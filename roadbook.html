@@ -253,6 +253,14 @@ nav {
 }
 .transport-tip::before { content: '🚗'; flex-shrink: 0; }
 
+.access-badge {
+  display: flex; align-items: flex-start; gap: 6px;
+  background: rgba(245,200,66,0.06); border: 1px solid rgba(245,200,66,0.15);
+  border-radius: 8px; padding: 7px 12px;
+  font-size: 12px; color: rgba(245,200,66,0.8);
+  margin-bottom: 10px; line-height: 1.5;
+}
+
 /* ── Modale lieu ── */
 .place-modal-overlay {
   display: none; position: fixed; inset: 0; z-index: 2000;
@@ -706,16 +714,23 @@ function renderStep(step) {
     ? `<div class="transport-tip">${esc(step.transport_tip)}</div>`
     : '';
 
+  // Badge point d'accès
+  const accessBadge = step.access_point?.note
+    ? `<div class="access-badge">📍 ${esc(step.access_point.note)}</div>`
+    : '';
+
   // Données encodées pour la modale
   const modalData = encodeURIComponent(JSON.stringify({
     title: step.title,
     type: step.type,
     description: step.description,
+    place_info: step.place_info || null,
     why_chosen: step.why_chosen || '',
     transport_tip: step.transport_tip || '',
     address: step.location?.address || '',
     lat: step.location?.lat,
     lng: step.location?.lng,
+    access_point: step.access_point || null,
     booking_url: step.booking_url || null
   }));
 
@@ -729,6 +744,7 @@ function renderStep(step) {
       </div>
       ${whyBadge}
       <div class="step-desc">${esc(step.description)}</div>
+      ${accessBadge}
       ${transportTip}
       ${tipsHTML}
       ${gps}
@@ -1005,7 +1021,6 @@ async function exportPDF() {
   btn.disabled = true;
 
   try {
-    // Chargement dynamique de jsPDF
     if (!window.jspdf) {
       await new Promise((resolve, reject) => {
         const s = document.createElement('script');
@@ -1017,80 +1032,144 @@ async function exportPDF() {
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-    const W = 210, margin = 18;
-    let y = 20;
+    const W = 210, PL = 18, PR = 18, TW = W - PL - PR;
+    let y = 0;
 
-    // Helpers
-    const addLine = (text, size, color, bold, maxW) => {
-      doc.setFontSize(size);
-      doc.setTextColor(...color);
-      if (bold) doc.setFont('helvetica', 'bold');
-      else doc.setFont('helvetica', 'normal');
-      const lines = doc.splitTextToSize(text, maxW || W - margin * 2);
-      doc.text(lines, margin, y);
-      y += lines.length * (size * 0.45) + 3;
+    // ── Helpers ──
+    const newPage = () => { doc.addPage(); y = 20; };
+    const check = (h = 15) => { if (y + h > 277) newPage(); };
+
+    const text = (str, x, fontSize, colorRGB, bold = false, maxWidth = TW) => {
+      if (!str) return;
+      doc.setFontSize(fontSize);
+      doc.setTextColor(...colorRGB);
+      doc.setFont('helvetica', bold ? 'bold' : 'normal');
+      const lines = doc.splitTextToSize(String(str), maxWidth);
+      doc.text(lines, x, y);
+      y += lines.length * (fontSize * 0.38) + 2;
     };
 
-    const checkPage = (needed = 20) => {
-      if (y + needed > 280) { doc.addPage(); y = 20; }
+    const rule = (color = [40, 40, 40]) => {
+      doc.setDrawColor(...color);
+      doc.setLineWidth(0.3);
+      doc.line(PL, y, W - PR, y);
+      y += 5;
     };
 
-    // Header
+    const badge = (label, bgColor, textColor) => {
+      check(10);
+      doc.setFillColor(...bgColor);
+      doc.setDrawColor(...bgColor);
+      doc.roundedRect(PL, y - 4, doc.getTextWidth(label) + 10, 7, 2, 2, 'F');
+      doc.setFontSize(8);
+      doc.setTextColor(...textColor);
+      doc.setFont('helvetica', 'bold');
+      doc.text(label, PL + 5, y);
+      y += 7;
+    };
+
+    // ── PAGE 1 : COUVERTURE ──
     doc.setFillColor(0, 0, 0);
     doc.rect(0, 0, W, 297, 'F');
+
+    // Bande couleur haut
+    doc.setFillColor(20, 20, 40);
+    doc.rect(0, 0, W, 60, 'F');
+
+    // Accent ligne
     doc.setFillColor(79, 142, 255);
-    doc.rect(margin, y, 40, 1, 'F');
-    y += 5;
+    doc.rect(0, 58, W, 2, 'F');
 
-    addLine('LIBERTRIP', 22, [79, 142, 255], true);
-    const title = document.getElementById('hero-title')?.textContent || 'Mon Roadbook';
-    addLine(title, 16, [255, 255, 255], true);
-    y += 4;
+    y = 22;
+    text('LIBERTRIP', PL, 28, [79, 142, 255], true);
+    y += 2;
+    text('Ton roadbook personnalisé', PL, 11, [180, 180, 180]);
+    y = 72;
 
-    // Résumé
+    const tripTitle = document.getElementById('hero-title')?.textContent || 'Mon Voyage';
+    text(tripTitle, PL, 22, [255, 255, 255], true);
+    y += 3;
+
     const summary = document.getElementById('journey-summary')?.textContent;
     if (summary) {
-      addLine(summary, 9, [160, 160, 160], false);
+      text(summary, PL, 10, [160, 160, 160], false, TW);
       y += 4;
     }
 
-    doc.setFillColor(30, 30, 30);
-    doc.rect(margin, y, W - margin * 2, 0.5, 'F');
-    y += 8;
+    rule([40, 40, 40]);
 
-    // Jour 1 — étapes
-    addLine('JOUR 1', 13, [79, 142, 255], true);
-    const day1Title = document.getElementById('day1-title')?.textContent;
-    if (day1Title) addLine(day1Title, 11, [255, 255, 255], true);
-    y += 4;
-
-    const steps = document.querySelectorAll('#day1-timeline .step');
-    steps.forEach(step => {
-      checkPage(30);
-      const time  = step.querySelector('.step-time')?.textContent?.trim();
-      const title = step.querySelector('.step-title')?.childNodes[0]?.textContent?.trim();
-      const desc  = step.querySelector('.step-desc')?.textContent?.trim();
-      const why   = step.querySelector('.why-badge')?.textContent?.replace(/^✓\s*/, '').trim();
-      const tip   = step.querySelector('.transport-tip')?.textContent?.replace(/^🚗\s*/, '').trim();
-
-      if (time) addLine(time, 8, [79, 142, 255], true);
-      if (title) addLine(title, 11, [255, 255, 255], true);
-      if (desc) addLine(desc, 9, [180, 180, 180], false);
-      if (why) { checkPage(10); addLine('✓ ' + why, 8, [52, 211, 153], false); }
-      if (tip) { checkPage(10); addLine('→ ' + tip, 8, [120, 160, 255], false); }
+    // Logistique rapide
+    const logCards = document.querySelectorAll('.logistic-card');
+    if (logCards.length) {
+      check(30);
+      text('VUE D\'ENSEMBLE', PL, 9, [79, 142, 255], true);
+      y += 2;
+      logCards.forEach(card => {
+        const label = card.querySelector('.logistic-label')?.textContent?.trim();
+        const val   = card.querySelector('.logistic-val')?.textContent?.trim();
+        if (label && val) {
+          check(8);
+          text(`${val}  `, PL, 11, [255, 255, 255], true, 60);
+          doc.setFontSize(8); doc.setTextColor(160, 160, 160);
+          doc.text(label, PL + doc.getTextWidth(val + '  ') + 2, y - 5);
+          y += 1;
+        }
+      });
       y += 4;
+    }
+
+    rule([40, 40, 40]);
+
+    // ── JOUR 1 ──
+    check(20);
+    text('JOUR 1', PL, 9, [79, 142, 255], true);
+    y += 1;
+    const day1Title = document.getElementById('day1-title')?.textContent;
+    if (day1Title) { text(day1Title, PL, 15, [255, 255, 255], true); y += 2; }
+    const day1Theme = document.getElementById('day1-theme')?.textContent;
+    if (day1Theme) { text(day1Theme, PL, 9, [120, 120, 120]); y += 3; }
+
+    // Étapes
+    const steps = document.querySelectorAll('#day1-timeline .step');
+    steps.forEach((stepEl, i) => {
+      check(35);
+
+      // Numéro + fond
+      doc.setFillColor(15, 15, 30);
+      doc.roundedRect(PL, y - 1, TW, 1, 1, 1, 'F');
+
+      const time  = stepEl.querySelector('.step-time')?.textContent?.replace(/[^\d:apm]/gi, '').trim();
+      const title = stepEl.querySelector('.step-title')?.childNodes[0]?.textContent?.trim();
+      const desc  = stepEl.querySelector('.step-desc')?.textContent?.trim();
+      const why   = stepEl.querySelector('.why-badge')?.textContent?.replace(/^✓\s*/, '').trim();
+      const access= stepEl.querySelector('.access-badge')?.textContent?.replace(/^📍\s*/, '').trim();
+
+      // Ligne de séparation légère
+      if (i > 0) { doc.setDrawColor(30, 30, 30); doc.setLineWidth(0.2); doc.line(PL, y, W - PR, y); y += 4; }
+
+      if (time) { text(time, PL, 8, [79, 142, 255], true); }
+      if (title) { check(8); text(title, PL, 12, [240, 240, 240], true); }
+      if (desc) { check(10); text(desc, PL, 9, [160, 160, 160], false, TW); }
+      if (why) { check(8); text('✓ ' + why, PL, 8, [52, 180, 130], false, TW); }
+      if (access) { check(8); text('→ ' + access, PL, 8, [200, 160, 60], false, TW); }
+      y += 3;
     });
 
-    // Footer
-    checkPage(20);
-    y += 8;
-    doc.setFillColor(79, 142, 255);
-    doc.rect(margin, y, 40, 0.5, 'F');
+    // ── FOOTER ──
+    check(15);
     y += 5;
-    addLine('Généré avec LIBERTRIP — libertrip.vercel.app', 8, [100, 100, 100], false);
+    rule([30, 30, 30]);
+    text('Généré avec LIBERTRIP · libertrip.vercel.app · ' + new Date().toLocaleDateString('fr-FR'), PL, 8, [80, 80, 80]);
 
-    const filename = `roadbook-libertrip-${Date.now()}.pdf`;
-    doc.save(filename);
+    // Numérotation pages
+    const totalPages = doc.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+      doc.setPage(p);
+      doc.setFontSize(8); doc.setTextColor(80, 80, 80);
+      doc.text(`${p} / ${totalPages}`, W - PR, 290, { align: 'right' });
+    }
+
+    doc.save(`roadbook-libertrip-${Date.now()}.pdf`);
     showToast('📄 PDF téléchargé !');
   } catch(e) {
     console.error('[pdf]', e);
@@ -1112,15 +1191,44 @@ function openPlaceModal(encodedData) {
     activity: 'Activité', overnight: 'Nuit'
   };
 
+  // GPS vers le lieu exact
   const mapsUrl = step.lat && step.lng
     ? `https://www.google.com/maps/search/?api=1&query=${step.lat},${step.lng}`
-    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(step.title)}`;
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(step.title + ' ' + (step.address || ''))}`;
   const wazeUrl = step.lat && step.lng
     ? `https://waze.com/ul?ll=${step.lat},${step.lng}&navigate=yes`
     : `https://waze.com/ul?q=${encodeURIComponent(step.title)}&navigate=yes`;
 
+  // GPS vers le point d'accès (parking, station, arrêt)
+  const ap = step.access_point;
+  const accessMapsUrl = ap?.lat && ap?.lng
+    ? `https://www.google.com/maps/search/?api=1&query=${ap.lat},${ap.lng}`
+    : null;
+  const accessWazeUrl = ap?.lat && ap?.lng
+    ? `https://waze.com/ul?ll=${ap.lat},${ap.lng}&navigate=yes`
+    : null;
+
+  const accessSection = ap ? `
+    <div style="background:rgba(79,142,255,0.06);border:1px solid rgba(79,142,255,0.15);border-radius:12px;padding:14px;margin-bottom:14px;">
+      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">Point d'accès recommandé</div>
+      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:4px;">${esc(ap.label || '')}</div>
+      ${ap.note ? `<div style="font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:10px;line-height:1.5;">${esc(ap.note)}</div>` : ''}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        ${accessMapsUrl ? `<a href="${accessMapsUrl}" target="_blank" rel="noopener" class="gps-btn maps" style="font-size:12px;padding:6px 12px;">🗺️ Y aller (Maps)</a>` : ''}
+        ${accessWazeUrl ? `<a href="${accessWazeUrl}" target="_blank" rel="noopener" class="gps-btn waze" style="font-size:12px;padding:6px 12px;">🚙 Y aller (Waze)</a>` : ''}
+      </div>
+    </div>` : '';
+
   const bookingBtn = step.booking_url
     ? `<a href="${step.booking_url}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.25);border-radius:8px;padding:8px 14px;font-size:13px;color:#F5C842;text-decoration:none;">🎟️ Réserver cette activité</a>`
+    : '';
+
+  // place_info : infos factuelles uniquement si disponibles
+  const placeInfoBlock = (step.place_info && step.place_info !== 'null' && step.place_info.trim())
+    ? `<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 14px;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:14px;">
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">À savoir</div>
+        ${esc(step.place_info)}
+       </div>`
     : '';
 
   document.getElementById('place-modal-overlay').innerHTML = `
@@ -1130,8 +1238,11 @@ function openPlaceModal(encodedData) {
       <div class="place-modal-name">${esc(step.title)}</div>
       ${step.address ? `<div class="place-modal-addr">📍 ${esc(step.address)}</div>` : ''}
       <div class="place-modal-desc">${esc(step.description)}</div>
+      ${placeInfoBlock}
       ${step.why_chosen ? `<div class="place-modal-why">✓ ${esc(step.why_chosen)}</div>` : ''}
       ${step.transport_tip ? `<div class="place-modal-transport">🗺️ ${esc(step.transport_tip)}</div>` : ''}
+      ${accessSection}
+      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:8px;">Lieu exact</div>
       <div class="place-modal-btns">
         <a href="${mapsUrl}" target="_blank" rel="noopener" class="gps-btn maps">🗺️ Google Maps</a>
         <a href="${wazeUrl}" target="_blank" rel="noopener" class="gps-btn waze">🚙 Waze</a>
