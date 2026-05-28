@@ -40,6 +40,23 @@ export default async function handler(req, res) {
 
   const { id } = req.query;
 
+  // ── Vérifier si l'utilisateur connecté a un abonnement actif ────────────
+  async function hasActiveSubscription(email) {
+    if (!email) return false;
+    const { data } = await supabase
+      .from('subscriptions')
+      .select('id')
+      .eq('email', email)
+      .eq('status', 'active')
+      .limit(1)
+      .single();
+    return !!data;
+  }
+
+  // Token optionnel pour vérifier l'abonnement
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.replace('Bearer ', '').trim();
+
   if (!id || !UUID_REGEX.test(id)) {
     return jsonResponse(res, 400, { error: 'ID de roadbook invalide.' });
   }
@@ -59,7 +76,20 @@ export default async function handler(req, res) {
 
   // ── 3. Masquage conditionnel selon le statut de paiement ────────────────
 
-  const isPaid = roadbook.payment_status === 'paid';
+  // Vérifier si l'utilisateur connecté a un abonnement actif
+  let isSubscriber = false;
+  if (token) {
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      const userClient = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+      const { data: { user } } = await userClient.auth.getUser(token);
+      if (user?.email) {
+        isSubscriber = await hasActiveSubscription(user.email);
+      }
+    } catch(e) { /* token invalide, on ignore */ }
+  }
+
+  const isPaid = roadbook.payment_status === 'paid' || isSubscriber;
 
   const response = {
     id:             roadbook.id,
