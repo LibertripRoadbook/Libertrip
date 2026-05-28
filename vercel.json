@@ -46,8 +46,6 @@
   ],
 
   "functions": {
-    "api/*.js":          { "maxDuration": 30 },
-    "api/generate.js":   { "maxDuration": 60 },
-    "api/generate-full.js": { "maxDuration": 60 }
+    "api/*.js": { "maxDuration": 60 }
   }
 }
