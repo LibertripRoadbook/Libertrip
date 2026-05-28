@@ -1,32 +1,33 @@
 // api/generate.js
-// Vercel Serverless Function â€” POST /api/generate
+// Vercel Serverless Function — POST /api/generate
 //
-// ReÃ§oit les rÃ©ponses du formulaire LIBERTRIP (10 questions + email),
+// Reçoit les réponses du formulaire LIBERTRIP (10 questions + email),
 // appelle l'API IA, enregistre le roadbook dans Supabase,
 // et retourne l'UUID unique pour redirection vers /roadbook/[id].
 
 import { supabase }                      from '../lib/supabase.js';
 import { SYSTEM_PROMPT, buildUserPrompt } from '../lib/prompt.js';
+import { sendRoadbookReadyEmail }         from '../lib/email.js';
 import OpenAI                             from 'openai';
 
-// â”€â”€ Constantes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Constantes ────────────────────────────────────────────────────────────────
 
-const OPENAI_MODEL   = 'gpt-4o';          // ou 'gpt-4o-mini' pour rÃ©duire les coÃ»ts
+const OPENAI_MODEL   = 'gpt-4o';          // ou 'gpt-4o-mini' pour réduire les coûts
 const MAX_TOKENS     = 4096;
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*'; // Restreindre en prod
 
-// â”€â”€ Initialisation OpenAI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Initialisation OpenAI ─────────────────────────────────────────────────────
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 /**
- * Valide les donnÃ©es du formulaire reÃ§ues.
+ * Valide les données du formulaire reçues.
  * @returns {string|null} Message d'erreur ou null si valide.
  */
 function validateCriteria(body) {
-  if (!body || typeof body !== 'object') return 'Corps de requÃªte invalide.';
+  if (!body || typeof body !== 'object') return 'Corps de requête invalide.';
   if (!body.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) {
     return 'Email invalide ou manquant.';
   }
@@ -35,17 +36,17 @@ function validateCriteria(body) {
   }
   const days = Number(body.days);
   if (!body.days || isNaN(days) || days < 1 || days > 30) {
-    return 'DurÃ©e invalide (1-30 jours).';
+    return 'Durée invalide (1-30 jours).';
   }
   return null;
 }
 
 /**
- * Extrait et parse le JSON retournÃ© par l'IA.
- * GÃ¨re les cas oÃ¹ le modÃ¨le entoure le JSON de backticks markdown.
+ * Extrait et parse le JSON retourné par l'IA.
+ * Gère les cas où le modèle entoure le JSON de backticks markdown.
  */
 function parseAIResponse(content) {
-  // Nettoyer les Ã©ventuels ```json ... ``` ajoutÃ©s par le modÃ¨le
+  // Nettoyer les éventuels ```json ... ``` ajoutés par le modèle
   const cleaned = content
     .replace(/^```(?:json)?\s*/i, '')
     .replace(/\s*```$/i, '')
@@ -55,7 +56,7 @@ function parseAIResponse(content) {
 }
 
 /**
- * Envoie une rÃ©ponse JSON avec les headers CORS.
+ * Envoie une réponse JSON avec les headers CORS.
  */
 function jsonResponse(res, status, data) {
   res.setHeader('Content-Type', 'application/json');
@@ -65,7 +66,7 @@ function jsonResponse(res, status, data) {
   return res.status(status).json(data);
 }
 
-// â”€â”€ Handler principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Handler principal ─────────────────────────────────────────────────────────
 
 export default async function handler(req, res) {
 
@@ -77,12 +78,12 @@ export default async function handler(req, res) {
     return res.status(204).end();
   }
 
-  // MÃ©thode autorisÃ©e : POST seulement
+  // Méthode autorisée : POST seulement
   if (req.method !== 'POST') {
-    return jsonResponse(res, 405, { error: 'MÃ©thode non autorisÃ©e.' });
+    return jsonResponse(res, 405, { error: 'Méthode non autorisée.' });
   }
 
-  // â”€â”€ 1. Validation des donnÃ©es entrantes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 1. Validation des données entrantes ──────────────────────────────────
 
   const body       = req.body;
   const validError  = validateCriteria(body);
@@ -108,7 +109,7 @@ export default async function handler(req, res) {
 
   const email = body.email.toLowerCase().trim();
 
-  // â”€â”€ 2. Appel API IA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 2. Appel API IA ──────────────────────────────────────────────────────
 
   let aiData;
 
@@ -126,23 +127,23 @@ export default async function handler(req, res) {
     });
 
     const rawContent = completion.choices[0]?.message?.content;
-    if (!rawContent) throw new Error('RÃ©ponse IA vide.');
+    if (!rawContent) throw new Error('Réponse IA vide.');
 
     aiData = parseAIResponse(rawContent);
 
-    // VÃ©rification minimale de la structure
+    // Vérification minimale de la structure
     if (!aiData.day_1 || !aiData.logistics) {
-      throw new Error('Structure JSON IA incomplÃ¨te.');
+      throw new Error('Structure JSON IA incomplète.');
     }
 
   } catch (aiError) {
     console.error('[generate] Erreur appel IA :', aiError.message);
     return jsonResponse(res, 502, {
-      error: 'Erreur lors de la gÃ©nÃ©ration IA. RÃ©essaie dans quelques instants.'
+      error: 'Erreur lors de la génération IA. Réessaie dans quelques instants.'
     });
   }
 
-  // â”€â”€ 3. Enregistrement dans Supabase â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 3. Enregistrement dans Supabase ──────────────────────────────────────
 
   const { data: inserted, error: dbError } = await supabase
     .from('roadbooks')
@@ -151,7 +152,7 @@ export default async function handler(req, res) {
       criteria,
       day_1:          aiData.day_1,
       logistics:      aiData.logistics,
-      days_full:      null,           // GÃ©nÃ©rÃ© aprÃ¨s paiement (voir /api/generate-full.js)
+      days_full:      null,           // Généré après paiement (voir /api/generate-full.js)
       days_preview:   aiData.days_preview || [],
       payment_status: 'pending'
     })
@@ -165,7 +166,15 @@ export default async function handler(req, res) {
     });
   }
 
-  // â”€â”€ 4. RÃ©ponse succÃ¨s â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── 4. Email de confirmation (non bloquant) ──────────────────────────────
+
+  sendRoadbookReadyEmail({
+    to:          email,
+    destination: criteria.destination,
+    roadbookId:  inserted.id,
+  }).catch(err => console.error('[generate] Erreur envoi email:', err));
+
+  // ── 5. Réponse succès ────────────────────────────────────────────────────
 
   return jsonResponse(res, 200, {
     success:    true,
