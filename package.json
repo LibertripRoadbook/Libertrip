@@ -1,0 +1,17 @@
+{
+  "name": "libertrip",
+  "version": "1.0.0",
+  "description": "LIBERTRIP — AI-powered van roadbook generator",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.44.0",
+    "openai": "^4.52.0",
+    "stripe": "^16.0.0"
+  },
+  "scripts": {
+    "dev": "vercel dev"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "buildCommand": "echo 'No build step required'",
+  "outputDirectory": ".",
+
+  "rewrites": [
+    { "source": "/",              "destination": "/Site/libertrip.html" },
+    { "source": "/roadbook/:id",  "destination": "/roadbook.html"       },
+    { "source": "/admin",         "destination": "/admin.html"           }
+  ],
+
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options",        "value": "DENY" },
+        { "key": "X-XSS-Protection",       "value": "1; mode=block" }
+      ]
+    },
+    {
+      "source": "/api/webhook-stripe",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" }
+      ]
+    }
+  ],
+
+  "functions": {
+    "api/generate.js":       { "maxDuration": 30 },
+    "api/roadbook.js":       { "maxDuration": 10 },
+    "api/webhook-stripe.js": { "maxDuration": 15 }
+  }
+}
