@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Roadbook — LIBERTRIP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Design System ── */
+:root {
+  --black:      #000000;
+  --card:       #0f0f0f;
+  --card-2:     #141414;
+  --border:     rgba(255,255,255,0.07);
+  --border-lg:  rgba(255,255,255,0.12);
+  --accent:     #4F8EFF;
+  --accent-2:   #8B5CF6;
+  --gold:       #F5C842;
+  --green:      #34D399;
+  --red:        #F87171;
+  --text:       rgba(255,255,255,0.85);
+  --text-muted: rgba(255,255,255,0.4);
+  --text-dim:   rgba(255,255,255,0.2);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── Typography ── */
+h1, h2, h3, h4 { font-family: 'Syne', sans-serif; }
+
+.logo-text {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  background: linear-gradient(135deg, #fff 40%, #4f8eff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Layout ── */
+.container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+/* ── Nav ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.nav-logo { font-size: 20px; letter-spacing: -0.5px; }
+.nav-badge {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500;
+  background: rgba(79,142,255,0.12);
+  border: 1px solid rgba(79,142,255,0.25);
+  border-radius: 100px; padding: 4px 12px;
+  color: var(--accent);
+}
+
+/* ── Loading screen ── */
+#loading-screen {
+  position: fixed; inset: 0; z-index: 999;
+  background: var(--black);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 24px;
+}
+
+.loader-logo { font-size: 32px; letter-spacing: -1px; }
+.loader-bar {
+  width: 200px; height: 2px;
+  background: var(--border);
+  border-radius: 2px; overflow: hidden;
+}
+.loader-bar-inner {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  width: 0%; animation: load-bar 1.5s ease-in-out forwards;
+}
+@keyframes load-bar { to { width: 100%; } }
+.loader-text { font-size: 14px; color: var(--text-muted); }
+
+/* ── Error screen ── */
+#error-screen {
+  min-height: 70vh;
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 16px; text-align: center;
+  padding: 40px;
+}
+#error-screen h2 { font-size: 24px; color: var(--red); }
+#error-screen p  { color: var(--text-muted); max-width: 400px; }
+
+/* ── Hero du roadbook ── */
+.roadbook-hero {
+  padding: 56px 0 40px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 40px;
+}
+
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 500; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.hero-title {
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 800; letter-spacing: -2px;
+  line-height: 1.05; margin-bottom: 12px;
+}
+
+.hero-sub { font-size: 17px; color: var(--text-muted); }
+
+/* ── Logistics cards ── */
+.logistics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 48px;
+}
+
+.logistic-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+.logistic-icon { font-size: 22px; }
+.logistic-value {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px; font-weight: 700;
+  color: #fff; letter-spacing: -0.5px;
+}
+.logistic-label { font-size: 12px; color: var(--text-muted); }
+
+/* ── Section headers ── */
+.section-title {
+  font-size: 13px; font-weight: 500;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 24px;
+}
+
+/* ── Budget strip ── */
+.budget-strip {
+  background: linear-gradient(135deg, rgba(245,200,66,0.06), rgba(245,200,66,0.02));
+  border: 1px solid rgba(245,200,66,0.15);
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 40px; flex-wrap: wrap; gap: 12px;
+}
+.budget-items { display: flex; gap: 24px; flex-wrap: wrap; }
+.budget-item  { display: flex; flex-direction: column; gap: 2px; }
+.budget-item-label { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+.budget-item-val   { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--gold); }
+.budget-total { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--gold); }
+.budget-total-label { font-size: 12px; color: var(--text-muted); }
+
+/* ── Jour 1 ── */
+.day-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 32px;
+}
+.day-pill {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-radius: 100px; padding: 6px 16px;
+  font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+  color: #fff;
+}
+.day-title { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+.day-theme { font-size: 15px; color: var(--text-muted); margin-top: 2px; }
+
+/* ── Timeline des étapes ── */
+.timeline { position: relative; padding-left: 32px; margin-bottom: 40px; }
+.timeline::before {
+  content: '';
+  position: absolute; left: 10px; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--accent), var(--accent-2), transparent);
+}
+
+.step {
+  position: relative;
+  margin-bottom: 28px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 24px;
+}
+
+.step::before {
+  content: '';
+  position: absolute;
+  left: -26px; top: 22px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--black);
+  box-shadow: 0 0 8px rgba(79,142,255,0.5);
+}
+
+.step.secret::before { background: var(--gold); box-shadow: 0 0 8px rgba(245,200,66,0.5); }
+.step.overnight::before { background: var(--accent-2); box-shadow: 0 0 8px rgba(139,92,246,0.5); }
+
+.step-time { font-size: 12px; font-weight: 500; color: var(--accent); letter-spacing: 1px; margin-bottom: 4px; }
+.step-title {
+  font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 6px;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+  transition: color 0.2s;
+}
+.step-title:hover { color: var(--accent); }
+.step-title .info-icon {
+  font-size: 13px; background: rgba(79,142,255,0.12); border: 1px solid rgba(79,142,255,0.25);
+  border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center;
+  color: var(--accent); flex-shrink: 0; transition: background 0.2s;
+}
+.step-title:hover .info-icon { background: rgba(79,142,255,0.25); }
+.step-desc  { font-size: 15px; color: rgba(255,255,255,0.65); line-height: 1.6; margin-bottom: 10px; }
+
+.why-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(52,211,153,0.07); border: 1px solid rgba(52,211,153,0.18);
+  border-radius: 8px; padding: 5px 12px;
+  font-size: 12px; color: var(--green);
+  margin-bottom: 10px; line-height: 1.4;
+}
+.why-badge::before { content: '✓'; font-weight: 700; }
+
+.transport-tip {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: rgba(79,142,255,0.05); border: 1px solid rgba(79,142,255,0.12);
+  border-radius: 8px; padding: 8px 12px;
+  font-size: 12px; color: rgba(79,142,255,0.85);
+  margin-bottom: 10px; line-height: 1.5;
+}
+.transport-tip::before { content: '🚗'; flex-shrink: 0; }
+
+/* ── Modale lieu ── */
+.place-modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 2000;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+  align-items: center; justify-content: center; padding: 20px;
+}
+.place-modal-overlay.open { display: flex; }
+.place-modal {
+  background: #0f0f0f; border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 24px; padding: 32px; max-width: 480px; width: 100%;
+  position: relative; animation: modal-in 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes modal-in { from { opacity:0; transform: scale(0.9) translateY(20px); } to { opacity:1; transform: scale(1) translateY(0); } }
+.place-modal-close {
+  position: absolute; top: 16px; right: 16px;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%; width: 32px; height: 32px; cursor: pointer;
+  color: rgba(255,255,255,0.5); font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.place-modal-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.place-modal-type { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.place-modal-name { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+.place-modal-addr { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+.place-modal-desc { font-size: 15px; color: rgba(255,255,255,0.75); line-height: 1.7; margin-bottom: 16px; }
+.place-modal-why  { background: rgba(52,211,153,0.07); border: 1px solid rgba(52,211,153,0.18); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--green); margin-bottom: 16px; }
+.place-modal-transport { background: rgba(79,142,255,0.06); border: 1px solid rgba(79,142,255,0.15); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: rgba(79,142,255,0.9); margin-bottom: 16px; }
+.place-modal-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.secret-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(245,200,66,0.1); border: 1px solid rgba(245,200,66,0.2);
+  border-radius: 6px; padding: 3px 10px;
+  font-size: 11px; font-weight: 500; color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.step-tips { margin-top: 12px; }
+.step-tip  {
+  font-size: 13px; color: var(--text-muted);
+  padding: 4px 0; display: flex; align-items: flex-start; gap: 8px;
+}
+.step-tip::before { content: '→'; color: var(--accent); flex-shrink: 0; }
+
+/* ── GPS Buttons ── */
+.gps-buttons {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px;
+}
+.gps-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-lg);
+  border-radius: 8px; padding: 7px 14px;
+  font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.7);
+  text-decoration: none; cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.gps-btn:hover { background: rgba(79,142,255,0.08); border-color: rgba(79,142,255,0.3); color: var(--accent); }
+.gps-btn.maps { }
+.gps-btn.waze { }
+
+/* ── Summary de la nuit ── */
+.overnight-card {
+  background: linear-gradient(135deg, rgba(139,92,246,0.06), rgba(79,142,255,0.04));
+  border: 1px solid rgba(139,92,246,0.2);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 48px;
+}
+.overnight-card h4 { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-2); margin-bottom: 12px; }
+.overnight-name     { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.overnight-desc     { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+.overnight-type     {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2);
+  border-radius: 6px; padding: 3px 10px;
+  font-size: 11px; font-weight: 500; color: var(--accent-2);
+}
+
+/* ── Lock Screen Premium ── */
+.lock-screen {
+  position: relative;
+  margin-top: 8px;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.days-preview-blur {
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.4;
+}
+
+.lock-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 15%, rgba(0,0,0,0.96) 40%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px;
+  text-align: center;
+  gap: 20px;
+}
+
+.lock-icon { font-size: 44px; margin-bottom: 4px; }
+.lock-title { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+.lock-sub   { font-size: 17px; color: rgba(255,255,255,0.55); max-width: 400px; line-height: 1.6; }
+
+.lock-btn {
+  background: linear-gradient(135deg, var(--accent-2), #7c3aed);
+  border: none; border-radius: 100px;
+  padding: 18px 44px;
+  font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700;
+  color: #fff; cursor: pointer;
+  position: relative; overflow: hidden;
+  box-shadow: 0 0 40px rgba(139,92,246,0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.lock-btn:hover { transform: translateY(-2px); box-shadow: 0 0 60px rgba(139,92,246,0.5); }
+.lock-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -70%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  transform: skewX(-15deg);
+  animation: shimmer-pass 3s ease infinite;
+}
+@keyframes shimmer-pass {
+  0%{left:-70%;opacity:0} 10%{opacity:1} 60%{left:130%;opacity:1} 61%{opacity:0} 100%{left:130%;opacity:0}
+}
+
+.lock-price { font-family: 'Syne', sans-serif; font-size: 42px; font-weight: 800; color: #fff; }
+.lock-price-sub { font-size: 14px; color: rgba(255,255,255,0.4); }
+
+.lock-guarantee {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: rgba(255,255,255,0.3);
+}
+
+/* ── Days preview cards (sous le lock) ── */
+.day-preview-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 20px 24px;
+  margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.dpc-left { display: flex; flex-direction: column; gap: 4px; }
+.dpc-day  { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
+.dpc-title{ font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; }
+.dpc-theme{ font-size: 13px; color: var(--text-muted); }
+.dpc-lock { font-size: 18px; color: var(--text-dim); }
+
+/* ── Unlock screen (when paid) ── */
+.unlock-banner {
+  background: linear-gradient(135deg, rgba(52,211,153,0.08), rgba(52,211,153,0.03));
+  border: 1px solid rgba(52,211,153,0.2);
+  border-radius: 16px; padding: 16px 24px;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 32px;
+}
+.unlock-banner-text { font-size: 15px; color: var(--green); font-weight: 500; }
+
+/* ── Full days (paid) ── */
+.full-day-section { margin-bottom: 56px; }
+
+/* ── Essentials ── */
+.essentials-grid {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  margin-bottom: 48px;
+}
+.essential-tag {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 14px;
+  font-size: 14px; color: var(--text-muted);
+}
+
+/* ── Footer ── */
+.page-footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 0 48px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+.page-footer a { color: var(--accent); text-decoration: none; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  /* Layout */
+  .main-wrap { padding: 16px; }
+  nav { padding: 14px 16px; }
+
+  /* Header roadbook */
+  .rb-meta { flex-direction: column; gap: 6px; }
+
+  /* Logistique */
+  .logistics-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .logistic-card  { padding: 14px; }
+  .logistic-val   { font-size: 20px; }
+
+  /* Budget */
+  .budget-strip { flex-direction: column; gap: 8px; }
+  .budget-item  { flex-direction: row; justify-content: space-between; }
+
+  /* Timeline */
+  .timeline { padding-left: 20px; }
+  .step { padding: 16px 14px; }
+  .step::before { left: -16px; }
+  .step-title { font-size: 16px; }
+  .step-desc  { font-size: 14px; }
+  .gps-buttons { gap: 8px; }
+  .gps-btn { font-size: 12px; padding: 6px 10px; }
+
+  /* Why badge + transport tip */
+  .why-badge, .transport-tip { font-size: 11px; }
+
+  /* Lock screen */
+  .lock-title { font-size: 22px; }
+  .lock-sub   { font-size: 14px; }
+  .lock-btn   { font-size: 15px; padding: 16px 28px; width: 100%; text-align: center; }
+  .lock-previews { flex-direction: column; }
+
+  /* Modale lieu */
+  .place-modal { padding: 24px 18px; border-radius: 18px; }
+  .place-modal-name { font-size: 18px; }
+  .place-modal-btns { flex-direction: column; }
+  .place-modal-btns a { justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Loading ── -->
+<div id="loading-screen">
+  <div class="loader-logo logo-text">LIBERTRIP</div>
+  <div class="loader-bar"><div class="loader-bar-inner"></div></div>
+  <div class="loader-text">Chargement de ton roadbook…</div>
+</div>
+
+<!-- ── Navigation ── -->
+<nav>
+  <a href="/" style="text-decoration:none">
+    <span class="nav-logo logo-text">LIBERTRIP</span>
+  </a>
+  <span class="nav-badge" id="nav-status-badge">🗺️ Ton roadbook</span>
+</nav>
+
+<!-- ── Contenu principal (injecté par JS) ── -->
+<main id="main-content" style="display:none">
+  <div class="container">
+    <!-- Hero -->
+    <div class="roadbook-hero">
+      <div class="hero-tag">✦ Roadbook personnalisé</div>
+      <h1 class="hero-title" id="hero-title">Chargement…</h1>
+      <p class="hero-sub" id="hero-sub"></p>
+    </div>
+
+    <!-- Logistique -->
+    <div class="section-title">Vue d'ensemble</div>
+    <div class="logistics-grid" id="logistics-grid"></div>
+
+    <!-- Budget -->
+    <div class="section-title">Budget estimé</div>
+    <div class="budget-strip" id="budget-strip"></div>
+
+    <!-- Ce qu'il faut emporter -->
+    <div class="section-title" id="essentials-title" style="display:none">À emporter</div>
+    <div class="essentials-grid" id="essentials-grid"></div>
+
+    <!-- Résumé du voyage -->
+    <p id="journey-summary" style="color:var(--text-muted);font-size:16px;margin-bottom:48px;line-height:1.7;font-style:italic;"></p>
+
+    <!-- ── JOUR 1 ── -->
+    <div class="section-title">Jour par jour</div>
+
+    <div id="unlock-banner" class="unlock-banner" style="display:none">
+      <span>✅</span>
+      <span class="unlock-banner-text">Voyage complet débloqué — tous tes jours sont disponibles !</span>
+    </div>
+
+    <div class="day-header">
+      <div class="day-pill">Jour 1</div>
+      <div>
+        <div class="day-title" id="day1-title"></div>
+        <div class="day-theme" id="day1-theme"></div>
+      </div>
+    </div>
+
+    <div class="timeline" id="day1-timeline"></div>
+
+    <div class="overnight-card" id="overnight-card"></div>
+
+    <!-- ── JOURS SUIVANTS : PAYÉ ou VERROUILLÉ ── -->
+    <div id="days-section"></div>
+
+  </div>
+</main>
+
+<!-- ── Erreur ── -->
+<div id="error-screen">
+  <h2>Roadbook introuvable</h2>
+  <p>Ce lien ne correspond à aucun roadbook. Vérifie l'URL ou génère un nouveau voyage.</p>
+  <a href="/" style="color:var(--accent);margin-top:16px;font-size:15px;">← Retour à l'accueil</a>
+</div>
+
+<!-- ── Footer ── -->
+<footer class="page-footer">
+  <p>Généré par <a href="/">LIBERTRIP</a> • IA powered roadbook</p>
+</footer>
+
+<script>
+// ────────────────────────────────────────────────────────────────────────────
+//  LIBERTRIP — roadbook.html — Script principal
+//  Lit l'UUID dans l'URL → appelle /api/roadbook → injecte le contenu
+// ────────────────────────────────────────────────────────────────────────────
+
+const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/9B6fZha6029VbO06Id3Ru00';
+
+// ── 1. Récupération de l'ID ──────────────────────────────────────────────────
+
+function getRoadbookId() {
+  // Support deux patterns d'URL :
+  //   /roadbook/uuid-ici        (avec vercel.json rewrite)
+  //   /roadbook.html?id=uuid    (accès direct au fichier)
+  const pathMatch = window.location.pathname.match(/\/roadbook\/([a-f0-9-]{36})/i);
+  if (pathMatch) return pathMatch[1];
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('id');
+}
+
+// ── 2. Helpers HTML ──────────────────────────────────────────────────────────
+
+function esc(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function gpsButtons(lat, lng, name) {
+  if (!lat || !lng) return '';
+  const label    = encodeURIComponent(name || 'Destination');
+  const gmaps    = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&destination_place_id=${label}`;
+  const wazeUrl  = `https://waze.com/ul?ll=${lat},${lng}&navigate=yes`;
+  return `
+    <div class="gps-buttons">
+      <a href="${gmaps}" target="_blank" rel="noopener" class="gps-btn maps">📍 Google Maps</a>
+      <a href="${wazeUrl}" target="_blank" rel="noopener" class="gps-btn waze">🔵 Waze</a>
+    </div>`;
+}
+
+function typeEmoji(type) {
+  const map = {
+    depart:'🚐', route:'🛣️', stop:'📍', meal:'🍽️',
+    activity:'🎯', overnight:'🌙', default:'📍'
+  };
+  return map[type] || map.default;
+}
+
+function overnightEmoji(type) {
+  return { bivouac:'⛺', campsite:'🏕️', hostel:'🏠' }[type] || '🌙';
+}
+
+// ── 3. Rendu de la logistique ────────────────────────────────────────────────
+
+function renderLogistics(logistics, criteria) {
+  const grid = document.getElementById('logistics-grid');
+  if (!logistics || !grid) return;
+
+  const items = [
+    { icon:'📏', value: logistics.total_distance_km ? `${logistics.total_distance_km} km`  : '—', label:'Distance totale' },
+    { icon:'📅', value: `${criteria.days || logistics.total_days || '?'} jours`,  label:'Durée du voyage' },
+    { icon:'🚐', value: esc(logistics.vehicle_type || criteria.vehicle || '—'),    label:'Véhicule' },
+    { icon:'🌤️', value: esc(logistics.best_season || '—'),  label:'Meilleure saison' },
+    { icon:'⚡', value: esc(logistics.difficulty   || '—'),  label:'Difficulté' },
+  ];
+
+  grid.innerHTML = items.map(i => `
+    <div class="logistic-card">
+      <div class="logistic-icon">${i.icon}</div>
+      <div class="logistic-value">${i.value}</div>
+      <div class="logistic-label">${i.label}</div>
+    </div>`).join('');
+}
+
+// ── 4. Rendu du budget ───────────────────────────────────────────────────────
+
+function renderBudget(budget) {
+  const el = document.getElementById('budget-strip');
+  if (!budget || !el) return;
+
+  const items = [
+    { label:'Carburant',     val: budget.fuel_eur },
+    { label:'Nuits',         val: budget.accommodation_eur },
+    { label:'Nourriture',    val: budget.food_eur },
+    { label:'Activités',     val: budget.activities_eur },
+  ].filter(i => i.val !== undefined);
+
+  el.innerHTML = `
+    <div class="budget-items">
+      ${items.map(i => `
+        <div class="budget-item">
+          <div class="budget-item-label">${esc(i.label)}</div>
+          <div class="budget-item-val">${i.val}€</div>
+        </div>`).join('')}
+    </div>
+    <div>
+      <div class="budget-total-label">Budget estimé total</div>
+      <div class="budget-total">${budget.total_eur || '—'}€</div>
+    </div>`;
+}
+
+// ── 5. Rendu des essentials ──────────────────────────────────────────────────
+
+function renderEssentials(items) {
+  const grid  = document.getElementById('essentials-grid');
+  const title = document.getElementById('essentials-title');
+  if (!items || !items.length || !grid) return;
+  title.style.display = '';
+  grid.innerHTML = items.map(i => `<div class="essential-tag">🎒 ${esc(i)}</div>`).join('');
+}
+
+// ── 6. Rendu d'une étape ─────────────────────────────────────────────────────
+
+function renderStep(step) {
+  const isSecret   = step.secret || false;
+  const isOvernight= step.type === 'overnight';
+  const tipsHTML   = (step.tips && step.tips.length)
+    ? `<div class="step-tips">${step.tips.map(t => `<div class="step-tip">${esc(t)}</div>`).join('')}</div>`
+    : '';
+
+  const secretBadge = isSecret
+    ? `<div class="secret-badge">⭐ Spot secret</div>` : '';
+
+  const gps = step.location
+    ? gpsButtons(step.location.lat, step.location.lng, step.location.name)
+    : '';
+
+  const whyBadge = step.why_chosen
+    ? `<div class="why-badge">${esc(step.why_chosen)}</div>`
+    : '';
+
+  const transportTip = step.transport_tip
+    ? `<div class="transport-tip">${esc(step.transport_tip)}</div>`
+    : '';
+
+  // Données encodées pour la modale
+  const modalData = encodeURIComponent(JSON.stringify({
+    title: step.title,
+    type: step.type,
+    description: step.description,
+    why_chosen: step.why_chosen || '',
+    transport_tip: step.transport_tip || '',
+    address: step.location?.address || '',
+    lat: step.location?.lat,
+    lng: step.location?.lng,
+    booking_url: step.booking_url || null
+  }));
+
+  return `
+    <div class="step ${isSecret ? 'secret' : ''} ${isOvernight ? 'overnight' : ''}">
+      ${step.time ? `<div class="step-time">${typeEmoji(step.type)} ${esc(step.time)}</div>` : ''}
+      ${secretBadge}
+      <div class="step-title" onclick="openPlaceModal('${modalData}')">
+        ${esc(step.title)}
+        <span class="info-icon">ℹ</span>
+      </div>
+      ${whyBadge}
+      <div class="step-desc">${esc(step.description)}</div>
+      ${transportTip}
+      ${tipsHTML}
+      ${gps}
+    </div>`;
+}
+
+// ── 7. Rendu Jour 1 ──────────────────────────────────────────────────────────
+
+function renderDay1(day1) {
+  document.getElementById('day1-title').textContent = day1.title || 'Jour 1';
+  document.getElementById('day1-theme').textContent = day1.theme || '';
+
+  // Timeline
+  const timeline = document.getElementById('day1-timeline');
+  if (day1.steps && day1.steps.length) {
+    timeline.innerHTML = day1.steps
+      .sort((a,b) => (a.order||0) - (b.order||0))
+      .map(renderStep).join('');
+  }
+
+  // Overnight
+  const on = day1.overnight;
+  const overnightCard = document.getElementById('overnight-card');
+  if (on) {
+    overnightCard.innerHTML = `
+      <h4>🌙 Nuit du Jour 1</h4>
+      <div class="overnight-name">${esc(on.name)}</div>
+      <div class="overnight-desc">${esc(on.description)}</div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;">
+        <div class="overnight-type">${overnightEmoji(on.type)} ${esc(on.type || 'bivouac')}</div>
+        ${gpsButtons(on.lat, on.lng, on.name)}
+      </div>
+      ${on.tips ? `<div class="step-tip" style="margin-top:12px;">💡 ${esc(on.tips)}</div>` : ''}`;
+  }
+}
+
+// ── 8. Rendu jours suivants (PREMIUM) ────────────────────────────────────────
+
+function renderFullDays(daysArr) {
+  const section = document.getElementById('days-section');
+  document.getElementById('unlock-banner').style.display = 'flex';
+
+  const html = daysArr.map(day => {
+    const steps = (day.steps || [])
+      .sort((a,b) => (a.order||0) - (b.order||0))
+      .map(renderStep).join('');
+
+    const on = day.overnight;
+    const overnightHtml = on ? `
+      <div class="overnight-card" style="margin-top:0;margin-bottom:32px;">
+        <h4>🌙 Nuit du Jour ${day.day}</h4>
+        <div class="overnight-name">${esc(on.name)}</div>
+        <div class="overnight-desc">${esc(on.description)}</div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;">
+          <div class="overnight-type">${overnightEmoji(on.type)} ${esc(on.type || 'bivouac')}</div>
+          ${gpsButtons(on.lat, on.lng, on.name)}
+        </div>
+      </div>` : '';
+
+    return `
+      <div class="full-day-section">
+        <div class="day-header">
+          <div class="day-pill">Jour ${day.day}</div>
+          <div>
+            <div class="day-title">${esc(day.title)}</div>
+            <div class="day-theme">${esc(day.theme || '')}</div>
+          </div>
+        </div>
+        <div class="timeline">${steps}</div>
+        ${overnightHtml}
+      </div>`;
+  }).join('');
+
+  section.innerHTML = html;
+}
+
+// ── 9. Écran de verrouillage (FREE → PREMIUM) ────────────────────────────────
+
+function renderLockScreen(roadbookId, daysPreview) {
+  const section = document.getElementById('days-section');
+
+  // Prévisualisation floue des titres
+  const previewCards = (daysPreview || []).map(d => `
+    <div class="day-preview-card">
+      <div class="dpc-left">
+        <div class="dpc-day">Jour ${d.day}</div>
+        <div class="dpc-title">${esc(d.title)}</div>
+        <div class="dpc-theme">${esc(d.highlight || d.theme || '')}</div>
+      </div>
+      <div class="dpc-lock">🔒</div>
+    </div>`).join('');
+
+  const checkoutUrl = `${STRIPE_PAYMENT_LINK}?client_reference_id=${encodeURIComponent(roadbookId)}`;
+
+  section.innerHTML = `
+    <div class="lock-screen">
+      <div class="days-preview-blur">
+        ${previewCards || '<div style="height:300px"></div>'}
+      </div>
+      <div class="lock-overlay">
+        <div class="lock-icon">🔒</div>
+        <div class="lock-title">Débloquer tout le voyage</div>
+        <div class="lock-sub">
+          Tes ${(daysPreview || []).length + 1} jours, tous les spots secrets,
+          les coordonnées GPS et les adresses locales — en accès à vie.
+        </div>
+        <div>
+          <div class="lock-price">14,99€</div>
+          <div class="lock-price-sub">Accès à vie • Paiement unique</div>
+        </div>
+        <button class="lock-btn" onclick="window.location.href='${checkoutUrl}'">
+          ✨ Débloquer mon voyage complet
+        </button>
+        <div class="lock-guarantee">🔒 Paiement sécurisé • Satisfait ou remboursé 7 jours</div>
+      </div>
+    </div>`;
+}
+
+// ── 10. Initialisation ───────────────────────────────────────────────────────
+
+async function init() {
+  const roadbookId = getRoadbookId();
+
+  if (!roadbookId) {
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('error-screen').style.display   = 'flex';
+    return;
+  }
+
+  try {
+    const res  = await fetch(`/api/roadbook?id=${encodeURIComponent(roadbookId)}`);
+    const data = await res.json();
+
+    if (!res.ok || data.error) throw new Error(data.error || 'Erreur serveur');
+
+    // ── Injection des données ──
+
+    const logistics = data.logistics || {};
+    const criteria  = data.criteria  || {};
+    const day1      = data.day_1     || {};
+    const isPaid    = data.payment_status === 'paid';
+
+    // Titre page
+    document.title = `${criteria.destination || 'Mon voyage'} — LIBERTRIP`;
+    document.getElementById('nav-status-badge').textContent =
+      isPaid ? '✅ Voyage complet' : '🗺️ Aperçu Jour 1';
+
+    // Hero
+    document.getElementById('hero-title').textContent =
+      `${criteria.destination || 'Ton voyage'} en ${criteria.days || '?'} jours`;
+    document.getElementById('hero-sub').textContent =
+      logistics.summary || 'Ton roadbook personnalisé est prêt.';
+
+    // Sections
+    renderLogistics(logistics, criteria);
+    renderBudget(logistics.budget_estimated);
+    renderEssentials(logistics.packing_essentials);
+
+    // Résumé
+    if (logistics.summary) {
+      document.getElementById('journey-summary').textContent = logistics.summary;
+    }
+
+    // Jour 1
+    renderDay1(day1);
+
+    // Jours suivants
+    if (isPaid && data.days_full && data.days_full.length) {
+      renderFullDays(data.days_full);
+    } else {
+      renderLockScreen(roadbookId, data.days_preview || []);
+    }
+
+    // Afficher le contenu
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('main-content').style.display  = '';
+
+  } catch (err) {
+    console.error('[roadbook]', err);
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('error-screen').style.display   = 'flex';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+// ── Modale Lieu ──────────────────────────────────────────────────────────────
+
+function openPlaceModal(encodedData) {
+  let step;
+  try { step = JSON.parse(decodeURIComponent(encodedData)); } catch(e) { return; }
+
+  const typeLabels = {
+    depart: 'Départ', route: 'Route', stop: 'Étape', meal: 'Repas',
+    activity: 'Activité', overnight: 'Nuit'
+  };
+
+  const mapsUrl = step.lat && step.lng
+    ? `https://www.google.com/maps/search/?api=1&query=${step.lat},${step.lng}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(step.title)}`;
+  const wazeUrl = step.lat && step.lng
+    ? `https://waze.com/ul?ll=${step.lat},${step.lng}&navigate=yes`
+    : `https://waze.com/ul?q=${encodeURIComponent(step.title)}&navigate=yes`;
+
+  const bookingBtn = step.booking_url
+    ? `<a href="${step.booking_url}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.25);border-radius:8px;padding:8px 14px;font-size:13px;color:#F5C842;text-decoration:none;">🎟️ Réserver cette activité</a>`
+    : '';
+
+  document.getElementById('place-modal-overlay').innerHTML = `
+    <div class="place-modal">
+      <button class="place-modal-close" onclick="closePlaceModal()">✕</button>
+      <div class="place-modal-type">${typeLabels[step.type] || step.type}</div>
+      <div class="place-modal-name">${esc(step.title)}</div>
+      ${step.address ? `<div class="place-modal-addr">📍 ${esc(step.address)}</div>` : ''}
+      <div class="place-modal-desc">${esc(step.description)}</div>
+      ${step.why_chosen ? `<div class="place-modal-why">✓ ${esc(step.why_chosen)}</div>` : ''}
+      ${step.transport_tip ? `<div class="place-modal-transport">🗺️ ${esc(step.transport_tip)}</div>` : ''}
+      <div class="place-modal-btns">
+        <a href="${mapsUrl}" target="_blank" rel="noopener" class="gps-btn maps">🗺️ Google Maps</a>
+        <a href="${wazeUrl}" target="_blank" rel="noopener" class="gps-btn waze">🚙 Waze</a>
+        ${bookingBtn}
+      </div>
+    </div>`;
+
+  document.getElementById('place-modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePlaceModal() {
+  document.getElementById('place-modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Fermer au clic sur le fond
+document.addEventListener('click', e => {
+  if (e.target.id === 'place-modal-overlay') closePlaceModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closePlaceModal();
+});
+</script>
+
+<!-- ── Modale Lieu ── -->
+<div class="place-modal-overlay" id="place-modal-overlay"></div>
+
+</body>
+</html>
