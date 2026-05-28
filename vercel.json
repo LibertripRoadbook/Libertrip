@@ -6,6 +6,7 @@
   "rewrites": [
     { "source": "/",              "destination": "/site/libertrip.html" },
     { "source": "/roadbook/:id",  "destination": "/roadbook.html"       },
+    { "source": "/mes-roadbooks", "destination": "/mes-roadbooks.html"  },
     { "source": "/admin",         "destination": "/admin.html"           }
   ],
 
