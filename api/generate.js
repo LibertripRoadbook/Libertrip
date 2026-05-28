@@ -12,8 +12,8 @@ import OpenAI                             from 'openai';
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 
-const OPENAI_MODEL   = 'gpt-4o';          // ou 'gpt-4o-mini' pour réduire les coûts
-const MAX_TOKENS     = 4096;
+const OPENAI_MODEL   = 'gpt-4o';
+const MAX_TOKENS     = 3000;
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*'; // Restreindre en prod
 
 // ── Initialisation OpenAI ─────────────────────────────────────────────────────
