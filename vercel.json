@@ -8,7 +8,7 @@
     { "source": "/roadbook/:id",  "destination": "/roadbook.html"       },
     { "source": "/mes-roadbooks", "destination": "/mes-roadbooks.html"  },
     { "source": "/admin",         "destination": "/admin.html"           },
-    { "source": "/auth/callback", "destination": "/api/auth-callback.js" }
+    { "source": "/auth/callback", "destination": "/api/auth-callback" }
   ],
 
   "headers": [
