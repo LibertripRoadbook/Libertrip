@@ -47,8 +47,12 @@ export default async function handler(req, res) {
   });
 
   if (error) {
-    console.error('[auth-magic-link] signInWithOtp error:', error.message);
-    return json(res, 500, { error: 'Impossible d\'envoyer le magic link. Réessaie.' });
+    console.error('[ml-err]', error.status, error.message);
+    // Rate limit Supabase (free tier: ~3 emails/heure)
+    if (error.status === 429 || error.message?.includes('rate')) {
+      return json(res, 429, { error: 'Trop de demandes. Attends quelques minutes avant de réessayer.' });
+    }
+    return json(res, 500, { error: `Erreur Supabase: ${error.message}` });
   }
 
   return json(res, 200, { success: true, message: 'Magic link envoyé !' });
