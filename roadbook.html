@@ -484,6 +484,63 @@ nav {
 }
 .page-footer a { color: var(--accent); text-decoration: none; }
 
+/* ── Copilote IA ── */
+#copilot-toggle {
+  position: fixed; bottom: 28px; right: 28px; z-index: 500;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border: none; cursor: pointer; font-size: 24px;
+  box-shadow: 0 4px 20px rgba(79,142,255,0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+#copilot-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(79,142,255,0.6); }
+#copilot-panel {
+  position: fixed; bottom: 96px; right: 28px; z-index: 500;
+  width: 340px; max-width: calc(100vw - 32px);
+  background: #111; border: 1px solid var(--border);
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+  display: none; flex-direction: column;
+}
+#copilot-panel.open { display: flex; }
+#copilot-header {
+  padding: 16px; background: linear-gradient(135deg, rgba(79,142,255,0.12), rgba(139,92,246,0.08));
+  border-bottom: 1px solid var(--border); position: relative;
+}
+#copilot-messages {
+  flex: 1; overflow-y: auto; padding: 14px; display: flex;
+  flex-direction: column; gap: 10px; max-height: 320px;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+.copilot-msg {
+  padding: 10px 14px; border-radius: 14px; font-size: 13px;
+  line-height: 1.55; max-width: 90%;
+}
+.copilot-msg-ai { background: rgba(79,142,255,0.1); border: 1px solid rgba(79,142,255,0.15); align-self: flex-start; color: #d8e8ff; }
+.copilot-msg-user { background: rgba(255,255,255,0.07); border: 1px solid var(--border); align-self: flex-end; color: #fff; }
+.copilot-msg-thinking { color: var(--text-dim); font-style: italic; }
+#copilot-input-row {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--border); background: #0d0d0d;
+}
+#copilot-input {
+  flex: 1; background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 14px; font-size: 13px;
+  color: #fff; font-family: 'DM Sans', sans-serif; outline: none;
+}
+#copilot-input:focus { border-color: var(--accent); }
+#copilot-send {
+  background: var(--accent); border: none; border-radius: 10px;
+  width: 38px; height: 38px; cursor: pointer; font-size: 16px;
+  color: #fff; transition: opacity 0.2s; flex-shrink: 0;
+}
+#copilot-send:hover { opacity: 0.8; }
+@media (max-width: 480px) {
+  #copilot-toggle { bottom: 16px; right: 16px; }
+  #copilot-panel  { bottom: 84px; right: 16px; left: 16px; width: auto; }
+}
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   /* Layout */
@@ -604,6 +661,29 @@ nav {
   <h2>Roadbook introuvable</h2>
   <p>Ce lien ne correspond à aucun roadbook. Vérifie l'URL ou génère un nouveau voyage.</p>
   <a href="/" style="color:var(--accent);margin-top:16px;font-size:15px;">← Retour à l'accueil</a>
+</div>
+
+<!-- ── Copilote IA (premium only) ── -->
+<div id="copilot-widget" style="display:none;">
+  <!-- Bouton flottant -->
+  <button id="copilot-toggle" onclick="toggleCopilot()" title="Copilote IA">
+    <span id="copilot-icon">🧭</span>
+  </button>
+  <!-- Panel chat -->
+  <div id="copilot-panel">
+    <div id="copilot-header">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">Copilote LIBERTRIP</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;">Ton guide IA en temps réel</div>
+      <button onclick="toggleCopilot()" style="position:absolute;top:14px;right:14px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:20px;cursor:pointer;line-height:1;">✕</button>
+    </div>
+    <div id="copilot-messages">
+      <div class="copilot-msg copilot-msg-ai">👋 Bonjour ! Je suis ton copilote pour ce voyage. Pose-moi n'importe quelle question sur ton itinéraire, les alternatives, ou si tu rencontres un imprévu.</div>
+    </div>
+    <div id="copilot-input-row">
+      <input type="text" id="copilot-input" placeholder="Pose une question..." onkeydown="if(event.key==='Enter')sendCopilotMessage()" />
+      <button onclick="sendCopilotMessage()" id="copilot-send">➤</button>
+    </div>
+  </div>
 </div>
 
 <!-- ── Footer ── -->
@@ -1027,6 +1107,13 @@ async function init() {
     document.getElementById('loading-screen').style.display = 'none';
     document.getElementById('main-content').style.display  = '';
 
+    // Afficher le copilote si premium
+    if (isPaid) {
+      const widget = document.getElementById('copilot-widget');
+      if (widget) widget.style.display = 'block';
+      window._copilotRoadbookId = roadbookId;
+    }
+
   } catch (err) {
     console.error('[roadbook]', err);
     document.getElementById('loading-screen').style.display = 'none';
@@ -1054,6 +1141,72 @@ function copyToClipboard(text) {
   }).catch(() => {
     prompt('Copie ce lien :', text);
   });
+}
+
+// ── Copilote IA ──────────────────────────────────────────────────────────────
+
+let _copilotHistory = [];
+
+function toggleCopilot() {
+  const panel = document.getElementById('copilot-panel');
+  if (panel) panel.classList.toggle('open');
+  // Scroll en bas à l'ouverture
+  if (panel && panel.classList.contains('open')) {
+    const msgs = document.getElementById('copilot-messages');
+    if (msgs) msgs.scrollTop = msgs.scrollHeight;
+    document.getElementById('copilot-input')?.focus();
+  }
+}
+
+async function sendCopilotMessage() {
+  const input = document.getElementById('copilot-input');
+  const msgs  = document.getElementById('copilot-messages');
+  if (!input || !msgs) return;
+
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  // Afficher le message utilisateur
+  const userDiv = document.createElement('div');
+  userDiv.className = 'copilot-msg copilot-msg-user';
+  userDiv.textContent = text;
+  msgs.appendChild(userDiv);
+
+  // Indicateur de saisie
+  const thinkDiv = document.createElement('div');
+  thinkDiv.className = 'copilot-msg copilot-msg-ai copilot-msg-thinking';
+  thinkDiv.textContent = '…';
+  msgs.appendChild(thinkDiv);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  // Token Supabase si connecté
+  const session = (() => { try { return JSON.parse(localStorage.getItem('libertrip_session') || 'null'); } catch { return null; } })();
+  const token = session?.access_token || '';
+
+  try {
+    const res = await fetch('/api/copilot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}) },
+      body: JSON.stringify({ roadbook_id: window._copilotRoadbookId, message: text, history: _copilotHistory })
+    });
+    const data = await res.json();
+    thinkDiv.remove();
+
+    const aiDiv = document.createElement('div');
+    aiDiv.className = 'copilot-msg copilot-msg-ai';
+    aiDiv.textContent = data.reply || data.error || 'Erreur.';
+    msgs.appendChild(aiDiv);
+
+    if (data.reply) {
+      _copilotHistory.push({ role: 'user', content: text });
+      _copilotHistory.push({ role: 'assistant', content: data.reply });
+      if (_copilotHistory.length > 16) _copilotHistory = _copilotHistory.slice(-16);
+    }
+  } catch (e) {
+    thinkDiv.textContent = 'Erreur de connexion. Réessaie.';
+  }
+  msgs.scrollTop = msgs.scrollHeight;
 }
 
 function showToast(msg) {
