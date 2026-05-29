@@ -1015,46 +1015,66 @@ function renderLockScreen(roadbookId, daysPreview) {
 
 // ── Génération des jours complets déclenchée par le frontend ────────────────
 async function triggerFullGeneration(roadbookId) {
-  const section = document.getElementById('days-section');
+  const section   = document.getElementById('days-section');
+  const totalDays = Number(window._roadbookDays) || 3;
+  const toGenerate = totalDays - 1; // jours 2 → N
 
-  // Écran de génération
-  section.innerHTML = `
-    <div style="text-align:center;padding:80px 20px;">
-      <div style="font-size:48px;margin-bottom:20px;animation:spin 1.5s linear infinite">✨</div>
-      <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:12px;color:#fff;">
-        Génération de ton voyage complet…
-      </div>
-      <div style="font-size:15px;color:rgba(255,255,255,0.5);max-width:360px;margin:0 auto;line-height:1.6;">
-        L'IA prépare tes ${window._roadbookDays || ''} jours avec tous les détails, spots secrets et adresses locales.<br>
-        <span style="color:rgba(255,255,255,0.3);font-size:13px;">Ça prend environ 20-30 secondes.</span>
-      </div>
-    </div>`;
-
-  try {
-    const res  = await fetch('/api/generate-full', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ roadbook_id: roadbookId })
-    });
-    const data = await res.json();
-
-    if (data.ok) {
-      // Succès → recharger pour afficher les jours
-      window.location.reload();
-    } else {
-      section.innerHTML = `
-        <div style="text-align:center;padding:60px 20px;">
-          <div style="font-size:14px;color:#F87171;">Erreur lors de la génération. <a href="" style="color:#4f8eff;">Rafraîchis la page</a> pour réessayer.</div>
-        </div>`;
-    }
-  } catch(e) {
+  function setScreen(currentDay, doneCount) {
+    const pct = Math.round((doneCount / toGenerate) * 100);
     section.innerHTML = `
-      <div style="text-align:center;padding:60px 20px;">
-        <div style="font-size:14px;color:rgba(255,255,255,0.4);">
-          Erreur réseau. <a href="" style="color:#4f8eff;">Rafraîchis la page</a> pour réessayer.
+      <div style="text-align:center;padding:80px 20px;">
+        <div style="font-size:48px;margin-bottom:20px;animation:spin 1.5s linear infinite">✨</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:12px;color:#fff;">
+          Génération de ton voyage complet…
+        </div>
+        <div style="font-size:15px;color:rgba(255,255,255,0.5);max-width:360px;margin:0 auto;line-height:1.6;margin-bottom:28px;">
+          Jour ${currentDay} sur ${totalDays} en cours…<br>
+          <span style="color:rgba(255,255,255,0.3);font-size:13px;">${doneCount} jour${doneCount>1?'s':''} prêt${doneCount>1?'s':''} sur ${toGenerate}</span>
+        </div>
+        <div style="background:rgba(255,255,255,0.08);border-radius:99px;height:6px;max-width:280px;margin:0 auto;">
+          <div style="background:linear-gradient(90deg,#4f8eff,#8b5cf6);height:6px;border-radius:99px;width:${pct}%;transition:width 0.4s ease;"></div>
         </div>
       </div>`;
   }
+
+  setScreen(2, 0);
+
+  let doneCount = 0;
+  for (let dayNum = 2; dayNum <= totalDays; dayNum++) {
+    setScreen(dayNum, doneCount);
+    let attempts = 0;
+    let success  = false;
+
+    while (attempts < 3 && !success) {
+      try {
+        const r    = await fetch('/api/generate-full', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ roadbook_id: roadbookId, day_number: dayNum })
+        });
+        const data = await r.json();
+        if (data.ok) { success = true; doneCount++; }
+        else { attempts++; await new Promise(r => setTimeout(r, 2000)); }
+      } catch(e) {
+        attempts++;
+        await new Promise(r => setTimeout(r, 2000));
+      }
+    }
+
+    if (!success) {
+      section.innerHTML = `
+        <div style="text-align:center;padding:60px 20px;">
+          <div style="font-size:14px;color:#F87171;margin-bottom:12px;">
+            Erreur au Jour ${dayNum}. Les jours déjà générés sont sauvegardés.
+          </div>
+          <a href="" style="color:#4f8eff;font-size:13px;">Rafraîchis la page pour reprendre</a>
+        </div>`;
+      return;
+    }
+  }
+
+  // Tout généré → recharger
+  window.location.reload();
 }
 
 // ── 11. Initialisation ───────────────────────────────────────────────────────
