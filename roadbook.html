@@ -1069,7 +1069,10 @@ async function init() {
   }
 
   try {
-    const res  = await fetch(`/api/roadbook?id=${encodeURIComponent(roadbookId)}`);
+    // Cache-bust si retour de paiement ou si ?paid=1 pour avoir les données fraîches
+    const bustCache = new URLSearchParams(window.location.search).get('paid') === '1';
+    const apiUrl = `/api/roadbook?id=${encodeURIComponent(roadbookId)}${bustCache ? '&_t=' + Date.now() : ''}`;
+    const res  = await fetch(apiUrl, bustCache ? { cache: 'no-store' } : {});
     const data = await res.json();
 
     if (!res.ok || data.error) throw new Error(data.error || 'Erreur serveur');
