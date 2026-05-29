@@ -77,13 +77,29 @@ export default async function handler(req, res) {
     }))
   ];
 
+  // Récupérer le lieu de nuit du jour précédent pour forcer la continuité géographique
+  const prevDayData = dayNum === 2
+    ? rb.day_1
+    : existing.find(d => d.day === dayNum - 1);
+  const prevOvernight = prevDayData?.overnight
+    ? `${prevDayData.overnight.name}${prevDayData.overnight.address ? ' (' + prevDayData.overnight.address + ')' : ''}`
+    : null;
+
   const dayPrompt = `
 ${buildUserPrompt(criteria)}
 
 MISSION — VERSION PREMIUM, JOUR ${dayNum} UNIQUEMENT :
 Les jours précédents ont déjà été générés. Génère UNIQUEMENT le Jour ${dayNum} sur ${totalDays}.
 
-JOURS DÉJÀ GÉNÉRÉS (contexte, ne pas répéter) :
+RÈGLE GÉOGRAPHIQUE ABSOLUE POUR CE JOUR :
+${prevOvernight
+  ? `- Ce jour commence depuis le lieu de nuit du jour précédent : "${prevOvernight}". La première étape doit partir de là ou de ses environs immédiats.`
+  : '- Assure-toi de partir du lieu de nuit du jour précédent.'
+}
+- Le lieu de nuit ("overnight") de ce jour doit être positionné géographiquement entre les activités d'aujourd'hui et celles du Jour ${dayNum + 1} (si applicable). Pas d'aller-retour.
+- La route de ce jour doit avancer dans la direction logique du voyage global vers "${criteria.destination || 'la destination'}".
+
+JOURS DÉJÀ GÉNÉRÉS (contexte géographique — ne pas répéter ces lieux) :
 ${JSON.stringify(previousDays)}
 
 FORMAT DE RÉPONSE — retourne UNIQUEMENT ce JSON :
