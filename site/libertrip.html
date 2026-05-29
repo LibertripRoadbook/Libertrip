@@ -1653,14 +1653,22 @@
       </div>
     </div>
 
-    <!-- PAGE 5 : Logistique d'arrivée -->
+    <!-- PAGE 5 : Logistique départ + retour -->
     <div class="form-slide" id="slide-5">
       <div class="form-q" style="text-align:center;">Où et quand commence ton voyage ? 🏁</div>
-      <div style="display:flex;flex-direction:column;gap:12px;margin-top:28px;">
+      <div style="display:flex;flex-direction:column;gap:16px;margin-top:28px;">
         <input class="form-field" type="text" placeholder="Ville ou lieu de départ exact (ex: Aéroport de Genève, Gare de Lyon...)" id="departure-place">
+        <div style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:-6px;">Départ</div>
         <div class="form-row">
           <input class="form-field" type="date" id="departure-date">
-          <input class="form-field" type="time" id="departure-time" placeholder="14:00">
+          <input class="form-field" type="time" id="departure-time" placeholder="09:00">
+        </div>
+        <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
+        <div style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:-6px;">Retour <span style="color:var(--gray);font-size:11px;text-transform:none;letter-spacing:0;">(optionnel — si tu as un avion, train ou contrainte de retour)</span></div>
+        <input class="form-field" type="text" placeholder="Lieu de retour (ex: Aéroport de Paris CDG, optionnel)" id="return-place">
+        <div class="form-row">
+          <input class="form-field" type="date" id="return-date">
+          <input class="form-field" type="time" id="return-time" placeholder="18:00">
         </div>
       </div>
       <div style="text-align:center;margin-top:32px;">
@@ -2160,10 +2168,13 @@ function generateTrip() {
   formData['email'] = email;
   formData['days']  = selectedDays;
 
-  // Logistique départ (slide 5)
+  // Logistique départ + retour (slide 5)
   formData['departure_place'] = (document.getElementById('departure-place') || {}).value || '';
   formData['departure_date']  = (document.getElementById('departure-date')  || {}).value || '';
   formData['departure_time']  = (document.getElementById('departure-time')  || {}).value || '';
+  formData['return_place']    = (document.getElementById('return-place')    || {}).value || '';
+  formData['return_date']     = (document.getElementById('return-date')     || {}).value || '';
+  formData['return_time']     = (document.getElementById('return-time')     || {}).value || '';
 
   // Logement — multi-select slide 7 (récupère les textes des boutons sélectionnés)
   const accomEls = document.querySelectorAll('#slide-7 .form-option.selected');
