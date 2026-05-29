@@ -1,0 +1,2566 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIBERTRIP — Ton Copilote IA de Voyage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #000000;
+    --card: #0a0a0a;
+    --border: #1a1a1a;
+    --border-light: #2a2a2a;
+    --white: #ffffff;
+    --gray: #6b6b6b;
+    --gray-light: #a0a0a0;
+    --accent: #4f8eff;
+    --accent-2: #8b5cf6;
+    --accent-glow: rgba(79,142,255,0.15);
+    --gold: #f5c842;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ─── TYPOGRAPHY ─── */
+  h1, h2, h3, h4 { font-family: 'Syne', sans-serif; letter-spacing: -0.02em; }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--border-light);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-light);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    backdrop-filter: blur(10px);
+  }
+  .tag .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 40px;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s, background 0.3s, backdrop-filter 0.3s;
+  }
+  nav.scrolled {
+    background: rgba(0,0,0,0.8);
+    border-color: var(--border);
+    backdrop-filter: blur(20px);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #fff 40%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { color: var(--gray-light); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--white); }
+  .nav-right-desktop { display: flex; align-items: center; gap: 10px; }
+  .nav-right-mobile  { display: none; align-items: center; gap: 8px; }
+  .nav-account-link  { font-size:13px; color:var(--gray-light); text-decoration:none; padding:9px 16px; border:1px solid var(--border-light); border-radius:100px; font-family:'DM Sans',sans-serif; transition:all 0.2s; }
+  .nav-account-link:hover { color:#fff; border-color:#555; }
+  .nav-hamburger {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    width: 38px; height: 38px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+    cursor: pointer; padding: 0;
+  }
+  .nav-hamburger span { display: block; width: 18px; height: 1.5px; background: var(--gray-light); border-radius: 2px; transition: all 0.2s; }
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 60px; left: 0; right: 0;
+    background: rgba(8,8,8,0.97);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 99;
+    flex-direction: column;
+    padding: 8px 0;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    display: block;
+    padding: 14px 24px;
+    color: var(--gray-light);
+    text-decoration: none;
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.2s, background 0.2s;
+  }
+  .mobile-menu a:last-child { border-bottom: none; }
+  .mobile-menu a:hover { color: var(--white); background: rgba(255,255,255,0.04); }
+  .nav-cta {
+    background: var(--white);
+    color: var(--black);
+    border: none;
+    border-radius: 100px;
+    padding: 10px 22px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .nav-cta:hover { opacity: 0.85; transform: scale(1.02); }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 140px 24px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+    opacity: 0;
+    animation: orb-appear 1.2s forwards;
+  }
+  .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(79,142,255,0.18) 0%, transparent 70%); top: -100px; left: 50%; transform: translateX(-50%); animation-delay: 0.2s; }
+  .orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%); bottom: 0; right: -100px; animation-delay: 0.6s; }
+  .orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(79,142,255,0.1) 0%, transparent 70%); bottom: 100px; left: -50px; animation-delay: 0.8s; }
+
+  @keyframes orb-appear { to { opacity: 1; } }
+
+  .hero-tag { opacity: 0; animation: fade-up 0.7s 0.3s forwards; }
+  .hero-h1 {
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    max-width: 900px;
+    margin: 28px auto 0;
+    opacity: 0;
+    animation: fade-up 0.7s 0.5s forwards;
+  }
+  .hero-h1 .gradient-text {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 50%, #ff6b6b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: gradient-shift 4s ease infinite;
+  }
+  @keyframes gradient-shift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+
+  .hero-sub {
+    max-width: 540px;
+    margin: 24px auto 0;
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--gray-light);
+    line-height: 1.6;
+    opacity: 0;
+    animation: fade-up 0.7s 0.7s forwards;
+  }
+
+  .hero-cta-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 44px;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+    animation: fade-up 0.7s 0.9s forwards;
+  }
+
+  .btn-primary {
+    position: relative;
+    background: var(--white);
+    color: var(--black);
+    border: none;
+    border-radius: 100px;
+    padding: 16px 36px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    letter-spacing: -0.01em;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(79,142,255,0.15), rgba(139,92,246,0.15));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .btn-primary:hover { transform: scale(1.03); box-shadow: 0 0 40px rgba(255,255,255,0.15); }
+  .btn-primary:hover::before { opacity: 1; }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -60%;
+    width: 40%;
+    height: 200%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.6s;
+    opacity: 0;
+  }
+  .btn-primary:hover::after { left: 120%; opacity: 1; }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border-light);
+    color: var(--gray-light);
+    border-radius: 100px;
+    padding: 16px 28px;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--gray); color: var(--white); }
+
+  /* ─── PARTNERS BAR ─── */
+  .partners-bar {
+    margin-top: 56px;
+    opacity: 0;
+    animation: fade-up 0.7s 1.1s forwards;
+  }
+  .partners-label { font-size: 11px; color: var(--gray); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px; }
+  .partners-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .partner-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.3);
+    transition: color 0.2s;
+    white-space: nowrap;
+  }
+  .partner-item:hover { color: rgba(255,255,255,0.6); }
+  .partner-divider { width: 1px; height: 16px; background: var(--border); }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── SECTION WRAPPER ─── */
+  section { padding: 120px 24px; max-width: 1200px; margin: 0 auto; }
+  .section-header { text-align: center; margin-bottom: 72px; }
+  .section-header h2 { font-size: clamp(36px, 5vw, 60px); font-weight: 800; letter-spacing: -0.03em; }
+  .section-header p { color: var(--gray-light); font-size: 17px; font-weight: 300; max-width: 480px; margin: 16px auto 0; line-height: 1.6; }
+
+  /* ─── BENTO GRID (Concept) ─── */
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto;
+    gap: 16px;
+  }
+
+  .bento-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .bento-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(600px circle at var(--mx,50%) var(--my,50%), rgba(79,142,255,0.04), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .bento-card:hover { border-color: #333; box-shadow: 0 0 0 1px rgba(79,142,255,0.1), 0 20px 60px rgba(0,0,0,0.4); }
+  .bento-card:hover::before { opacity: 1; }
+
+  .bc-1 { grid-column: span 7; }
+  .bc-2 { grid-column: span 5; }
+  .bc-3 { grid-column: span 4; }
+  .bc-4 { grid-column: span 4; }
+  .bc-5 { grid-column: span 4; }
+  .bc-6 { grid-column: span 12; }
+
+  .bento-icon { font-size: 36px; margin-bottom: 20px; display: block; }
+  .bento-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.02em; }
+  .bento-card p { font-size: 14px; color: var(--gray-light); line-height: 1.65; font-weight: 300; }
+  .bento-stat { font-size: 56px; font-weight: 800; font-family: 'Syne', sans-serif; letter-spacing: -0.04em; background: linear-gradient(135deg, var(--white) 40%, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .bento-stat-label { font-size: 14px; color: var(--gray); margin-top: 4px; }
+
+  .bento-large-card {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .bento-large-card .content { max-width: 380px; }
+  .bento-visual {
+    flex-shrink: 0;
+    width: 200px;
+    height: 120px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(79,142,255,0.1), rgba(139,92,246,0.1));
+    border: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bento-visual::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(79,142,255,0.08));
+  }
+
+  .pill {
+    display: inline-block;
+    background: rgba(79,142,255,0.12);
+    color: var(--accent);
+    border: 1px solid rgba(79,142,255,0.25);
+    border-radius: 100px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    letter-spacing: 0.02em;
+  }
+  .pill.purple { background: rgba(139,92,246,0.12); color: #a78bfa; border-color: rgba(139,92,246,0.25); }
+  .pill.gold { background: rgba(245,200,66,0.12); color: var(--gold); border-color: rgba(245,200,66,0.25); }
+
+  /* ─── TIMELINE / COMMENT ÇA MARCHE ─── */
+  #how { background: var(--black); }
+  .steps { display: flex; flex-direction: column; gap: 0; max-width: 700px; margin: 0 auto; }
+  .step {
+    display: flex;
+    gap: 32px;
+    padding: 40px 0;
+    position: relative;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .step.visible { opacity: 1; transform: none; }
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 72px;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--border-light), transparent);
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--gray-light);
+  }
+  .step-content h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.02em; }
+  .step-content p { color: var(--gray-light); font-weight: 300; line-height: 1.65; }
+
+  /* ─── PRICING ─── */
+  #pricing { position: relative; }
+  #pricing::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(79,142,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .price-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  }
+  .price-card:hover { border-color: #2a2a2a; transform: translateY(-4px); box-shadow: 0 30px 80px rgba(0,0,0,0.5); }
+
+  .price-card.featured {
+    border-color: rgba(79,142,255,0.3);
+    background: linear-gradient(160deg, rgba(79,142,255,0.06) 0%, var(--card) 60%);
+  }
+  .price-card.featured::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  }
+
+  .price-name { font-size: 13px; font-weight: 600; color: var(--gray-light); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; }
+  .price-amount { font-family: 'Syne', sans-serif; font-size: 52px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+  .price-period { font-size: 14px; color: var(--gray); font-weight: 300; margin-top: 4px; }
+  .price-desc { font-size: 14px; color: var(--gray-light); margin: 20px 0 28px; font-weight: 300; line-height: 1.6; }
+  .price-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
+  .price-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--gray-light); font-weight: 300; }
+  .price-features li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .price-btn {
+    width: 100%;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    transition: all 0.2s;
+    border: none;
+  }
+  .price-btn.outline { background: transparent; border: 1px solid var(--border-light); color: var(--gray-light); }
+  .price-btn.outline:hover { border-color: var(--gray); color: var(--white); }
+  .price-btn.solid { background: var(--accent); color: var(--white); }
+  .price-btn.solid:hover { background: #6a9fff; box-shadow: 0 0 30px rgba(79,142,255,0.4); }
+  .price-btn.dark { background: var(--white); color: var(--black); }
+  .price-btn.dark:hover { opacity: 0.85; }
+  .badge { position: absolute; top: 20px; right: 20px; background: var(--accent); color: var(--white); border-radius: 100px; padding: 4px 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; }
+  .badge-star { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg,#7c3aed,#8b5cf6); color: #fff; border-radius: 100px; padding: 5px 16px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; white-space: nowrap; box-shadow: 0 0 20px rgba(139,92,246,0.5); }
+
+  /* ─── PREMIUM STAR CARD ─── */
+  .price-card.premium-star {
+    border-color: rgba(139,92,246,0.45);
+    background: linear-gradient(160deg, rgba(139,92,246,0.1) 0%, rgba(109,40,217,0.04) 40%, var(--card) 70%);
+    transform: translateY(-8px);
+  }
+  .price-card.premium-star::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #8b5cf6, #a78bfa, #8b5cf6, transparent);
+  }
+  .price-card.premium-star:hover {
+    border-color: rgba(139,92,246,0.7);
+    transform: translateY(-12px);
+    box-shadow: 0 0 60px rgba(139,92,246,0.25), 0 30px 80px rgba(0,0,0,0.5);
+  }
+  .price-card.premium-star .price-features li::before {
+    color: #a78bfa;
+  }
+
+  /* ─── SHIMMER BUTTON ─── */
+  .btn-shimmer {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg,#7c3aed,#8b5cf6);
+    color: #fff;
+    border: none;
+  }
+  .btn-shimmer:hover { background: linear-gradient(135deg,#6d28d9,#7c3aed); box-shadow: 0 0 40px rgba(139,92,246,0.5); }
+  .btn-shimmer::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -70%;
+    width: 45%;
+    height: 200%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.22), transparent);
+    transform: skewX(-20deg);
+    animation: shimmer-pass 3s ease infinite;
+  }
+  @keyframes shimmer-pass {
+    0%   { left: -70%; opacity: 0; }
+    10%  { opacity: 1; }
+    60%  { left: 130%; opacity: 1; }
+    61%  { opacity: 0; }
+    100% { left: 130%; opacity: 0; }
+  }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal-box {
+    background: #121212;
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 20px;
+    padding: 40px 44px;
+    max-width: 640px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    transform: translateY(20px) scale(0.98);
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+    opacity: 0;
+    scrollbar-width: thin;
+    scrollbar-color: #333 transparent;
+  }
+  .modal-overlay.open .modal-box { transform: translateY(0) scale(1); opacity: 1; }
+  .modal-close {
+    position: absolute; top: 16px; right: 20px;
+    background: transparent; border: 1px solid #2a2a2a;
+    color: var(--gray-light); width: 32px; height: 32px;
+    border-radius: 50%; cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; line-height: 1;
+  }
+  .modal-close:hover { border-color: #555; color: var(--white); }
+  .modal-box h3 { font-family:'Syne',sans-serif; font-size:22px; font-weight:700; margin-bottom:20px; letter-spacing:-0.02em; }
+  .modal-box h4 { font-family:'Syne',sans-serif; font-size:15px; font-weight:600; margin:20px 0 6px; color:var(--gray-light); }
+  .modal-box p, .modal-box li { font-size:14px; color:var(--gray-light); font-weight:300; line-height:1.75; margin-bottom:10px; }
+  .modal-box a { color:var(--accent); text-decoration:none; }
+  .modal-box a:hover { text-decoration:underline; }
+
+  /* ─── SCROLL REVEAL PER-ELEMENT ─── */
+  .reveal-item {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal-item.visible { opacity: 1; transform: translateY(0); }
+
+  /* ─── SOCIAL PROOF / AVIS ─── */
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .review-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    transition: border-color 0.3s;
+  }
+  .review-card:hover { border-color: #2a2a2a; }
+  .review-stars { color: var(--gold); font-size: 13px; letter-spacing: 2px; margin-bottom: 12px; }
+  .review-text { font-size: 14px; font-weight: 300; color: var(--gray-light); line-height: 1.7; margin-bottom: 16px; font-style: italic; }
+  .review-author { display: flex; align-items: center; gap: 10px; }
+  .review-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .review-name { font-size: 13px; font-weight: 600; }
+  .review-detail { font-size: 11px; color: var(--gray); }
+
+  /* ─── REVIEWS CAROUSEL ─── */
+  .reviews-carousel-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+  .reviews-track-outer {
+    overflow: hidden;
+    border-radius: 4px;
+  }
+  .reviews-track {
+    display: flex;
+    gap: 16px;
+    transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  .review-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    flex: 0 0 calc((100% - 32px) / 3);
+    min-width: 0;
+  }
+  .review-card:hover { border-color: #2a2a2a; box-shadow: 0 8px 40px rgba(0,0,0,0.4); }
+  .review-stars { color: var(--gold); font-size: 13px; letter-spacing: 2px; margin-bottom: 12px; }
+  .review-text { font-size: 14px; font-weight: 300; color: var(--gray-light); line-height: 1.7; margin-bottom: 16px; font-style: italic; }
+  .review-author { display: flex; align-items: center; gap: 10px; }
+  .review-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .review-name { font-size: 13px; font-weight: 600; }
+  .review-detail { font-size: 11px; color: var(--gray); }
+
+  .carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 36px;
+  }
+  .carousel-btn {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 1px solid var(--border-light);
+    color: var(--white);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .carousel-btn:hover { border-color: var(--accent); background: rgba(79,142,255,0.08); color: var(--accent); }
+  .carousel-btn:disabled { opacity: 0.25; cursor: default; pointer-events: none; }
+  .carousel-dots {
+    display: flex; gap: 6px; align-items: center;
+  }
+  .carousel-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--border-light);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .carousel-dot.active { background: var(--accent); width: 18px; border-radius: 3px; }
+
+  @media (max-width: 900px) {
+    .review-card { flex: 0 0 calc((100% - 16px) / 2); }
+  }
+  @media (max-width: 600px) {
+    .review-card { flex: 0 0 100%; }
+  }
+
+  /* ─── FAQ ACCORDION ─── */
+  #faq { position: relative; }
+  .faq-list { display: flex; flex-direction: column; gap: 12px; max-width: 860px; margin: 0 auto; }
+  .faq-item {
+    background: #0d0d0d;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .faq-item:hover { border-color: #252525; box-shadow: 0 4px 30px rgba(0,0,0,0.4); }
+  .faq-item.open { border-color: rgba(79,142,255,0.25); }
+  .faq-q {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 24px 28px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: -0.01em;
+    line-height: 1.4;
+  }
+  .faq-q:hover { color: #e0e0e0; }
+  .faq-chevron {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--border-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    color: var(--accent);
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), background 0.2s, border-color 0.2s;
+    background: transparent;
+  }
+  .faq-item.open .faq-chevron {
+    transform: rotate(180deg);
+    background: rgba(79,142,255,0.1);
+    border-color: rgba(79,142,255,0.3);
+  }
+  .faq-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease;
+    opacity: 0;
+  }
+  .faq-item.open .faq-body { max-height: 400px; opacity: 1; }
+  .faq-body-inner {
+    padding: 0 28px 24px;
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--gray-light);
+    line-height: 1.75;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+
+  /* ─── FORM / GENERATEUR ─── */
+  #generator {
+    padding: 120px 24px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .form-wrapper {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 56px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .form-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(79,142,255,0.4), transparent);
+  }
+
+  .form-progress {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 48px;
+  }
+  .progress-step {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .progress-step .fill { height: 100%; background: var(--accent); border-radius: 100px; width: 0; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+  .progress-step.active .fill { width: 100%; }
+  .progress-step.done .fill { width: 100%; background: var(--accent); }
+
+  .form-slide {
+    display: none;
+    animation: slide-in 0.4s cubic-bezier(0.4,0,0.2,1) forwards;
+  }
+  .form-slide.active { display: block; }
+  .form-slide.exit { animation: slide-out 0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
+
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes slide-out {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(-40px); }
+  }
+
+  .form-q { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .form-hint { font-size: 14px; color: var(--gray); font-weight: 300; margin-bottom: 32px; }
+
+  .form-options { display: flex; flex-direction: column; gap: 12px; }
+  .form-option {
+    background: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: 14px;
+    padding: 18px 22px;
+    cursor: pointer;
+    text-align: left;
+    color: var(--gray-light);
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.2s;
+  }
+  .form-option:hover { border-color: var(--accent); color: var(--white); background: rgba(79,142,255,0.05); }
+  .form-option.selected { border-color: var(--accent); color: var(--white); background: rgba(79,142,255,0.08); }
+  .form-option .opt-icon { font-size: 20px; flex-shrink: 0; }
+
+  .form-row { display: flex; gap: 12px; }
+  .form-field {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--border-light);
+    border-radius: 14px;
+    padding: 16px 20px;
+    color: var(--white);
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-field:focus { border-color: var(--accent); }
+  .form-field::placeholder { color: var(--gray); }
+
+  .form-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; }
+  .btn-back { background: transparent; border: 1px solid var(--border-light); color: var(--gray); border-radius: 100px; padding: 12px 24px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; transition: all 0.2s; }
+  .btn-back:hover { border-color: var(--gray); color: var(--white); }
+  .btn-next { background: var(--accent); color: var(--white); border: none; border-radius: 100px; padding: 14px 32px; cursor: pointer; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; transition: all 0.2s; }
+  .btn-next:hover { background: #6a9fff; box-shadow: 0 0 30px rgba(79,142,255,0.35); transform: scale(1.02); }
+
+  /* ─── LOADER MAGIC ─── */
+  #magic-loader {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    text-align: center;
+  }
+  .loader-icon { font-size: 52px; margin-bottom: 28px; animation: float 2s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .loader-text { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 8px; height: 32px; }
+  .loader-sub { font-size: 13px; color: var(--gray); margin-bottom: 40px; }
+  .loader-bar { width: 100%; height: 4px; background: var(--border); border-radius: 100px; overflow: hidden; }
+  .loader-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 100px; width: 0; transition: width 0.4s ease; }
+
+  /* ─── SUCCESS STATE ─── */
+  #success-state {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 24px 0;
+  }
+  .success-icon { font-size: 64px; margin-bottom: 20px; animation: pop 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes pop { from{transform:scale(0)} to{transform:scale(1)} }
+  .success-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 10px; }
+  .success-sub { font-size: 15px; color: var(--gray-light); font-weight: 300; margin-bottom: 32px; }
+
+  /* ─── TOAST NOTIFICATION ─── */
+  #toast-container {
+    position: fixed;
+    bottom: 32px;
+    left: 32px;
+    z-index: 1000;
+    pointer-events: none;
+  }
+  .toast {
+    background: rgba(12,12,12,0.95);
+    border: 1px solid var(--border-light);
+    border-radius: 14px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    max-width: 280px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+    transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .toast.show { opacity: 1; transform: translateY(0) scale(1); }
+  .toast.hide { opacity: 0; transform: translateY(8px) scale(0.97); transition: all 0.3s ease; }
+  .toast-emoji { font-size: 20px; flex-shrink: 0; }
+  .toast-body { flex: 1; }
+  .toast-title { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+  .toast-msg { font-size: 12px; color: var(--gray-light); font-weight: 300; }
+  .toast-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; flex-shrink: 0; margin-top: 5px; animation: pulse 2s infinite; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 48px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  footer p { font-size: 13px; color: var(--gray); }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-size: 13px; color: var(--gray); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--white); }
+
+  /* ─── QUIZ GRID (New Form) ─── */
+  .quiz-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .quiz-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .quiz-card {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px 16px;
+    border-radius: 16px;
+    min-height: 100px;
+    font-size: 14px;
+    gap: 8px;
+    line-height: 1.4;
+  }
+  .quiz-card .opt-icon {
+    font-size: 30px;
+    display: block;
+    flex-shrink: unset;
+    margin-bottom: 4px;
+  }
+  .quiz-card-full {
+    grid-column: span 2;
+  }
+  .quiz-card-rythme {
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px 12px;
+    border-radius: 16px;
+    min-width: 100px;
+    gap: 4px;
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid var(--border-light);
+    color: var(--gray-light);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .quiz-card-rythme .opt-icon { font-size: 26px; }
+  .quiz-card-rythme:hover, .quiz-card-rythme.selected {
+    border-color: var(--accent);
+    color: var(--white);
+    background: rgba(79,142,255,0.08);
+  }
+  .day-btn {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 1px solid var(--border-light);
+    color: var(--white);
+    font-size: 26px;
+    font-weight: 300;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .day-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(79,142,255,0.08); }
+
+  /* ─── SUCCESS UNLOCK BUTTONS ─── */
+  .unlock-btn-gold {
+    background: linear-gradient(135deg, #f5c842, #f59e0b);
+    color: #000; border: none; border-radius: 14px;
+    padding: 18px 28px; font-family: 'Syne', sans-serif;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: all 0.2s; box-shadow: 0 0 40px rgba(245,200,66,0.25);
+    white-space: nowrap;
+  }
+  .unlock-btn-gold:hover { transform: translateY(-2px); box-shadow: 0 0 60px rgba(245,200,66,0.4); }
+  .unlock-btn-purple {
+    background: linear-gradient(135deg, var(--accent-2), #6d28d9);
+    color: #fff; border: none; border-radius: 14px;
+    padding: 18px 28px; font-family: 'Syne', sans-serif;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: all 0.2s; box-shadow: 0 0 40px rgba(139,92,246,0.25);
+    white-space: nowrap;
+  }
+  .unlock-btn-purple:hover { transform: translateY(-2px); box-shadow: 0 0 60px rgba(139,92,246,0.4); }
+
+  @media (max-width: 600px) {
+    .quiz-grid { grid-template-columns: 1fr; }
+    .quiz-card-full { grid-column: span 1; }
+    .quiz-grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .nav-right-desktop { display: none; }
+    .nav-right-mobile  { display: flex; }
+    .bento-grid { grid-template-columns: 1fr; }
+    .bc-1,.bc-2,.bc-3,.bc-4,.bc-5,.bc-6 { grid-column: span 1; }
+    .bento-large-card { flex-direction: column; }
+    .bento-visual { display: none; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .reviews-grid { grid-template-columns: 1fr; }
+    .form-wrapper { padding: 32px 24px; }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+  }
+
+  @media (max-width: 600px) {
+    /* Nav */
+    nav { padding: 14px 16px; }
+    .nav-logo { font-size: 17px; }
+    .nav-cta { font-size: 12px; padding: 8px 14px; white-space: nowrap; }
+
+    /* Hero */
+    #hero { padding: 110px 16px 60px; }
+    .hero-h1 { font-size: clamp(36px, 10vw, 56px); margin: 20px auto 0; }
+    .hero-sub { font-size: 15px; padding: 0 4px; }
+    .hero-cta-group { flex-direction: column; align-items: stretch; gap: 12px; }
+    .btn-primary, .btn-ghost { font-size: 15px; padding: 16px 20px; }
+    .partners-bar { padding: 0 8px; }
+    .partners-list { gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .partner-divider { display: none; }
+
+    /* Sections */
+    section { padding: 64px 16px; }
+    .section-title { font-size: clamp(28px, 7vw, 48px); }
+    .section-sub { font-size: 14px; }
+
+    /* Form wrapper */
+    #generator { padding: 64px 16px; }
+    .form-wrapper { padding: 28px 18px; border-radius: 20px; }
+    .form-q { font-size: 20px; }
+    .form-progress { gap: 4px; margin-bottom: 32px; }
+    .form-row { flex-direction: column; }
+    .form-field { font-size: 14px; padding: 14px 16px; }
+
+    /* Quiz cards grid */
+    .quiz-grid { grid-template-columns: 1fr !important; gap: 10px !important; }
+    .quiz-card { padding: 16px 18px !important; font-size: 14px !important; }
+
+    /* Buttons */
+    .btn-next { font-size: 14px; padding: 14px 28px; }
+    .btn-back { font-size: 13px; padding: 10px 18px; }
+
+    /* Days slider */
+    .days-display { font-size: 48px !important; }
+
+    /* Loader */
+    .loader-text { font-size: 18px; }
+
+    /* Success state */
+    .success-title { font-size: 22px; }
+    .unlock-btn-gold, .unlock-btn-purple { font-size: 13px; padding: 14px 18px; }
+
+    /* Pricing */
+    .pricing-card { padding: 28px 20px; }
+    .price-amount { font-size: 42px; }
+
+    /* FAQ */
+    .faq-q { font-size: 15px; padding: 18px 16px; }
+    .faq-body-inner { padding: 0 16px 18px; padding-top: 16px; }
+
+    /* Hébergements */
+    #lodging-list .lodging-entry { flex-direction: column; gap: 8px; }
+    #lodging-list .lodging-entry button { width: 100%; }
+
+    /* Toast */
+    #toast-container { left: 16px; bottom: 16px; right: 16px; }
+    .toast { max-width: 100%; }
+  }
+
+  @media (max-width: 380px) {
+    .nav-right-mobile .nav-cta { display: none; }
+    .hero-h1 { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav id="main-nav">
+  <div class="nav-logo">LIBERTRIP</div>
+  <!-- Desktop links -->
+  <ul class="nav-links">
+    <li><a href="#concept">Concept</a></li>
+    <li><a href="#how">Comment ça marche</a></li>
+    <li><a href="#pricing">Tarifs</a></li>
+    <li><a href="#reviews">Avis</a></li>
+  </ul>
+  <!-- Desktop right -->
+  <div class="nav-right-desktop">
+    <a href="/mes-roadbooks" class="nav-account-link">Mon compte</a>
+    <button class="nav-cta" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})">Générer mon voyage →</button>
+  </div>
+  <!-- Mobile right : bouton CTA + menu 3 points -->
+  <div class="nav-right-mobile">
+    <button class="nav-cta" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})">Générer →</button>
+    <button class="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<!-- Menu mobile déroulant -->
+<div id="mobile-menu" class="mobile-menu">
+  <a href="#concept" onclick="toggleMobileMenu()">Concept</a>
+  <a href="#how" onclick="toggleMobileMenu()">Comment ça marche</a>
+  <a href="#pricing" onclick="toggleMobileMenu()">Tarifs</a>
+  <a href="#reviews" onclick="toggleMobileMenu()">Avis</a>
+  <a href="/mes-roadbooks">Mon compte</a>
+  <a href="/mes-roadbooks">Mes roadbooks</a>
+</div>
+
+<!-- ─── HERO ─── -->
+<section id="hero" style="max-width:none; padding-top:140px;">
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+  <div class="glow-orb orb-3"></div>
+
+  <div class="tag hero-tag">
+    <span class="dot"></span>
+    Copilote IA de voyage — Bêta ouverte
+  </div>
+
+  <h1 class="hero-h1">
+    Arrête de planifier.<br>
+    <span class="gradient-text">Commence à voyager.</span>
+  </h1>
+
+  <p class="hero-sub">
+    50 onglets ouverts, 3 heures perdues, un itinéraire qui ressemble à tout le monde.
+    LIBERTRIP génère ton roadbook ultra-personnalisé en <strong>60 secondes chrono</strong>.
+  </p>
+
+  <div class="hero-cta-group">
+    <button class="btn-primary" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})">
+      ✦ &nbsp;Générer mon voyage — C'est gratuit
+    </button>
+    <button class="btn-ghost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
+      Voir comment ça marche
+    </button>
+  </div>
+
+  <div class="partners-bar">
+    <div class="partners-label">Compatible avec</div>
+    <div class="partners-list">
+      <span class="partner-item">🗺️ Google Maps</span>
+      <div class="partner-divider"></div>
+      <span class="partner-item">🚙 Apple CarPlay</span>
+      <div class="partner-divider"></div>
+      <span class="partner-item">📍 Waze</span>
+      <div class="partner-divider"></div>
+      <span class="partner-item">🏍️ Calimoto</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONCEPT / BENTO ─── -->
+<section id="concept">
+  <div class="section-header reveal">
+    <div class="tag" style="margin-bottom:20px;"><span class="dot"></span>Le concept</div>
+    <h2>Un copilote. Pas un itinéraire de plus.</h2>
+    <p>LIBERTRIP ne te donne pas une liste de spots. Il pense comme toi, roule comme toi, et construit un roadbook que personne d'autre n'aura.</p>
+  </div>
+
+  <div class="bento-grid reveal">
+    <!-- Carte principale -->
+    <div class="bento-card bc-1 bento-large-card">
+      <div class="content">
+        <span class="pill">✦ IA sur-mesure</span>
+        <h3>Ton voyage. Vraiment le tien.</h3>
+        <p>L'IA analyse ton véhicule, ton heure de départ, tes préférences (cols, spots cachés, villes, tranquillité…) et génère un itinéraire logistiquement parfait — avec les temps de trajet réels, les pauses intelligentes, et zéro mauvaise surprise.</p>
+      </div>
+      <div class="bento-visual">🗺️</div>
+    </div>
+
+    <!-- Stat rapide -->
+    <div class="bento-card bc-2" style="display:flex;flex-direction:column;justify-content:space-between;">
+      <span class="bento-icon">⚡</span>
+      <div>
+        <div class="bento-stat">60s</div>
+        <div class="bento-stat-label">pour un roadbook complet</div>
+      </div>
+    </div>
+
+    <!-- Route / motards -->
+    <div class="bento-card bc-3">
+      <span class="pill">🏍️ Road-trip</span>
+      <h3>Pour les vrais coureurs de routes</h3>
+      <p>Cols mythiques, routes panoramiques, spots viraux TikTok/Instagram. LIBERTRIP trouve ce que Google Maps ignore.</p>
+    </div>
+
+    <!-- Citadins -->
+    <div class="bento-card bc-4">
+      <span class="pill purple">🏙️ Citadins</span>
+      <h3>Maîtrise la ville comme un local</h3>
+      <p>Bus, tram, métro : l'IA optimise chaque connexion pour que tu ne rates jamais rien.</p>
+    </div>
+
+    <!-- Export -->
+    <div class="bento-card bc-5">
+      <span class="pill gold">📲 Prêt à l'emploi</span>
+      <h3>Balancé direct sur ton téléphone</h3>
+      <p>Un tap et ton roadbook est dans Google Maps ou Waze. Pas besoin d'imprimer quoi que ce soit.</p>
+    </div>
+
+    <!-- Claim large -->
+    <div class="bento-card bc-6" style="text-align:center; background: linear-gradient(135deg, rgba(79,142,255,0.06) 0%, rgba(139,92,246,0.06) 100%);">
+      <p style="font-family:'Syne',sans-serif; font-size:clamp(22px,3vw,36px); font-weight:700; color:var(--white); letter-spacing:-0.02em; max-width:700px; margin:0 auto;">"Prends les clés. On s'occupe du reste."</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COMMENT ÇA MARCHE ─── -->
+<section id="how" style="max-width:none; background:linear-gradient(to bottom, var(--black), #050508, var(--black));">
+  <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
+    <div class="section-header reveal">
+      <div class="tag" style="margin-bottom:20px;"><span class="dot"></span>Comment ça marche</div>
+      <h2>De 0 à roadbook en 3 étapes</h2>
+      <p>Pas de compte à créer. Pas de galère. Juste toi, tes préférences, et l'IA.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3>Tu décris ton voyage en 60 secondes</h3>
+          <p>Destination, dates, type de véhicule, vibe recherchée. Quelques questions simples — zéro blabla inutile.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3>L'IA construit ton roadbook sur-mesure</h3>
+          <p>Elle croise des milliers de données (routes, spots, météo, horaires) pour te livrer un itinéraire optimisé que personne d'autre n'aura.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3>Tu pars. C'est tout.</h3>
+          <p>Roadbook interactif sur ton téléphone, intégré direct dans Maps ou Waze. Aucune impression. Aucun stress. Juste la route.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TARIFS ─── -->
+<section id="pricing">
+  <div class="section-header reveal">
+    <div class="tag" style="margin-bottom:20px;"><span class="dot"></span>Tarifs</div>
+    <h2>Simple. Honnête. Efficace.</h2>
+    <p>Pas d'abonnement surprise. Paye le voyage que tu veux, quand tu veux.</p>
+  </div>
+
+  <div class="pricing-grid">
+
+    <!-- COL 1 : Découverte IA (0€) -->
+    <div class="price-card reveal-item">
+      <div class="price-name">Découverte IA</div>
+      <div class="price-amount">0€</div>
+      <div class="price-period">Gratuit — sans carte bancaire</div>
+      <div class="price-desc">Teste la puissance de Libertrip. Reçois instantanément l'itinéraire complet et ultra-personnalisé de ton JOUR 1, configuré selon tes critères.</div>
+      <ul class="price-features">
+        <li>Itinéraire complet du Jour 1</li>
+        <li>Ultra-personnalisé selon tes choix</li>
+        <li>Accès immédiat, zéro engagement</li>
+      </ul>
+      <button class="price-btn outline" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})">🚀 Générer mon Jour 1</button>
+    </div>
+
+    <!-- COL 2 (CENTRE STAR) : Roadbook Premium à Vie (14,99€) -->
+    <div class="price-card premium-star reveal-item" style="transition-delay:0.12s;">
+      <div class="badge-star">✨ MEILLEURE OFFRE</div>
+      <div class="price-name" style="margin-top:28px;">Roadbook Premium à Vie</div>
+      <div class="price-amount">14,99€</div>
+      <div class="price-period">Paiement unique — pas d'abonnement</div>
+      <div class="price-desc">Idéal si tu as un seul grand voyage de prévu et que tu veux l'itinéraire premium complet sans engagement.</div>
+      <ul class="price-features">
+        <li>Toutes les options premium débloquées à vie pour ton voyage</li>
+        <li>Support IA 24/7 inclus</li>
+        <li>Accès à vie, sans renouvellement</li>
+      </ul>
+      <button class="price-btn btn-shimmer" onclick="goToCheckout('premium')">🔒 Débloquer mon voyage (14,99€)</button>
+    </div>
+
+    <!-- COL 3 : Explorateur Clé en Main (4,99€/mois) -->
+    <div class="price-card featured reveal-item" style="transition-delay:0.24s;">
+      <div class="price-name">Explorateur Clé en Main</div>
+      <div class="price-amount">4,99€</div>
+      <div class="price-period">/ mois · Engagement 6 mois minimum</div>
+      <div class="price-desc">Accès illimité à tous tes roadbooks. Génère autant d'itinéraires complets que tu veux, partout en Europe.</div>
+      <ul class="price-features">
+        <li>Itinéraires complets (tous les jours)</li>
+        <li>Spots secrets Instagram/TikTok</li>
+        <li>Intégration GPS (Google Maps/Waze)</li>
+        <li>Gestion véhicule électrique/moto/van</li>
+      </ul>
+      <button class="price-btn solid" onclick="goToCheckout('aventurier')">💳 S'abonner (4,99€)</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── AVIS ─── -->
+<section id="reviews">
+  <div class="section-header reveal">
+    <div class="tag" style="margin-bottom:20px;"><span class="dot"></span>Ils sont déjà partis</div>
+    <h2>Ce qu'ils en disent</h2>
+    <p>Pas de rédaction marketing. Juste des gens qui ont arrêté d'ouvrir 50 onglets.</p>
+  </div>
+
+  <div class="reviews-carousel-wrapper reveal">
+    <div class="reviews-track-outer">
+      <div class="reviews-track" id="reviews-track">
+
+        <div class="review-card reveal-item" style="transition-delay:0.00s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"J'ai passé 3 heures sur Google pour préparer mon trip en Norvège. LIBERTRIP m'a sorti un roadbook 10x meilleur en 1 minute. Littéralement."</div>
+          <div class="review-author"><div class="review-avatar">L</div><div><div class="review-name">Lucas M.</div><div class="review-detail">Road-trip Norvège · Van</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:0.08s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Les cols qu'il m'a proposés pour la Corse, j'aurais jamais trouvé ça tout seul. L'IA connaît des spots que même les locaux ignorent."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#ff6b6b,#f5c842);">M</div><div><div class="review-name">Marco D.</div><div class="review-detail">Cols corses · Moto</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:0.16s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Mon itinéraire Tokyo en 5 jours était parfait. Transports, timing, restos hors-des-sentiers battus. J'ai eu l'impression d'avoir un guide local dans la poche."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#8b5cf6,#4f8eff);">S</div><div><div class="review-name">Sophie L.</div><div class="review-detail">City-trip Tokyo · Transports</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:0.24s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Le roadbook Islande pour notre van-trip était dingue. Chaque spot recommandé était une claque visuelle, et les horaires étaient parfaits pour éviter les foules. On recommence l'an prochain."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#06b6d4,#4f8eff);">J</div><div><div class="review-name">Julie & Tom</div><div class="review-detail">Van-trip Islande · 12 jours</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:0.32s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"En solo en Espagne, j'avais peur de m'ennuyer. L'IA m'a concocté un itinéraire tellement dense et varié que je n'ai même pas eu le temps de vérifier Instagram une seule fois."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">A</div><div><div class="review-name">Anaïs R.</div><div class="review-detail">Solo Espagne · Voiture</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:0.40s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Les spots Instagram que LIBERTRIP m'a trouvés en Grèce… même mes abonnés me demandaient si c'était du CGI. Ces endroits n'existaient pas sur les guides classiques."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#8b5cf6,#ec4899);">C</div><div><div class="review-name">Camille V.</div><div class="review-detail">Grèce · Spots secrets</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:0.48s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Voyage de noces en Toscane. Je voulais que ce soit parfait. LIBERTRIP a trouvé des agriturismo que je n'aurais jamais dénichés seul, avec des routes de nuit absolument magiques."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#10b981,#4f8eff);">R</div><div><div class="review-name">Romain & Clara</div><div class="review-detail">Toscane · Voiture</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:0.56s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"On était 5 potes en van en Écosse. L'IA a géré les spots de stationnement légaux, les points de recharge, les pubs locaux… même nos disputes sur la destination suivante ont diminué."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#059669,#f59e0b);">K</div><div><div class="review-name">Kevin B.</div><div class="review-detail">Écosse · Van 5 pax</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:0.64s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Je fais de la moto depuis 20 ans et je pensais connaître les Alpes par cœur. LIBERTRIP m'a sorti 3 cols que je n'avais jamais empruntés. Du bitume de rêve, sans un seul touriste."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#dc2626,#f59e0b);">P</div><div><div class="review-name">Patrick H.</div><div class="review-detail">Alpes · Moto 20 ans d'expérience</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:0.72s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Famille de 4, enfants de 6 et 9 ans, road-trip en Croatie. L'IA a intégré les plages adaptées aux enfants, les restaurants avec menu enfant et les étapes courtes. Zéro crise dans la voiture."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#4f8eff,#8b5cf6);">N</div><div><div class="review-name">Nathalie & Éric</div><div class="review-detail">Croatie en famille · 9 jours</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:0.80s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Mon véhicule électrique me rendait nerveux pour les longs trajets. LIBERTRIP a planifié chaque borne Ionity sur mon parcours Portugal-Espagne avec les temps de pause optimaux. Stress zéro."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#22c55e,#4f8eff);">T</div><div><div class="review-name">Thomas G.</div><div class="review-detail">Portugal · Électrique</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:0.88s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"City-trip à Prague en 3 jours. J'avais peur de faire le "classique". L'IA m'a orienté vers des cafés de spécialité cachés dans des arrière-cours, des bars à absinthe locaux. Incroyable."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#f59e0b,#8b5cf6);">M</div><div><div class="review-name">Margot D.</div><div class="review-detail">City-trip Prague · Solo</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:0.96s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Le roadbook Sardaigne était tellement précis que le gendarme local nous a demandé si on était des journalistes. Il ne connaissait même pas la moitié des plages listées."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#ef4444,#f59e0b);">F</div><div><div class="review-name">Florian M.</div><div class="review-detail">Sardaigne · Voiture</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:1.04s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Randonnées dans les Écrins avec l'IA. Elle a croisé les conditions météo, les refuges disponibles et mon niveau de forme pour me générer un trek parfaitement calibré. J'ai adoré chaque journée."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#6366f1,#22c55e);">V</div><div><div class="review-name">Victor L.</div><div class="review-detail">Écrins · Rando 7 jours</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:1.12s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"J'ai utilisé LIBERTRIP pour préparer mon Van-trip au Portugal. Les spots de van-life sauvages recommandés étaient parfaits — et surtout légaux. C'est rare de trouver ça compilé proprement."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#0ea5e9,#8b5cf6);">O</div><div><div class="review-name">Océane F.</div><div class="review-detail">Portugal · Vanlife solo</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:1.20s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Algarve en couple, 6 jours. Chaque matin on recevait le programme du jour via le chat roadbook. On s'est sentis guidés sans jamais être contraints. La liberté avec un filet de sécurité."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#f472b6,#f59e0b);">I</div><div><div class="review-name">Inès & Sam</div><div class="review-detail">Algarve en couple</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:1.28s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Traversée des Dolomites à moto avec 3 amis. LIBERTRIP nous a sortis des sentiers battus façon rally, avec des points-de-vue absolument épiques. On a roulé 11 heures sans s'en rendre compte."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#dc2626,#6366f1);">B</div><div><div class="review-name">Bastien & co.</div><div class="review-detail">Dolomites · Moto x3</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:1.36s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Je gère une communauté voyage sur TikTok. J'ai testé LIBERTRIP pour créer du contenu. Résultat : 3 vidéos virales en 2 semaines grâce aux spots uniques trouvés en Sicile. Merci !"</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">L</div><div><div class="review-name">Léa créatrice</div><div class="review-detail">Sicile · Contenu TikTok</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:1.44s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Voyage gastronomique en Bourgogne. L'IA a intégré mes allergies alimentaires ET mes préférences de vins naturels dans l'itinéraire. J'ai mangé et bu comme jamais. Chapeau."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#8b5cf6,#f59e0b);">H</div><div><div class="review-name">Hugo C.</div><div class="review-detail">Bourgogne · Gastronomie</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:1.52s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Road-trip Norvège en voiture électrique avec 2 enfants. LIBERTRIP a jonglé entre autonomie des bornes, étapes adaptées aux enfants et paysages de fjords. Un sans-faute total."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#22c55e,#0ea5e9);">E</div><div><div class="review-name">Élise & David</div><div class="review-detail">Norvège · Famille électrique</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:1.60s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Séjour de 10 jours aux Canaries. Je voulais tout : surf, rando, gastronomie locale, plages secrètes. L'IA a tout combiné dans un planning logistiquement parfait. Je me suis senti invincible."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#f59e0b,#22c55e);">Q</div><div><div class="review-name">Quentin D.</div><div class="review-detail">Canaries · Multi-activités</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:1.68s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Weekend à Berlin pour 6 potes aux goûts très différents. L'IA a réussi à contenter le fan de musées, les fêtards, la foodie et les deux qui voulaient juste se balader. Exploit absolu."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#6366f1,#f472b6);">Z</div><div><div class="review-name">Zoé & potes</div><div class="review-detail">Berlin · City-trip x6</div></div></div>
+        </div>
+
+        <div class="review-card reveal-item" style="transition-delay:1.76s;">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Roadbook Lofoten pour mon voyage photo. L'IA a intégré les heures de lever/coucher du soleil pour chaque spot. J'ai shooté la golden hour à chaque fois. Résultat incroyable."</div>
+          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#0ea5e9,#ef4444);">G</div><div><div class="review-name">Guillaume R.</div><div class="review-detail">Lofoten · Photographe</div></div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="carousel-controls">
+      <button class="carousel-btn" id="rev-prev" onclick="moveCarousel(-1)" aria-label="Précédent">←</button>
+      <div class="carousel-dots" id="carousel-dots"></div>
+      <button class="carousel-btn" id="rev-next" onclick="moveCarousel(1)" aria-label="Suivant">→</button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FAQ ─── -->
+<section id="faq">
+  <div class="section-header reveal">
+    <div class="tag" style="margin-bottom:20px;"><span class="dot"></span>Questions fréquentes</div>
+    <h2>Tout ce que tu veux savoir.</h2>
+    <p>Des réponses claires, sans jargon. Parce que ton énergie doit aller à la route, pas aux FAQ.</p>
+  </div>
+
+  <div class="faq-list reveal">
+
+    <div class="faq-item reveal-item" onclick="toggleFaq(this)" style="transition-delay:0.1s;">
+      <button class="faq-q">
+        <span>Sous quel format je reçois mon voyage ?</span>
+        <span class="faq-chevron">▾</span>
+      </button>
+      <div class="faq-body">
+        <div class="faq-body-inner">Tu reçois instantanément par email un lien unique vers ton "Roadbook Interactif". Il est optimisé à 100% pour ton smartphone (style application native) et accessible à vie, sans rien avoir à télécharger.</div>
+      </div>
+    </div>
+
+    <div class="faq-item reveal-item" onclick="toggleFaq(this)" style="transition-delay:0.2s;">
+      <button class="faq-q">
+        <span>Comment ça se passe si je veux modifier l'itinéraire ?</span>
+        <span class="faq-chevron">▾</span>
+      </button>
+      <div class="faq-body">
+        <div class="faq-body-inner">C'est la magie de l'IA ! Ton Roadbook intègre un chat copilote accessible en direct. D'ailleurs, nos utilisateurs modifient souvent leur trajet en cours de route pour rallonger leurs étapes : les itinéraires sont tellement fous qu'ils s'arrêtent toutes les 20 minutes pour prendre des photos. Si tu prends du retard ou que tu veux changer de rythme, tu l'écris simplement au chat ("Décale mon arrivée", "Trouve-moi un spot dodo plus proche") et l'IA recalcule tout en 5 secondes.</div>
+      </div>
+    </div>
+
+    <div class="faq-item reveal-item" onclick="toggleFaq(this)" style="transition-delay:0.3s;">
+      <button class="faq-q">
+        <span>L'offre "Aperçu Gratuit" demande-t-elle une carte bancaire ?</span>
+        <span class="faq-chevron">▾</span>
+      </button>
+      <div class="faq-body">
+        <div class="faq-body-inner">Absolument pas. Tu réponds aux questions, et l'IA te génère immédiatement la logistique globale et l'itinéraire complet de ton JOUR 1. Pas d'engagement, pas de carte bancaire requise. Vous ne payez que si vous adorez le concept et voulez débloquer le reste.</div>
+      </div>
+    </div>
+
+    <div class="faq-item reveal-item" onclick="toggleFaq(this)" style="transition-delay:0.4s;">
+      <button class="faq-q">
+        <span>Comment j'utilise le Roadbook sur mon GPS en conduisant ?</span>
+        <span class="faq-chevron">▾</span>
+      </button>
+      <div class="faq-body">
+        <div class="faq-body-inner">Chaque étape, point de vue secret ou hébergement de ton carnet contient un bouton magique. Un clic dessus ouvre instantanément l'itinéraire exact dans Google Maps, Apple Maps, Waze, ou ton système de navigation embarqué (CarPlay / Android Auto).</div>
+      </div>
+    </div>
+
+    <div class="faq-item reveal-item" onclick="toggleFaq(this)" style="transition-delay:0.5s;">
+      <button class="faq-q">
+        <span>Proposez-vous une garantie de remboursement ?</span>
+        <span class="faq-chevron">▾</span>
+      </button>
+      <div class="faq-body">
+        <div class="faq-body-inner">Oui. Nous sommes tellement sûrs de la précision de notre IA que si l'itinéraire complet généré ne te convient pas du tout, tu as 14 jours pour envoyer un message à notre support et tu seras remboursé à 100%, sans discussion.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── GÉNÉRATEUR / FORMULAIRE ─── -->
+<section id="generator" style="padding:120px 24px;">
+  <div style="text-align:center;margin-bottom:56px;" class="reveal">
+    <div class="tag" style="margin-bottom:20px;display:inline-flex;"><span class="dot"></span>Essaie maintenant</div>
+    <h2 style="font-size:clamp(36px,5vw,60px);letter-spacing:-0.03em;">Génère ton roadbook.<br>Gratuit. En 60 secondes.</h2>
+    <p style="color:var(--gray-light);font-size:17px;font-weight:300;max-width:440px;margin:16px auto 0;">Réponds à quelques questions et laisse l'IA faire le reste.</p>
+  </div>
+
+  <div class="form-wrapper reveal">
+    <!-- PROGRESS BAR (10 steps) -->
+    <div class="form-progress" id="form-progress-bar">
+      <div class="progress-step active" id="p1"><div class="fill"></div></div>
+      <div class="progress-step" id="p2"><div class="fill"></div></div>
+      <div class="progress-step" id="p3"><div class="fill"></div></div>
+      <div class="progress-step" id="p4"><div class="fill"></div></div>
+      <div class="progress-step" id="p5"><div class="fill"></div></div>
+      <div class="progress-step" id="p6"><div class="fill"></div></div>
+      <div class="progress-step" id="p7"><div class="fill"></div></div>
+      <div class="progress-step" id="p8"><div class="fill"></div></div>
+      <div class="progress-step" id="p9"><div class="fill"></div></div>
+      <div class="progress-step" id="p10"><div class="fill"></div></div>
+    </div>
+
+    <!-- PAGE 1 : Écran de bienvenue -->
+    <div class="form-slide active" id="slide-1" style="text-align:center;padding:32px 0 16px;">
+      <div style="font-size:60px;margin-bottom:20px;line-height:1;">🚀</div>
+      <div class="form-q" style="font-size:clamp(24px,4vw,34px);margin-bottom:0;">Prêt pour ton voyage de rêve ?</div>
+      <div class="form-hint" style="font-size:16px;max-width:400px;margin:14px auto 36px;line-height:1.6;">Découvre une nouvelle façon de planifier. Clique sur tes choix, notre IA s'occupe du reste.</div>
+      <button class="btn-next" style="background:linear-gradient(135deg,var(--accent),var(--accent-2));padding:18px 44px;font-size:17px;border-radius:14px;margin:0 auto;display:inline-block;" onclick="goToSlide(1,2)">🗺️ &nbsp;Générer mon aperçu gratuit</button>
+    </div>
+
+    <!-- PAGE 2 : Profil voyageur (auto-advance) -->
+    <div class="form-slide" id="slide-2">
+      <div class="form-q" style="text-align:center;">Avec qui pars-tu à l'aventure ? 👥</div>
+      <div class="form-options quiz-grid" style="margin-top:28px;">
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'companions','solo',2)"><span class="opt-icon">🏄</span> En solo</button>
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'companions','couple',2)"><span class="opt-icon">🤍</span> En couple</button>
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'companions','potes',2)"><span class="opt-icon">🎒</span> Entre potes</button>
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'companions','famille',2)"><span class="opt-icon">👨‍👩‍👧‍👦</span> En famille<div style="font-size:12px;color:var(--gray);margin-top:3px;">avec enfants</div></button>
+      </div>
+    </div>
+
+    <!-- PAGE 3 : Destination (auto-advance + champ texte si Autre) -->
+    <div class="form-slide" id="slide-3">
+      <div class="form-q" style="text-align:center;">Où veux-tu poser tes bagages ? 🌍</div>
+      <div class="form-options quiz-grid" style="margin-top:28px;" id="dest-grid">
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'destination','suisse',3)"><span class="opt-icon">🇨🇭</span> Suisse</button>
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'destination','italie',3)"><span class="opt-icon">🇮🇹</span> Italie</button>
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'destination','france',3)"><span class="opt-icon">🇫🇷</span> France</button>
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'destination','espagne',3)"><span class="opt-icon">🇪🇸</span> Espagne</button>
+        <button class="form-option quiz-card quiz-card-full" id="btn-autre-dest" onclick="toggleDestAutre(this)"><span class="opt-icon">🗺️</span> Autre destination</button>
+      </div>
+      <div id="autre-dest-field" style="display:none;margin-top:16px;">
+        <input class="form-field" type="text" placeholder="Saisir le pays ou la région..." id="destination-custom">
+        <div style="text-align:center;margin-top:12px;">
+          <button class="btn-next" style="border-radius:12px;padding:14px 40px;" onclick="advanceFromAutreDest()">Continuer ➔</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 4 : Véhicule (auto-advance) -->
+    <div class="form-slide" id="slide-4">
+      <div class="form-q" style="text-align:center;">Quel sera ton moyen de transport ? 🚘</div>
+      <div class="form-options quiz-grid" style="margin-top:28px;">
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'vehicle','voiture',4)"><span class="opt-icon">🚗</span> Voiture classique<div style="font-size:12px;color:var(--gray);margin-top:3px;">Citadine</div></button>
+        <button class="form-option quiz-card" onclick="selectVehicleElectric(this)"><span class="opt-icon">🔌</span> Véhicule Électrique<div style="font-size:12px;color:var(--gray);margin-top:3px;">Bornes de recharge</div></button>
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'vehicle','moto',4)"><span class="opt-icon">🏍️</span> Moto<div style="font-size:12px;color:var(--gray);margin-top:3px;">Virages, belles routes</div></button>
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'vehicle','van',4)"><span class="opt-icon">🚐</span> Van / Camping-car<div style="font-size:12px;color:var(--gray);margin-top:3px;">Spots nature & parking</div></button>
+        <button class="form-option quiz-card quiz-card-full" onclick="selectAndAdvance(this,'vehicle','transports',4)"><span class="opt-icon">🚂</span> Pas de véhicule<div style="font-size:12px;color:var(--gray);margin-top:3px;">Transports en commun : Train, Bus</div></button>
+      </div>
+      <!-- Champ autonomie — visible uniquement si véhicule électrique sélectionné -->
+      <div id="ev-range-box" style="display:none;margin-top:24px;max-width:420px;margin-left:auto;margin-right:auto;">
+        <div style="font-size:13px;color:var(--gray);text-align:center;margin-bottom:10px;">Quelle est l'autonomie de ton véhicule ? <span style="color:var(--gray-light)">(optionnel)</span></div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input class="form-field" type="number" id="ev-range-input" placeholder="Ex : 350" min="50" max="800" style="flex:1;padding:14px 16px;font-size:15px;" oninput="formData['vehicle_range']=this.value?Number(this.value):null" />
+          <span style="color:var(--gray-light);font-size:15px;white-space:nowrap;">km</span>
+        </div>
+        <div style="text-align:center;margin-top:20px;">
+          <button class="btn-next" style="border-radius:12px;padding:14px 40px;" onclick="goToSlide(4,5)">Continuer ➔</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 5 : Logistique d'arrivée -->
+    <div class="form-slide" id="slide-5">
+      <div class="form-q" style="text-align:center;">Où et quand commence ton voyage ? 🏁</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:28px;">
+        <input class="form-field" type="text" placeholder="Ville ou lieu de départ exact (ex: Aéroport de Genève, Gare de Lyon...)" id="departure-place">
+        <div class="form-row">
+          <input class="form-field" type="date" id="departure-date">
+          <input class="form-field" type="time" id="departure-time" placeholder="14:00">
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:32px;">
+        <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(5,6)">Continuer ➔</button>
+      </div>
+    </div>
+
+    <!-- PAGE 6 : Durée et rythme -->
+    <div class="form-slide" id="slide-6">
+      <div class="form-q" style="text-align:center;">Configure ton tempo ⏱️</div>
+      <div style="display:flex;flex-direction:column;align-items:center;margin:28px 0 24px;">
+        <div style="font-size:12px;color:var(--gray-light);margin-bottom:16px;text-transform:uppercase;letter-spacing:0.07em;">Nombre de jours du voyage</div>
+        <div style="display:flex;align-items:center;gap:28px;">
+          <button class="day-btn" onclick="changeDays(-1)">−</button>
+          <div id="days-count" style="font-family:'Syne',sans-serif;font-size:56px;font-weight:800;min-width:80px;text-align:center;background:linear-gradient(135deg,var(--white) 40%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">7</div>
+          <button class="day-btn" onclick="changeDays(1)">+</button>
+        </div>
+        <div style="font-size:13px;color:var(--gray);margin-top:6px;">jours</div>
+      </div>
+      <div style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;text-align:center;margin-bottom:14px;">Rythme de voyage</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="quiz-card-rythme" onclick="selectRythme(this,'slow')"><span class="opt-icon">🧘</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Slow Travel</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">Moins de 100km/j</div></button>
+        <button class="quiz-card-rythme" onclick="selectRythme(this,'equilibre')"><span class="opt-icon">⛰️</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Équilibré</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">100–200km/j</div></button>
+        <button class="quiz-card-rythme" onclick="selectRythme(this,'rouleur')"><span class="opt-icon">🏁</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Grand Rouleur</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">+200km/j</div></button>
+      </div>
+      <div style="text-align:center;margin-top:32px;">
+        <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(6,7)">Continuer ➔</button>
+      </div>
+    </div>
+
+    <!-- PAGE 7 : Logement (choix multiple) -->
+    <div class="form-slide" id="slide-7">
+      <div class="form-q" style="text-align:center;">Où est-ce qu'on s'arrête dormir le soir ? 🛌</div>
+      <div class="form-options quiz-grid" style="margin-top:28px;">
+        <button class="form-option quiz-card" onclick="toggleMulti(this)"><span class="opt-icon">🏕️</span> Camping / Nature</button>
+        <button class="form-option quiz-card" onclick="toggleMulti(this)"><span class="opt-icon">🏡</span> AirBnb de charme</button>
+        <button class="form-option quiz-card" onclick="toggleMulti(this)"><span class="opt-icon">🏨</span> Hôtels d'exception & Spas</button>
+        <button class="form-option quiz-card" onclick="toggleMulti(this)"><span class="opt-icon">🤫</span> Peu importe</button>
+      </div>
+      <div style="text-align:center;margin-top:32px;">
+        <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(7,8)">Suivant ➔</button>
+      </div>
+    </div>
+
+    <!-- PAGE 8 : Gastronomie (auto-advance) -->
+    <div class="form-slide" id="slide-8">
+      <div class="form-q" style="text-align:center;">Côté nourriture, quelle est la politique ? 🍽️</div>
+      <div class="form-options quiz-grid quiz-grid-3" style="margin-top:28px;">
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'food','economique',8)"><span class="opt-icon">🥪</span> Sur le pouce<div style="font-size:12px;color:var(--gray);margin-top:4px;">Économique, sandwichs, fast-food</div></button>
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'food','local',8)"><span class="opt-icon">🍕</span> Bon rapport qualité/prix<div style="font-size:12px;color:var(--gray);margin-top:4px;">Petits restos locaux, brasseries</div></button>
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'food','gastronomie',8)"><span class="opt-icon">🍷</span> Gastronomie & Terroir<div style="font-size:12px;color:var(--gray);margin-top:4px;">Spécialités et belles tables</div></button>
+      </div>
+    </div>
+
+    <!-- PAGE 9 : Budget -->
+    <div class="form-slide" id="slide-9">
+      <div class="form-q" style="text-align:center;">Quel est ton budget pour ce voyage ? 💰</div>
+      <div style="font-size:13px;color:var(--gray);text-align:center;margin:8px 0 24px;">L'IA adaptera ses recommandations à ton enveloppe</div>
+      <div class="form-options quiz-grid quiz-grid-3" style="margin-top:0;">
+        <button class="form-option quiz-card" onclick="selectBudget(this,'eco')" id="budget-eco"><span class="opt-icon">🎒</span> Économique<div style="font-size:12px;color:var(--gray);margin-top:4px;">40-80€/jour · Camping, auberges</div></button>
+        <button class="form-option quiz-card" onclick="selectBudget(this,'medium')" id="budget-medium"><span class="opt-icon">🏨</span> Confortable<div style="font-size:12px;color:var(--gray);margin-top:4px;">100-180€/jour · Hôtels 3★, Airbnb</div></button>
+        <button class="form-option quiz-card" onclick="selectBudget(this,'premium')" id="budget-premium"><span class="opt-icon">✨</span> Premium<div style="font-size:12px;color:var(--gray);margin-top:4px;">250€+/jour · Hôtels haut de gamme</div></button>
+      </div>
+      <div style="margin-top:20px;max-width:440px;margin-left:auto;margin-right:auto;">
+        <div style="font-size:13px;color:var(--gray);text-align:center;margin-bottom:10px;">Ou saisis ton budget total :</div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input class="form-field" type="number" id="budget-custom" placeholder="Ex : 1500" min="0" style="flex:1;padding:14px 16px;font-size:15px;" oninput="onBudgetCustomInput(this)" />
+          <span style="color:var(--gray-light);font-size:15px;white-space:nowrap;">€ total</span>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:28px;">
+        <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(9,10)">Suivant ➔</button>
+      </div>
+    </div>
+
+    <!-- PAGE 10 : Centres d'intérêts (max 3) -->
+    <div class="form-slide" id="slide-10">
+      <div class="form-q" style="text-align:center;">Coche tes 3 priorités absolues pour ce voyage 🏔️</div>
+      <div style="font-size:13px;color:var(--gray);text-align:center;margin:8px 0 24px;">Sélectionne jusqu'à 3 options</div>
+      <div class="form-options quiz-grid" style="margin-top:0;">
+        <button class="form-option quiz-card" onclick="toggleMax3(this)"><span class="opt-icon">📸</span> Spots Secrets & Instagrammables</button>
+        <button class="form-option quiz-card" onclick="toggleMax3(this)"><span class="opt-icon">🥾</span> Randonnées & Nature sauvage</button>
+        <button class="form-option quiz-card" onclick="toggleMax3(this)"><span class="opt-icon">🏰</span> Monuments, Histoire & Musées</button>
+        <button class="form-option quiz-card" onclick="toggleMax3(this)"><span class="opt-icon">🌊</span> Lacs, Cascades & Plages</button>
+        <button class="form-option quiz-card" onclick="toggleMax3(this)"><span class="opt-icon">🎡</span> Activités fun<div style="font-size:12px;color:var(--gray);margin-top:3px;">Parcs, sensations, tyrolienne</div></button>
+        <button class="form-option quiz-card" onclick="toggleMax3(this)"><span class="opt-icon">🛍️</span> Shopping & Vie citadine</button>
+      </div>
+      <div style="text-align:center;margin-top:32px;">
+        <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(10,11)">Suivant ➔</button>
+      </div>
+    </div>
+
+    <!-- PAGE 11 : Hébergements (renumbered) -->
+    <div class="form-slide" id="slide-11">
+      <div class="form-q" style="text-align:center;">Où dors-tu chaque soir ? 🏠</div>
+      <div style="font-size:13px;color:var(--gray);text-align:center;margin:8px 0 24px;">Ajoute l'adresse ou le nom de chaque hébergement (Airbnb, hôtel, camping…). L'IA génèrera tes trajets depuis ces lieux.</div>
+
+      <div id="lodging-list" style="display:flex;flex-direction:column;gap:12px;max-width:520px;margin:0 auto;">
+        <div class="lodging-entry" style="display:flex;gap:10px;align-items:center;">
+          <input class="form-field" type="text" placeholder="Ex : Camping Les Pins, Annecy" style="flex:1;padding:16px;font-size:15px;" />
+          <button onclick="removeLodging(this)" style="background:rgba(255,255,255,0.07);border:1px solid var(--border-light);color:var(--gray-light);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:18px;line-height:1;flex-shrink:0;" title="Supprimer">✕</button>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:20px;">
+        <button onclick="addLodging()" style="background:rgba(255,255,255,0.06);border:1px solid var(--border-light);color:var(--gray-light);border-radius:12px;padding:12px 28px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">+ Ajouter un hébergement</button>
+      </div>
+
+      <div style="text-align:center;margin-top:12px;">
+        <button onclick="goToSlide(11,12)" style="background:transparent;border:none;color:var(--gray);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-decoration:underline;padding:8px;">Je n'ai pas encore réservé → passer</button>
+      </div>
+
+      <div style="text-align:center;margin-top:20px;">
+        <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(11,12)">Suivant ➔</button>
+      </div>
+    </div>
+
+    <!-- PAGE 12 : Notes personnalisées -->
+    <div class="form-slide" id="slide-12">
+      <div class="form-q" style="text-align:center;">Une contrainte ou un souhait particulier ? ✍️</div>
+      <div style="font-size:13px;color:var(--gray);text-align:center;margin:8px 0 24px;">L'IA adaptera l'itinéraire à ta situation réelle. Laisse ce champ vide si tu n'as rien à ajouter.</div>
+      <div style="max-width:560px;margin:0 auto;">
+        <textarea
+          id="custom-notes"
+          class="form-field"
+          rows="6"
+          placeholder="Ex : Je dois être à un mariage le 15 août à Lyon, j'aimerais faire du surf à Hossegor, on voyage avec un chien, pas d'autoroute…"
+          style="width:100%;padding:16px;font-size:15px;resize:vertical;line-height:1.6;font-family:'DM Sans',sans-serif;"
+        ></textarea>
+        <div style="text-align:right;margin-top:6px;font-size:12px;color:var(--gray);">
+          <span id="notes-count">0</span> / 500 caractères
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:24px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <button onclick="goToSlide(12,13)" style="background:transparent;border:none;color:var(--gray);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-decoration:underline;padding:8px;">Passer cette étape</button>
+        <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(12,13)">Continuer ➔</button>
+      </div>
+    </div>
+
+    <!-- PAGE 13 : Email & Génération -->
+    <div class="form-slide" id="slide-13" style="text-align:center;">
+      <div class="form-q" style="text-align:center;">Où doit-on t'envoyer ton carnet de route interactif ? ✉️</div>
+      <div style="margin-top:32px;max-width:460px;margin-left:auto;margin-right:auto;">
+        <input class="form-field" type="email" placeholder="ton@email.com" id="email" style="width:100%;text-align:center;font-size:17px;padding:20px;display:block;">
+        <p style="font-size:12px;color:var(--gray);margin-top:10px;text-align:center;">Pas de spam. Promis sur la route.</p>
+      </div>
+      <div style="text-align:center;margin-top:32px;">
+        <button class="btn-next" style="background:linear-gradient(135deg,var(--accent),var(--accent-2));font-size:17px;padding:18px 44px;border-radius:14px;" id="btn-generate" onclick="generateTrip()">Générer mon aperçu gratuit 🚀</button>
+        <div id="generate-error" style="display:none;margin-top:16px;color:#F87171;font-size:14px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:10px;padding:12px 16px;"></div>
+      </div>
+    </div>
+
+    <!-- LOADER SKELETON -->
+    <div id="magic-loader">
+      <div class="loader-icon">✈️</div>
+      <div class="loader-text" id="loader-text">Analyse de ton véhicule en cours...</div>
+      <div class="loader-sub">Ça prend à peine quelques secondes.</div>
+      <div class="loader-bar"><div class="loader-bar-fill" id="loader-fill"></div></div>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div id="success-state">
+      <div class="success-icon">🗺️</div>
+      <div class="success-title">Ton Jour 1 est prêt !</div>
+      <div class="success-sub">Bienvenue dans l'ère du voyage sans prise de tête.<br>Débloque ton roadbook complet pour vivre l'expérience totale.</div>
+      <div style="display:flex;gap:16px;margin-top:28px;flex-wrap:wrap;justify-content:center;">
+        <button class="unlock-btn-gold" onclick="goToCheckout('aventurier')">💳 S'abonner Explorateur (4,99€/mois)</button>
+        <button class="unlock-btn-purple" onclick="goToCheckout('premium')">🔒 Débloquer mon voyage (14,99€)</button>
+      </div>
+      <button style="margin-top:20px;background:transparent;border:1px solid var(--border-light);color:var(--gray-light);border-radius:100px;padding:10px 24px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;transition:all 0.2s;" onmouseover="this.style.color='#fff';this.style.borderColor='#555'" onmouseout="this.style.color='';this.style.borderColor=''" onclick="resetForm()">Recommencer depuis le début</button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="nav-logo">LIBERTRIP</div>
+  <p>© 2026 LIBERTRIP — Tous droits réservés</p>
+  <div class="footer-links">
+    <a href="#" onclick="openModal('mentions');return false;">Mentions légales</a>
+    <a href="#" onclick="openModal('cgu');return false;">CGU</a>
+    <a href="#" onclick="openModal('contact');return false;">Contact</a>
+  </div>
+</footer>
+
+<!-- ─── MODAL : MENTIONS LÉGALES ─── -->
+<div class="modal-overlay" id="modal-mentions" onclick="closeModalOnBg(event,this)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('mentions')">×</button>
+    <h3>Mentions Légales</h3>
+    <h4>Éditeur du site</h4>
+    <p>Le site LIBERTRIP (libertrip.co) est édité par la société LIBERTRIP SAS, au capital de 1 000 €, immatriculée au Registre du Commerce et des Sociétés sous le numéro RCS Paris 000 000 000. Siège social : 1 rue de la Route, 75001 Paris, France. Directeur de la publication : Alexandre Gueugneau.</p>
+    <h4>Hébergement</h4>
+    <p>Le site est hébergé par Vercel Inc., 340 Pine Street, Suite 900, San Francisco, CA 94104, États-Unis. Contact hébergeur : <a href="mailto:privacy@vercel.com">privacy@vercel.com</a>.</p>
+    <h4>Propriété intellectuelle</h4>
+    <p>L'ensemble des contenus présents sur le site LIBERTRIP (textes, images, logos, interface) sont protégés par le droit d'auteur et appartiennent exclusivement à LIBERTRIP SAS. Toute reproduction, représentation, modification ou diffusion, totale ou partielle, sans l'accord exprès de LIBERTRIP SAS est strictement interdite.</p>
+    <h4>Cookies</h4>
+    <p>Le site utilise des cookies strictement nécessaires à son bon fonctionnement. Aucun cookie publicitaire ou de tracking tiers n'est déposé sans votre consentement explicite. Vous pouvez configurer votre navigateur pour refuser les cookies à tout moment.</p>
+    <h4>Responsabilité</h4>
+    <p>Les itinéraires générés par l'IA LIBERTRIP sont fournis à titre indicatif. LIBERTRIP SAS ne saurait être tenu responsable d'inexactitudes, de routes impraticables ou de conditions météorologiques défavorables. L'utilisateur reste seul responsable de ses décisions de voyage.</p>
+    <h4>Contact</h4>
+    <p>Pour toute question : <a href="mailto:legal@libertrip.co">legal@libertrip.co</a></p>
+  </div>
+</div>
+
+<!-- ─── MODAL : CGU ─── -->
+<div class="modal-overlay" id="modal-cgu" onclick="closeModalOnBg(event,this)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('cgu')">×</button>
+    <h3>Conditions Générales d'Utilisation</h3>
+    <h4>1. Objet du service</h4>
+    <p>LIBERTRIP propose un service de génération d'itinéraires de voyage par intelligence artificielle. Les roadbooks générés sont fournis à titre indicatif et ne constituent pas un service de guidage professionnel. LIBERTRIP se réserve le droit de modifier ses fonctionnalités à tout moment.</p>
+    <h4>2. Offre gratuite (Découverte IA)</h4>
+    <p>L'accès à la génération du Jour 1 est gratuit et sans engagement. Aucune carte bancaire n'est requise. L'utilisateur peut y accéder autant de fois qu'il le souhaite.</p>
+    <h4>3. Offres payantes</h4>
+    <p>L'offre "Explorateur Clé en Main" est facturée 4,99€ par mois avec un engagement minimum de 6 mois. L'offre "Roadbook Premium à Vie" est facturée en un paiement unique de 14,99€, sans abonnement.</p>
+    <h4>4. Remboursement</h4>
+    <p>LIBERTRIP offre une garantie satisfait ou remboursé de <strong>14 jours</strong> à compter de la date d'achat. Pour toute demande de remboursement, contactez <a href="mailto:support@libertrip.co">support@libertrip.co</a>. Le remboursement sera effectué sous 5 à 10 jours ouvrés.</p>
+    <h4>5. Données personnelles & paiement</h4>
+    <p>Les paiements sont traités de manière sécurisée via Stripe (certifié PCI-DSS niveau 1). LIBERTRIP ne stocke jamais vos données bancaires. Vos données personnelles (email, préférences voyage) sont utilisées exclusivement pour générer vos roadbooks et ne sont jamais revendues à des tiers. Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données : <a href="mailto:privacy@libertrip.co">privacy@libertrip.co</a>.</p>
+    <h4>6. Droit applicable</h4>
+    <p>Les présentes CGU sont soumises au droit français. En cas de litige, les tribunaux compétents du ressort de Paris seront seuls compétents.</p>
+  </div>
+</div>
+
+<!-- ─── MODAL : CONTACT ─── -->
+<div class="modal-overlay" id="modal-contact" onclick="closeModalOnBg(event,this)">
+  <div class="modal-box" style="max-width:480px;text-align:center;">
+    <button class="modal-close" onclick="closeModal('contact')">×</button>
+    <div style="font-size:48px;margin-bottom:16px;">✉️</div>
+    <h3>Une question ?</h3>
+    <p style="margin-bottom:24px;font-size:15px;">Notre équipe support est disponible 7j/7 pour t'aider à planifier le voyage de tes rêves.</p>
+    <a href="mailto:support@libertrip.co" style="display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;padding:14px 32px;border-radius:12px;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;text-decoration:none;transition:all 0.2s;">support@libertrip.co</a>
+    <p style="margin-top:16px;font-size:13px;color:var(--gray);">Réponse garantie sous 24h ouvrées.</p>
+  </div>
+</div>
+
+<!-- ─── TOAST CONTAINER ─── -->
+<div id="toast-container">
+  <div class="toast" id="main-toast">
+    <div class="toast-emoji" id="toast-emoji">🔥</div>
+    <div class="toast-body">
+      <div class="toast-title" id="toast-title">Lucas vient de générer</div>
+      <div class="toast-msg" id="toast-msg">Son itinéraire en Suisse (3 jours)</div>
+    </div>
+    <div class="toast-dot"></div>
+  </div>
+</div>
+
+<script>
+// ─── NAV SCROLL ───
+window.addEventListener('scroll', () => {
+  document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 30);
+});
+
+// ─── BENTO CARD GLOW EFFECT ───
+document.querySelectorAll('.bento-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+    card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+  });
+});
+
+// ─── SCROLL REVEAL (containers) ───
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal, .step').forEach(el => observer.observe(el));
+
+// ─── SCROLL REVEAL PER-ELEMENT (cards, FAQ items) ───
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal-item').forEach(el => revealObserver.observe(el));
+
+// ─── MODAL LOGIC ───
+function openModal(id) {
+  const m = document.getElementById('modal-' + id);
+  if (!m) return;
+  m.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  const m = document.getElementById('modal-' + id);
+  if (!m) return;
+  m.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeModalOnBg(e, overlay) {
+  if (e.target === overlay) {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+// Close modals on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => {
+      m.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  }
+});
+
+// ─── MOBILE MENU ───
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  if (menu) menu.classList.toggle('open');
+}
+// Fermer le menu si clic en dehors
+document.addEventListener('click', e => {
+  const menu = document.getElementById('mobile-menu');
+  const nav  = document.getElementById('main-nav');
+  if (menu && menu.classList.contains('open') && !menu.contains(e.target) && !nav.contains(e.target)) {
+    menu.classList.remove('open');
+  }
+});
+
+// ─── FORM LOGIC (10 PAGES) ───
+let currentSlide = 1;
+const totalSlides = 13;
+let formData = {};
+let selectedDays = 7;
+
+function updateProgress() {
+  for (let i = 1; i <= totalSlides; i++) {
+    const p = document.getElementById('p' + i);
+    if (!p) continue;
+    p.classList.remove('active', 'done');
+    if (i < currentSlide) p.classList.add('done');
+    if (i === currentSlide) p.classList.add('active');
+  }
+}
+
+function goToSlide(from, to) {
+  const leaving = document.getElementById('slide-' + from);
+  const arriving = document.getElementById('slide-' + to);
+  if (!leaving || !arriving) return;
+  leaving.classList.add('exit');
+  setTimeout(() => {
+    leaving.classList.remove('active', 'exit');
+    leaving.style.display = 'none';
+    arriving.style.display = 'block';
+    arriving.classList.add('active');
+  }, 340);
+  currentSlide = to;
+  updateProgress();
+}
+
+function selectAndAdvance(el, key, val, fromSlide) {
+  const container = el.closest('.form-options');
+  if (container) container.querySelectorAll('.form-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  formData[key] = val;
+  setTimeout(() => goToSlide(fromSlide, fromSlide + 1), 360);
+}
+
+function toggleMulti(el) {
+  el.classList.toggle('selected');
+}
+
+function addLodging() {
+  const list = document.getElementById('lodging-list');
+  const entry = document.createElement('div');
+  entry.className = 'lodging-entry';
+  entry.style.cssText = 'display:flex;gap:10px;align-items:center;';
+  entry.innerHTML = `
+    <input class="form-field" type="text" placeholder="Ex : Hôtel du Lac, Chamonix" style="flex:1;padding:16px;font-size:15px;" />
+    <button onclick="removeLodging(this)" style="background:rgba(255,255,255,0.07);border:1px solid var(--border-light);color:var(--gray-light);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:18px;line-height:1;flex-shrink:0;" title="Supprimer">✕</button>
+  `;
+  list.appendChild(entry);
+  entry.querySelector('input').focus();
+}
+
+function removeLodging(btn) {
+  const list = document.getElementById('lodging-list');
+  if (list.querySelectorAll('.lodging-entry').length <= 1) {
+    btn.closest('.lodging-entry').querySelector('input').value = '';
+    return;
+  }
+  btn.closest('.lodging-entry').remove();
+}
+
+function toggleMax3(el) {
+  const container = el.closest('.form-options');
+  const selected = container.querySelectorAll('.form-option.selected');
+  if (!el.classList.contains('selected') && selected.length >= 3) return;
+  el.classList.toggle('selected');
+}
+
+function selectRythme(el, val) {
+  document.querySelectorAll('.quiz-card-rythme').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  formData['rythme'] = val;
+}
+
+function selectVehicleElectric(el) {
+  // Sélectionner la carte
+  const container = el.closest('.form-options');
+  if (container) container.querySelectorAll('.form-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  formData['vehicle'] = 'electrique';
+  // Afficher le champ autonomie
+  const box = document.getElementById('ev-range-box');
+  if (box) box.style.display = 'block';
+  // Scroll vers le bas
+  setTimeout(() => box && box.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+}
+
+function selectBudget(el, val) {
+  // Désélectionner les autres cartes budget
+  ['budget-eco','budget-medium','budget-premium'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  formData['budget_level'] = val;
+  // Vider le champ custom si on choisit une catégorie
+  const custom = document.getElementById('budget-custom');
+  if (custom) { custom.value = ''; formData['budget_amount'] = null; }
+}
+
+function onBudgetCustomInput(el) {
+  const val = parseFloat(el.value);
+  if (!isNaN(val) && val > 0) {
+    formData['budget_amount'] = val;
+    formData['budget_level']  = 'custom';
+    // Désélectionner les cartes catégorie
+    ['budget-eco','budget-medium','budget-premium'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) btn.classList.remove('selected');
+    });
+  } else {
+    formData['budget_amount'] = null;
+  }
+}
+
+function toggleDestAutre(el) {
+  const field = document.getElementById('autre-dest-field');
+  const isShown = field.style.display !== 'none';
+  if (isShown) {
+    field.style.display = 'none';
+    el.classList.remove('selected');
+  } else {
+    field.style.display = 'block';
+    el.classList.add('selected');
+    document.querySelectorAll('#dest-grid .form-option:not(#btn-autre-dest)').forEach(o => o.classList.remove('selected'));
+    document.getElementById('destination-custom').focus();
+  }
+}
+
+function advanceFromAutreDest() {
+  const val = document.getElementById('destination-custom').value.trim();
+  if (val) {
+    formData['destination'] = val;
+    goToSlide(3, 4);
+  }
+}
+
+function changeDays(delta) {
+  selectedDays = Math.max(1, Math.min(30, selectedDays + delta));
+  document.getElementById('days-count').textContent = selectedDays;
+  formData['days'] = selectedDays;
+}
+
+// ─── MAGIC LOADER ───
+const loaderMessages = [
+  "Analyse de ton véhicule en cours...",
+  "Calcul des plus beaux cols et itinéraires...",
+  "Extraction des meilleurs spots cachés sur TikTok...",
+  "Génération de ton Jour 1 gratuit... ✨"
+];
+
+function generateTrip() {
+  // ── Validation email ──
+  const emailEl = document.getElementById('email');
+  const email   = emailEl ? emailEl.value.trim() : '';
+  const errEl   = document.getElementById('generate-error');
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (emailEl) { emailEl.style.outline = '2px solid #F87171'; emailEl.focus(); }
+    if (errEl)   { errEl.style.display = 'block'; errEl.textContent = '⚠️ Saisis un email valide pour recevoir ton roadbook.'; }
+    return;
+  }
+  if (emailEl) emailEl.style.outline = '';
+  if (errEl)   errEl.style.display = 'none';
+
+  // ── Collecter toutes les réponses du formulaire ──
+  formData['email'] = email;
+  formData['days']  = selectedDays;
+
+  // Logistique départ (slide 5)
+  formData['departure_place'] = (document.getElementById('departure-place') || {}).value || '';
+  formData['departure_date']  = (document.getElementById('departure-date')  || {}).value || '';
+  formData['departure_time']  = (document.getElementById('departure-time')  || {}).value || '';
+
+  // Logement — multi-select slide 7 (récupère les textes des boutons sélectionnés)
+  const accomEls = document.querySelectorAll('#slide-7 .form-option.selected');
+  formData['accommodation'] = Array.from(accomEls).map(el => {
+    const icon = el.querySelector('.opt-icon');
+    return el.textContent.replace(icon ? icon.textContent : '', '').split('\n')[0].trim();
+  });
+
+  // Intérêts — max3 slide 10
+  const interestEls = document.querySelectorAll('#slide-10 .form-option.selected');
+  formData['interests'] = Array.from(interestEls).map(el => {
+    const icon = el.querySelector('.opt-icon');
+    return el.textContent.replace(icon ? icon.textContent : '', '').split('\n')[0].trim();
+  });
+
+  // ── Collecter les hébergements (slide 10) ──
+  const lodgingInputs = document.querySelectorAll('#lodging-list .lodging-entry input');
+  formData['lodgings'] = Array.from(lodgingInputs)
+    .map(el => el.value.trim())
+    .filter(v => v.length > 0);
+
+  // ── Masquer slide 13, afficher loader ──
+  const slide10 = document.getElementById('slide-13');
+  slide10.classList.remove('active');
+  slide10.style.display = 'none';
+  document.getElementById('form-progress-bar').style.display = 'none';
+
+  const loader = document.getElementById('magic-loader');
+  loader.style.display = 'flex';
+
+  const fill = document.getElementById('loader-fill');
+  const text = document.getElementById('loader-text');
+
+  // ── Animation loader ──
+  let step = 0;
+  const duration = 4000;
+  const steps    = loaderMessages.length;
+  const stepTime = duration / steps;
+
+  function nextMsg() {
+    if (step < steps) {
+      text.style.opacity = '0';
+      setTimeout(() => {
+        text.textContent = loaderMessages[step];
+        text.style.transition = 'opacity 0.35s';
+        text.style.opacity = '1';
+        step++;
+      }, 200);
+    }
+  }
+
+  nextMsg();
+  const msgInterval = setInterval(() => {
+    nextMsg();
+    if (step >= steps) clearInterval(msgInterval);
+  }, stepTime);
+
+  let progress = 0;
+  const barInterval = setInterval(() => {
+    progress += 100 / (duration / 50);
+    fill.style.width = Math.min(progress, 92) + '%';
+  }, 50);
+
+  // ── Appel API /api/generate ──
+  const payload = {
+    email,
+    companion:       formData.companions     || 'solo',
+    destination:     formData.destination    || '',
+    vehicle:         formData.vehicle        || 'van',
+    departure_place: formData.departure_place || '',
+    departure_date:  formData.departure_date  || '',
+    departure_time:  formData.departure_time  || '',
+    days:            Number(formData.days)    || 7,
+    rhythm:          formData.rythme          || 'equilibre',
+    accommodation:   formData.accommodation   || [],
+    food:            formData.food            || 'local',
+    interests:       formData.interests       || [],
+    lodgings:        formData.lodgings        || [],
+    budget_level:    formData.budget_level    || 'medium',
+    budget_amount:   formData.budget_amount   || null,
+    vehicle_range:   formData.vehicle_range   || null,
+    custom_notes:    (document.getElementById('custom-notes') || {}).value?.trim() || '',
+  };
+
+  fetch('/api/generate', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.error) throw new Error(data.error);
+
+    // Barre à 100%
+    clearInterval(msgInterval);
+    clearInterval(barInterval);
+    fill.style.width = '100%';
+
+    // Redirection vers la page roadbook
+    setTimeout(() => {
+      window.location.href = '/roadbook/' + data.roadbook_id;
+    }, 700);
+  })
+  .catch(err => {
+    clearInterval(msgInterval);
+    clearInterval(barInterval);
+
+    // Cacher le loader, réafficher slide 10
+    loader.style.display = 'none';
+    slide10.style.display = 'block';
+    slide10.classList.add('active');
+    currentSlide = 12;
+    document.getElementById('form-progress-bar').style.display = 'flex';
+
+    // Afficher l'erreur
+    if (errEl) {
+      errEl.style.display = 'block';
+      errEl.textContent   = '⚠️ ' + (err.message || 'Une erreur est survenue. Réessaie dans quelques instants.');
+    }
+    const btnGen = document.getElementById('btn-generate');
+    if (btnGen) btnGen.disabled = false;
+  });
+}
+
+function resetForm() {
+  document.getElementById('success-state').style.display = 'none';
+  document.getElementById('form-progress-bar').style.display = 'flex';
+  formData = {};
+  selectedDays = 7;
+  document.getElementById('days-count').textContent = '7';
+  currentSlide = 1;
+  for (let i = 1; i <= totalSlides; i++) {
+    const s = document.getElementById('slide-' + i);
+    if (!s) continue;
+    s.classList.remove('active', 'exit');
+    s.style.display = i === 1 ? 'block' : 'none';
+    if (i === 1) s.classList.add('active');
+  }
+  // Reset all selections
+  document.querySelectorAll('.form-option.selected').forEach(o => o.classList.remove('selected'));
+  document.querySelectorAll('.quiz-card-rythme.selected').forEach(o => o.classList.remove('selected'));
+  document.getElementById('autre-dest-field').style.display = 'none';
+  updateProgress();
+}
+
+// ─── CHECKOUT REDIRECT ───
+const STRIPE_LINKS = {
+  aventurier: 'https://buy.stripe.com/6oU00jce829Vg4gd6B3Ru01',
+  premium:    'https://buy.stripe.com/9B6fZha6029VbO06Id3Ru00'
+};
+
+function goToCheckout(plan, roadbookId, promoCode) {
+  const base = STRIPE_LINKS[plan];
+  if (!base || base.includes('LIEN_')) {
+    alert('⚙️ Lien de paiement non configuré. Ajoute ton lien Stripe dans le code (variable STRIPE_LINKS).');
+    return;
+  }
+  let params = roadbookId ? '?client_reference_id=' + encodeURIComponent(roadbookId) : '?';
+  if (promoCode) params += '&prefilled_promo_code=' + encodeURIComponent(promoCode.toUpperCase());
+  window.location.href = base + params;
+}
+
+// Init slides
+for (let i = 2; i <= totalSlides; i++) {
+  const s = document.getElementById('slide-' + i);
+  if (s) s.style.display = 'none';
+}
+
+// Date min = aujourd'hui
+const dateInput = document.getElementById('departure-date');
+if (dateInput) {
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.min = today;
+  dateInput.addEventListener('change', () => {
+    if (dateInput.value && dateInput.value < today) dateInput.value = today;
+  });
+}
+
+// Compteur caractères notes perso
+const notesTA = document.getElementById('custom-notes');
+const notesCount = document.getElementById('notes-count');
+if (notesTA && notesCount) {
+  notesTA.addEventListener('input', () => {
+    if (notesTA.value.length > 500) notesTA.value = notesTA.value.slice(0, 500);
+    notesCount.textContent = notesTA.value.length;
+  });
+}
+
+// ─── TOAST NOTIFICATIONS FOMO (100 notifications) ───
+const toastMessages = [
+  "🔥 Thomas vient de générer son itinéraire en Suisse (4 jours)",
+  "⚡ Manon a débloqué son Roadbook pour l'Italie du Nord en couple !",
+  "🏍️ Un motard vient de planifier ses cols dans les Dolomites",
+  "🚐 Lucas a créé son road trip en Van en Écosse (10 jours)",
+  "✨ Chloé prépare son city-trip à Amsterdam en solo",
+  "🔥 Maxime vient de lancer la génération pour l'Islande (7 jours)",
+  "⚡ Sarah a configuré son voyage en famille en Espagne",
+  "🚗 Nicolas vient de générer son tracé sur la Côte d'Azur",
+  "✨ Inès a trouvé ses spots secrets Instagram en Grèce",
+  "🚐 Julien part explorer la Bretagne en Van (5 jours)",
+  "🔥 Léa vient de créer son itinéraire gastronomique en Toscane",
+  "🏍️ Un groupe de motards a planifié la Route des Grandes Alpes",
+  "⚡ Enzo vient de débloquer son carnet de route pour le Portugal",
+  "✨ Camille prépare un week-end tranquille dans les Châteaux de la Loire",
+  "🚗 Alexandre a généré son road trip en Norvège (12 jours)",
+  "🔥 Clara vient de trouver ses randonnées sauvages à Madère",
+  "🚐 Antoine a configuré ses spots dodo pour les Landes en Van",
+  "⚡ Mathilde a généré son city-trip intense à Londres",
+  "✨ Hugo part explorer l'Andalousie en couple (8 jours)",
+  "🏍️ Une motarde vient de planifier son tracé dans les Cévennes",
+  "🔥 Valentine a débloqué ses spots cachés en Corse (6 jours)",
+  "⚡ Bastien vient de générer son voyage sur-mesure au Maroc",
+  "🚗 Elodie prépare son itinéraire sur la côte de l'Algarve",
+  "✨ Arthur a créé son voyage sur le thème des Châteaux en Bavière",
+  "🚐 Romane part 2 semaines en road trip en Irlande en Van",
+  "🔥 Quentin vient de planifier ses visites à Rome et Florence",
+  "⚡ Juliette a configuré son road trip électrique en Normandie",
+  "🏍️ Un motard vient de générer ses virages dans le Verdon",
+  "✨ Paul a trouvé ses spots photos secrets au Monténégro",
+  "🚗 Laura vient de générer son itinéraire en Croatie (9 jours)",
+  "🔥 Gabriel part explorer l'Alsace et la Route des Vins",
+  "⚡ Marine a débloqué son Roadbook pour la Côte Amalfitaine",
+  "🚐 Clément a créé son voyage slow-travel dans les Pyrénées",
+  "✨ Jade prépare son voyage entre potes à Majorque",
+  "🔥 Florian vient de lancer sa génération pour la Sardaigne",
+  "⚡ Alice a configuré son city-trip à Berlin (3 jours)",
+  "🚗 Théo vient de générer son voyage le long du Danube",
+  "🏍️ Un équipage a planifié son road trip moto au Pays Basque",
+  "✨ Zoé a trouvé ses cascades secrètes en Islande",
+  "🚐 Matthieu part en road trip sauvage dans les Alpes Suisses",
+  "🔥 Amandine vient de générer son itinéraire à Budapest",
+  "⚡ Alexis a débloqué ses hébergements de charme en Provence",
+  "🚗 Noémie prépare son voyage en famille dans les Pouilles",
+  "✨ Simon a créé son road trip sur la Wild Atlantic Way",
+  "🏍️ Un motard vient de générer sa traversée de la Forêt-Noire",
+  "🔥 Louise a configuré son voyage gastronomique à Lyon et Annecy",
+  "⚡ Killian vient de planifier son trip en Autriche (7 jours)",
+  "🚐 Mélanie a trouvé ses spots nature autour des Lacs Italiens",
+  "✨ Victor prépare son itinéraire de randonnées dans les Écrins",
+  "🔥 Pauline vient de générer son road trip de rêve aux Canaries (10 jours)",
+  "⚡ Raphaël a débloqué son itinéraire pour le Péloponnèse en Grèce",
+  "🚗 Sofia vient de configurer son voyage électrique dans les Fjords",
+  "🏍️ Un groupe de potes à moto a tracé son trip en Corse du Sud",
+  "✨ Léonie prépare un week-end romantique à Venise (3 jours)",
+  "🚐 Damien part explorer la côte escarpée de la Galice en Van",
+  "🔥 Audrey vient de générer ses spots Instagram à Santorin",
+  "⚡ Kevin a créé son parcours rando dans les Hautes Tatras",
+  "🚗 Manon vient de planifier son road trip des Châteaux en Écosse",
+  "✨ Cédric part découvrir l'Algarve en solo (6 jours)",
+  "🚐 Léa a configuré ses spots sauvages secrets en Sardaigne",
+  "🔥 Thibault vient de lancer son itinéraire autour des Lacs Autrichiens",
+  "🏍️ Un motard vient de générer sa trace GPX pour le Vercors",
+  "⚡ Iris a débloqué ses adresses insolites dans le Luberon",
+  "✨ Samuel prépare un city-trip ultra-intense à Prague",
+  "🚗 Éva vient de générer son road trip dans la vallée du Douro",
+  "🔥 Jérémy part 10 jours explorer l'Andalousie en famille",
+  "🚐 Maëlys a tracé son itinéraire Vanlife sur la côte d'Opale",
+  "⚡ Oscar vient de planifier sa tournée des châteaux d'Émilie-Romagne",
+  "✨ Anaïs a trouvé ses plages secrètes à Minorque (5 jours)",
+  "🏍️ Un duo de motards vient de configurer la Route Napoléon",
+  "🔥 Baptiste a débloqué son carnet de route pour l'Andorre",
+  "⚡ Mathéo vient de générer son trip rando dans le Tyrol",
+  "🚗 Line prépare son circuit gastronomique dans le Piémont",
+  "✨ Corentin a créé son voyage photo dans les Lofoten",
+  "🚐 Océane part 12 jours en autonomie totale en Suède en Van",
+  "🔥 Timothée vient de lancer sa génération pour la Sicile",
+  "⚡ Axelle a configuré son city-trip chill à Copenhague",
+  "🚗 Loïc vient de générer son itinéraire dans le Pays de Galles",
+  "🏍️ Un motard vient de planifier ses étapes en Forêt-Noire",
+  "✨ Margaux a trouvé ses cascades cachées en Auvergne (4 jours)",
+  "🚐 Rémi part explorer les spots nature de la Forêt d'Iraty",
+  "🔥 Elsa vient d'obtenir son Roadbook pour la Crète sauvage",
+  "⚡ Dorian a programmé sa traversée des Pyrénées espagnoles",
+  "🚗 Justine prépare son voyage en voiture électrique à Amsterdam",
+  "✨ Dorian a créé son trip sur le thème de l'Histoire à Rome",
+  "🏍️ Une motarde vient de flécher ses virages dans les Vosges",
+  "🔥 Inès a configuré son itinéraire secret à Ibiza hors-saison",
+  "⚡ Tristan vient de débloquer son voyage de noces à Majorque",
+  "🚗 Agathe part explorer la Toscane rurale (7 jours)",
+  "✨ Kilian a planifié son road trip châteaux en Transylvanie",
+  "🚐 Fanny a généré ses spots dodo face aux sommets des Dolomites",
+  "🔥 Louis vient de créer son parcours sur la Wild Atlantic Way",
+  "⚡ Alix a configuré son city-trip culturel à Vienne",
+  "🚗 Bastien prépare sa traversée de la Suisse par les cols mythiques",
+  "🏍️ Un club de moto vient de générer son tracé en Ardèche",
+  "✨ Clémence a trouvé ses points de vue secrets à Madère",
+  "🚐 Robin part en week-end prolongé en Van sur l'Île de Ré",
+  "🔥 Nathan vient de lancer sa génération pour les Îles Féroé",
+  "⚡ Lola a débloqué ses logements d'exception dans la vallée du Rhin",
+  "🚀 Un utilisateur TikTok vient de générer le voyage parfait (15 jours)"
+];
+
+// Shuffle array for varied order
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+let shuffledToasts = shuffleArray(toastMessages);
+let toastIdx = 0;
+
+function showToast() {
+  if (toastIdx >= shuffledToasts.length) {
+    shuffledToasts = shuffleArray(toastMessages);
+    toastIdx = 0;
+  }
+  const fullText = shuffledToasts[toastIdx++];
+
+  // Extract emoji (first "word")
+  const spaceIdx = fullText.indexOf(' ');
+  const emoji = spaceIdx > -1 ? fullText.substring(0, spaceIdx) : '🔥';
+  const msg = spaceIdx > -1 ? fullText.substring(spaceIdx + 1) : fullText;
+
+  const toast = document.getElementById('main-toast');
+  document.getElementById('toast-emoji').textContent = emoji;
+  document.getElementById('toast-title').textContent = 'En direct';
+  document.getElementById('toast-msg').textContent = msg;
+
+  toast.classList.remove('hide');
+  toast.classList.add('show');
+
+  setTimeout(() => {
+    toast.classList.add('hide');
+    setTimeout(() => toast.classList.remove('show', 'hide'), 400);
+  }, 4500);
+}
+
+// ─── REVIEWS CAROUSEL ───
+(function() {
+  const track = document.getElementById('reviews-track');
+  if (!track) return;
+  const cards = Array.from(track.querySelectorAll('.review-card'));
+  const total = cards.length;
+  let page = 0;
+
+  function perPage() {
+    return window.innerWidth <= 600 ? 1 : window.innerWidth <= 900 ? 2 : 3;
+  }
+  function maxPage() { return Math.ceil(total / perPage()) - 1; }
+
+  // Build dots
+  const dotsContainer = document.getElementById('carousel-dots');
+  function buildDots() {
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i <= maxPage(); i++) {
+      const d = document.createElement('span');
+      d.className = 'carousel-dot' + (i === page ? ' active' : '');
+      d.addEventListener('click', () => goToPage(i));
+      dotsContainer.appendChild(d);
+    }
+  }
+
+  function goToPage(p) {
+    page = Math.max(0, Math.min(p, maxPage()));
+    const pp = perPage();
+    const cardW = cards[0].offsetWidth + 16;
+    track.style.transform = `translateX(-${page * pp * cardW}px)`;
+    document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === page));
+    const prev = document.getElementById('rev-prev');
+    const next = document.getElementById('rev-next');
+    if (prev) prev.disabled = page === 0;
+    if (next) next.disabled = page >= maxPage();
+  }
+
+  window.moveCarousel = function(dir) { goToPage(page + dir); };
+
+  // Init after DOM paint
+  requestAnimationFrame(() => { buildDots(); goToPage(0); });
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => { buildDots(); goToPage(0); }, 200);
+  });
+})();
+
+// ─── FAQ ACCORDION ───
+function toggleFaq(item) {
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// Intervalle aléatoire entre 12 et 20 secondes
+function scheduleNextToast() {
+  const delay = 12000 + Math.random() * 8000;
+  setTimeout(() => {
+    showToast();
+    scheduleNextToast();
+  }, delay);
+}
+
+setTimeout(() => {
+  showToast();
+  scheduleNextToast();
+}, 5000);
+</script>
+</body>
+</html>
