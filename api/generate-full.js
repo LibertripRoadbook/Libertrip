@@ -1,9 +1,9 @@
 // api/generate-full.js
 // POST /api/generate-full
-// Génère les jours 2→N d'un roadbook payé.
-// Appelé directement par le navigateur de l'utilisateur après paiement.
-// Reçoit : { roadbook_id }
-// Retourne : { ok: true } quand les jours sont sauvegardés en base.
+// Génère UN jour à la fois pour un roadbook payé.
+// Appelé en boucle par le navigateur jusqu'à ce que tous les jours soient générés.
+// Reçoit : { roadbook_id, day_number }
+// Retourne : { ok: true, day_number, done: bool }
 
 import OpenAI from 'openai';
 import { supabase } from '../lib/supabase.js';
@@ -31,10 +31,15 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') return json(res, 405, { error: 'Méthode non autorisée.' });
 
-  const { roadbook_id } = req.body || {};
+  const { roadbook_id, day_number } = req.body || {};
 
   if (!roadbook_id || !UUID_REGEX.test(roadbook_id)) {
     return json(res, 400, { error: 'ID invalide.' });
+  }
+
+  const dayNum = Number(day_number);
+  if (!dayNum || dayNum < 2) {
+    return json(res, 400, { error: 'day_number invalide (min 2).' });
   }
 
   // Charger le roadbook
@@ -46,92 +51,108 @@ export default async function handler(req, res) {
 
   if (error || !rb) return json(res, 404, { error: 'Roadbook introuvable.' });
 
-  // Vérifier que c'est bien payé
   if (rb.payment_status !== 'paid') {
     return json(res, 403, { error: 'Paiement requis.' });
   }
 
-  // Si déjà généré, retourner directement
-  if (rb.days_full && Array.isArray(rb.days_full) && rb.days_full.length > 0) {
-    return json(res, 200, { ok: true, already_done: true });
+  const criteria  = rb.criteria || {};
+  const totalDays = Number(criteria.days) || 3;
+
+  if (dayNum > totalDays) {
+    return json(res, 400, { error: `Jour ${dayNum} hors limites (max ${totalDays}).` });
   }
 
-  const criteria = rb.criteria || {};
-  const days     = Number(criteria.days) || 3;
-
-  if (days <= 1) {
-    // Voyage d'un seul jour, rien à générer
-    await supabase.from('roadbooks').update({ days_full: [] }).eq('id', roadbook_id);
-    return json(res, 200, { ok: true });
+  // Si ce jour est déjà dans days_full, on skip
+  const existing = Array.isArray(rb.days_full) ? rb.days_full : [];
+  if (existing.find(d => d.day === dayNum)) {
+    const done = existing.length >= (totalDays - 1);
+    return json(res, 200, { ok: true, day_number: dayNum, skipped: true, done });
   }
 
-  // Construire le prompt pour les jours 2→N
-  const fullPrompt = `
+  // Contexte des jours déjà générés (jour 1 + jours précédents déjà en base)
+  const previousDays = [
+    { day: 1, title: rb.day_1?.title, steps: (rb.day_1?.steps || []).map(s => s.title) },
+    ...existing.filter(d => d.day < dayNum).map(d => ({
+      day: d.day, title: d.title, steps: (d.steps || []).map(s => s.title)
+    }))
+  ];
+
+  const dayPrompt = `
 ${buildUserPrompt(criteria)}
 
-MISSION SPÉCIALE — VERSION PREMIUM :
-Le Jour 1 a déjà été généré.
-Génère maintenant les jours 2 à ${days} avec le MÊME niveau de détail que le Jour 1.
+MISSION — VERSION PREMIUM, JOUR ${dayNum} UNIQUEMENT :
+Les jours précédents ont déjà été générés. Génère UNIQUEMENT le Jour ${dayNum} sur ${totalDays}.
 
-JOUR 1 DÉJÀ GÉNÉRÉ (contexte, ne pas répéter) :
-${JSON.stringify({ title: rb.day_1?.title, steps: (rb.day_1?.steps||[]).map(s => s.title) })}
+JOURS DÉJÀ GÉNÉRÉS (contexte, ne pas répéter) :
+${JSON.stringify(previousDays)}
 
 FORMAT DE RÉPONSE — retourne UNIQUEMENT ce JSON :
 {
-  "days": [
+  "day": ${dayNum},
+  "title": "...",
+  "theme": "...",
+  "distance_km": 0,
+  "highlight": "...",
+  "steps": [
     {
-      "day": 2,
-      "title": "...",
-      "theme": "...",
-      "distance_km": 0,
-      "highlight": "...",
-      "steps": [
-        {
-          "order": 1, "time": "HH:MM", "title": "...", "description": "...",
-          "why_chosen": "...", "type": "stop",
-          "duration_min": 60,
-          "location": { "name": "...", "address": "...", "lat": 0.0, "lng": 0.0 },
-          "access_point": { "label": "...", "lat": 0.0, "lng": 0.0, "note": "..." },
-          "place_info": null, "price_info": null,
-          "transport_tip": "...", "tips": [], "booking_url": null, "secret": false
-        }
-      ],
-      "overnight": {
-        "name": "...", "description": "...", "type": "hotel",
-        "price_range": "...", "lat": 0.0, "lng": 0.0,
-        "address": "...", "tips": "..."
-      }
+      "order": 1, "time": "HH:MM", "title": "...", "description": "...",
+      "why_chosen": "...", "type": "stop", "duration_min": 60,
+      "location": { "name": "...", "address": "...", "lat": 0.0, "lng": 0.0 },
+      "access_point": { "label": "...", "lat": 0.0, "lng": 0.0, "note": "..." },
+      "place_info": null, "price_info": null,
+      "transport_tip": "...", "tips": [], "booking_url": null, "secret": false
     }
-  ]
+  ],
+  "overnight": {
+    "name": "...", "description": "...", "type": "hotel",
+    "price_range": "...", "lat": 0.0, "lng": 0.0, "address": "...", "tips": "..."
+  }
 }
+
+IMPORTANT : 3 à 5 étapes, concis (2 phrases max par description), coordonnées GPS réelles.
 `.trim();
 
   try {
     const completion = await openai.chat.completions.create({
       model:           'gpt-4o',
-      max_tokens:      4000,
+      max_tokens:      2500,
       temperature:     0.7,
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user',   content: fullPrompt }
+        { role: 'user',   content: dayPrompt }
       ]
     });
 
-    const raw    = completion.choices[0]?.message?.content || '{"days":[]}';
+    const raw    = completion.choices[0]?.message?.content || '{}';
     const parsed = JSON.parse(raw);
-    const daysArr = Array.isArray(parsed) ? parsed : (parsed.days || []);
+
+    // S'assurer que le champ day est bien défini
+    parsed.day = dayNum;
+
+    // Ajouter ce jour à days_full (atomic: re-lire pour éviter les races)
+    const { data: latest } = await supabase
+      .from('roadbooks')
+      .select('days_full')
+      .eq('id', roadbook_id)
+      .single();
+
+    const currentDays = Array.isArray(latest?.days_full) ? latest.days_full : [];
+    // Éviter les doublons
+    const merged = [...currentDays.filter(d => d.day !== dayNum), parsed]
+      .sort((a, b) => a.day - b.day);
 
     await supabase
       .from('roadbooks')
-      .update({ days_full: daysArr })
+      .update({ days_full: merged })
       .eq('id', roadbook_id);
 
-    console.log(`[generate-full] ${daysArr.length} jours générés pour ${roadbook_id}`);
-    return json(res, 200, { ok: true, days_count: daysArr.length });
+    const done = merged.length >= (totalDays - 1);
+    console.log(`[generate-full] Jour ${dayNum}/${totalDays} généré pour ${roadbook_id} (done=${done})`);
+    return json(res, 200, { ok: true, day_number: dayNum, done });
 
   } catch (err) {
-    console.error('[generate-full] Erreur OpenAI:', err.message);
-    return json(res, 502, { error: 'Erreur IA. Réessaie.' });
+    console.error(`[generate-full] Erreur jour ${dayNum}:`, err.message);
+    return json(res, 502, { error: `Erreur IA jour ${dayNum}. Réessaie.` });
   }
 }
