@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Mon Roadbook — LIBERTRIP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -59,6 +59,7 @@ nav {
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   padding: 16px 24px;
+  padding-top: max(16px, env(safe-area-inset-top));
   display: flex; align-items: center; justify-content: space-between;
 }
 
@@ -290,22 +291,35 @@ nav {
 .place-modal-overlay {
   display: none; position: fixed; inset: 0; z-index: 2000;
   background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
-  align-items: center; justify-content: center; padding: 20px;
+  align-items: flex-end; justify-content: center; padding: 0;
+}
+@media (min-width: 600px) {
+  .place-modal-overlay { align-items: center; padding: 20px; }
 }
 .place-modal-overlay.open { display: flex; }
 .place-modal {
   background: #0f0f0f; border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 24px; padding: 32px; max-width: 480px; width: 100%;
+  border-radius: 24px 24px 0 0; padding: 32px; max-width: 480px; width: 100%;
   position: relative; animation: modal-in 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  max-height: 88vh; overflow-y: auto;
+  /* scrollbar fine sur le côté */
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent;
+}
+.place-modal::-webkit-scrollbar { width: 4px; }
+.place-modal::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+@media (min-width: 600px) {
+  .place-modal { border-radius: 24px; max-height: 90vh; }
 }
 @keyframes modal-in { from { opacity:0; transform: scale(0.9) translateY(20px); } to { opacity:1; transform: scale(1) translateY(0); } }
+/* La croix : sticky pour rester visible quand le modal scroll */
 .place-modal-close {
-  position: absolute; top: 16px; right: 16px;
-  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  position: sticky; top: 0; float: right; margin: -4px -4px 12px 12px;
+  z-index: 10;
+  background: rgba(15,15,15,0.95); border: 1px solid rgba(255,255,255,0.1);
   border-radius: 50%; width: 32px; height: 32px; cursor: pointer;
   color: rgba(255,255,255,0.5); font-size: 16px;
   display: flex; align-items: center; justify-content: center;
-  transition: background 0.2s;
+  transition: background 0.2s; flex-shrink: 0;
 }
 .place-modal-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
 .place-modal-type { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
