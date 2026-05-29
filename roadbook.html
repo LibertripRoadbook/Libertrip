@@ -1013,44 +1013,48 @@ function renderLockScreen(roadbookId, daysPreview) {
 
 // ── 10. Polling post-paiement ────────────────────────────────────────────────
 
-function startPaymentPolling(roadbookId) {
-  // Afficher un message d'attente
+// ── Génération des jours complets déclenchée par le frontend ────────────────
+async function triggerFullGeneration(roadbookId) {
   const section = document.getElementById('days-section');
+
+  // Écran de génération
   section.innerHTML = `
-    <div style="text-align:center;padding:60px 20px;">
-      <div style="font-size:40px;margin-bottom:16px;animation:spin 1.5s linear infinite">⏳</div>
-      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:8px;">Confirmation du paiement…</div>
-      <div style="font-size:14px;color:rgba(255,255,255,0.4);">Ton roadbook complet est en cours de déverrouillage.</div>
+    <div style="text-align:center;padding:80px 20px;">
+      <div style="font-size:48px;margin-bottom:20px;animation:spin 1.5s linear infinite">✨</div>
+      <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:12px;color:#fff;">
+        Génération de ton voyage complet…
+      </div>
+      <div style="font-size:15px;color:rgba(255,255,255,0.5);max-width:360px;margin:0 auto;line-height:1.6;">
+        L'IA prépare tes ${window._roadbookDays || ''} jours avec tous les détails, spots secrets et adresses locales.<br>
+        <span style="color:rgba(255,255,255,0.3);font-size:13px;">Ça prend environ 20-30 secondes.</span>
+      </div>
     </div>`;
 
-  let attempts = 0;
-  const maxAttempts = 20; // 60 secondes max
+  try {
+    const res  = await fetch('/api/generate-full', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ roadbook_id: roadbookId })
+    });
+    const data = await res.json();
 
-  const poll = setInterval(async () => {
-    attempts++;
-    try {
-      const res  = await fetch(`/api/roadbook?id=${encodeURIComponent(roadbookId)}`);
-      const data = await res.json();
-
-      if (data.payment_status === 'paid') {
-        clearInterval(poll);
-        // Nettoyer l'URL
-        window.history.replaceState({}, '', window.location.pathname);
-        // Recharger proprement
-        window.location.reload();
-      }
-    } catch(e) { /* on continue */ }
-
-    if (attempts >= maxAttempts) {
-      clearInterval(poll);
+    if (data.ok) {
+      // Succès → recharger pour afficher les jours
+      window.location.reload();
+    } else {
       section.innerHTML = `
         <div style="text-align:center;padding:60px 20px;">
-          <div style="font-size:14px;color:rgba(255,255,255,0.4);">
-            La confirmation prend un peu de temps. Rafraîchis la page dans quelques secondes.
-          </div>
+          <div style="font-size:14px;color:#F87171;">Erreur lors de la génération. <a href="" style="color:#4f8eff;">Rafraîchis la page</a> pour réessayer.</div>
         </div>`;
     }
-  }, 3000);
+  } catch(e) {
+    section.innerHTML = `
+      <div style="text-align:center;padding:60px 20px;">
+        <div style="font-size:14px;color:rgba(255,255,255,0.4);">
+          Erreur réseau. <a href="" style="color:#4f8eff;">Rafraîchis la page</a> pour réessayer.
+        </div>
+      </div>`;
+  }
 }
 
 // ── 11. Initialisation ───────────────────────────────────────────────────────
@@ -1074,6 +1078,7 @@ async function init() {
 
     const logistics = data.logistics || {};
     const criteria  = data.criteria  || {};
+    window._roadbookDays = criteria.days || logistics.total_days || '';
     const day1      = data.day_1     || {};
     const isPaid    = data.payment_status === 'paid';
 
@@ -1105,12 +1110,13 @@ async function init() {
     const justPaid = new URLSearchParams(window.location.search).get('paid') === '1';
 
     if (isPaid && data.days_full && data.days_full.length) {
+      // ✅ Payé + jours générés → afficher tout
       renderFullDays(data.days_full);
-      // Nettoyer l'URL si on revient de Stripe
       if (justPaid) window.history.replaceState({}, '', window.location.pathname);
-    } else if (justPaid) {
-      // Paiement vient d'être effectué mais webhook pas encore traité → polling
-      startPaymentPolling(roadbookId);
+    } else if (isPaid) {
+      // ✅ Payé mais jours pas encore générés → déclencher génération
+      if (justPaid) window.history.replaceState({}, '', window.location.pathname);
+      triggerFullGeneration(roadbookId);
     } else {
       renderLockScreen(roadbookId, data.days_preview || []);
     }
