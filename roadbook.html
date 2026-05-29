@@ -844,11 +844,8 @@ function renderStep(step) {
     ? `<div class="why-badge">${esc(step.why_chosen)}</div>`
     : '';
 
-  const transportTip = step.transport_tip
-    ? `<div class="transport-tip">${esc(step.transport_tip)}</div>`
-    : '';
-
-  // Badge point d'accès
+  // transport_tip visible uniquement dans le modal ℹ (pas sur la carte)
+  // Badge point d'accès uniquement (a du sens avec le GPS)
   const accessBadge = step.access_point?.note
     ? `<div class="access-badge">📍 ${esc(step.access_point.note)}</div>`
     : '';
@@ -880,7 +877,6 @@ function renderStep(step) {
       ${whyBadge}
       <div class="step-desc">${esc(step.description)}</div>
       ${accessBadge}
-      ${transportTip}
       ${tipsHTML}
       ${gps}
     </div>`;
