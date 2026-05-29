@@ -41,7 +41,7 @@ export default async function handler(req, res) {
   const { error } = await supabaseAnon.auth.signInWithOtp({
     email: email.toLowerCase().trim(),
     options: {
-      emailRedirectTo: `${BASE_URL}/mes-roadbooks`,
+      emailRedirectTo: `${BASE_URL}/auth/callback`,
       shouldCreateUser: true,
     }
   });
