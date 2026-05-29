@@ -114,6 +114,18 @@ main { max-width:800px; margin:0 auto; padding:48px 24px; }
   padding:14px 32px; font-family:'Syne',sans-serif; font-weight:700; font-size:15px;
 }
 
+/* Success banner */
+.success-banner {
+  display:none; background:rgba(52,211,153,0.08);
+  border:1px solid rgba(52,211,153,0.25); border-radius:16px;
+  padding:20px 24px; margin-bottom:28px;
+  display:flex; align-items:flex-start; gap:14px;
+}
+.success-banner-icon { font-size:28px; flex-shrink:0; }
+.success-banner-text { flex:1; }
+.success-banner-title { font-family:'Syne',sans-serif; font-weight:700; font-size:17px; color:var(--green); margin-bottom:4px; }
+.success-banner-sub { font-size:14px; color:rgba(255,255,255,0.6); line-height:1.5; }
+
 /* Loader */
 #loading-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:80vh; gap:16px; }
 .loader { width:32px; height:32px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
@@ -162,6 +174,16 @@ main { max-width:800px; margin:0 auto; padding:48px 24px; }
 <main id="main-content" style="display:none;">
   <div class="page-title">Mes Roadbooks</div>
   <div class="page-sub" id="page-sub">Retrouve tous tes itinéraires générés.</div>
+
+  <!-- Bandeau succès paiement -->
+  <div class="success-banner" id="success-banner" style="display:none;">
+    <div class="success-banner-icon">🎉</div>
+    <div class="success-banner-text">
+      <div class="success-banner-title">Paiement confirmé !</div>
+      <div class="success-banner-sub">Ton roadbook complet est en cours de génération. Clique dessus ci-dessous pour accéder à ton itinéraire complet — il sera prêt dans quelques secondes.</div>
+    </div>
+  </div>
+
   <div class="rb-grid" id="rb-grid"></div>
 </main>
 
@@ -238,8 +260,14 @@ async function sendMagicLink() {
   }
 }
 
-async function loadRoadbooks() {
+async function loadRoadbooks(showBanner = false) {
   if (!session?.access_token) return;
+
+  // Aussi vérifier le flag sessionStorage (cas: pas connecté au moment du paiement)
+  if (!showBanner && sessionStorage.getItem('showPaidBanner') === '1') {
+    showBanner = true;
+    sessionStorage.removeItem('showPaidBanner');
+  }
 
   document.getElementById('nav-email').textContent = '';
   document.getElementById('btn-logout').style.display = '';
@@ -260,6 +288,10 @@ async function loadRoadbooks() {
     document.getElementById('loading-screen').style.display = 'none';
     document.getElementById('main-content').style.display   = '';
 
+    if (showBanner) {
+      document.getElementById('success-banner').style.display = 'flex';
+    }
+
     const grid = document.getElementById('rb-grid');
     if (!data.roadbooks || data.roadbooks.length === 0) {
       grid.innerHTML = `
@@ -272,13 +304,21 @@ async function loadRoadbooks() {
       return;
     }
 
+    // Si retour paiement, mettre en avant le 1er roadbook payé
+    const highlightId = showBanner
+      ? (data.roadbooks.find(r => r.payment_status === 'paid') || data.roadbooks[0])?.id
+      : null;
+
     grid.innerHTML = data.roadbooks.map(rb => {
-      const date   = new Date(rb.created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
-      const badge  = rb.payment_status === 'paid'
+      const date      = new Date(rb.created_at).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+      const badge     = rb.payment_status === 'paid'
         ? '<span class="rb-badge paid">✅ Complet</span>'
         : '<span class="rb-badge pending">🔒 Aperçu</span>';
+      const highlight = rb.id === highlightId
+        ? 'border-color:rgba(52,211,153,0.4);box-shadow:0 0 0 3px rgba(52,211,153,0.1);'
+        : '';
       return `
-        <a class="rb-card" href="${rb.url}">
+        <a class="rb-card" href="${rb.url}" style="${highlight}">
           <div class="rb-info">
             <div class="rb-dest">${rb.destination}</div>
             <div class="rb-meta">${rb.days} jours · Généré le ${date}</div>
@@ -316,9 +356,19 @@ async function init() {
     session = getStoredSession();
   }
 
+  // Détecter retour Stripe après paiement
+  const urlParams = new URLSearchParams(window.location.search);
+  const justPaid  = urlParams.get('paid') === '1';
+  if (justPaid) {
+    // Nettoyer l'URL sans recharger
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+
   if (session?.access_token) {
-    await loadRoadbooks();
+    await loadRoadbooks(justPaid);
   } else {
+    // Pas connecté mais vient de payer → stocker le flag, demander connexion
+    if (justPaid) sessionStorage.setItem('showPaidBanner', '1');
     showLoginScreen();
   }
 }
