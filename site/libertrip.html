@@ -1209,7 +1209,6 @@
   html.light nav { background: var(--nav-bg) !important; border-bottom-color: var(--border); }
   html.light .mobile-menu { background: var(--card); border-color: var(--border); }
   html.light .glow-orb { opacity: 0.15; }
-  html.light .partners-bar { background: var(--card); border-color: var(--border); }
   html.light .partner-item { color: var(--gray); }
   html.light footer { background: var(--black); border-top-color: var(--border); }
   .how-section { background: linear-gradient(to bottom, var(--black), #050508, var(--black)); }
@@ -1224,10 +1223,10 @@
   html.light .toast-title { color: #111; }
   html.light .toast-msg { color: #555; }
   /* Partners bar light mode */
-  html.light .partners-bar { background: #ffffff; border-color: var(--border); }
+  html.light .partners-bar { background: transparent !important; border: none !important; box-shadow: none; }
   html.light .partners-label { color: var(--gray); }
-  html.light .partner-item { color: #333; }
-  html.light .partner-divider { background: var(--border); }
+  html.light .partner-item { color: var(--gray); }
+  html.light .partner-divider { background: var(--border-light); }
   /* Bento cards light mode */
   html.light .bento-card h3 { color: var(--white); }
   html.light .bento-card p { color: var(--gray); }
@@ -1521,147 +1520,7 @@
 
   <div class="reviews-carousel-wrapper reveal">
     <div class="reviews-track-outer">
-      <div class="reviews-track" id="reviews-track">
-
-        <div class="review-card reveal-item" style="transition-delay:0.00s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"J'ai passé 3 heures sur Google pour préparer mon trip en Norvège. LIBERTRIP m'a sorti un roadbook 10x meilleur en 1 minute. Littéralement."</div>
-          <div class="review-author"><div class="review-avatar">L</div><div><div class="review-name">Lucas M.</div><div class="review-detail">Road-trip Norvège · Van</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:0.08s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Les cols qu'il m'a proposés pour la Corse, j'aurais jamais trouvé ça tout seul. L'IA connaît des spots que même les locaux ignorent."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#ff6b6b,#f5c842);">M</div><div><div class="review-name">Marco D.</div><div class="review-detail">Cols corses · Moto</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:0.16s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Mon itinéraire Tokyo en 5 jours était parfait. Transports, timing, restos hors-des-sentiers battus. J'ai eu l'impression d'avoir un guide local dans la poche."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#8b5cf6,#4f8eff);">S</div><div><div class="review-name">Sophie L.</div><div class="review-detail">City-trip Tokyo · Transports</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:0.24s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Le roadbook Islande pour notre van-trip était dingue. Chaque spot recommandé était une claque visuelle, et les horaires étaient parfaits pour éviter les foules. On recommence l'an prochain."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#06b6d4,#4f8eff);">J</div><div><div class="review-name">Julie & Tom</div><div class="review-detail">Van-trip Islande · 12 jours</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:0.32s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"En solo en Espagne, j'avais peur de m'ennuyer. L'IA m'a concocté un itinéraire tellement dense et varié que je n'ai même pas eu le temps de vérifier Instagram une seule fois."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">A</div><div><div class="review-name">Anaïs R.</div><div class="review-detail">Solo Espagne · Voiture</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:0.40s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Les spots Instagram que LIBERTRIP m'a trouvés en Grèce… même mes abonnés me demandaient si c'était du CGI. Ces endroits n'existaient pas sur les guides classiques."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#8b5cf6,#ec4899);">C</div><div><div class="review-name">Camille V.</div><div class="review-detail">Grèce · Spots secrets</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:0.48s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Voyage de noces en Toscane. Je voulais que ce soit parfait. LIBERTRIP a trouvé des agriturismo que je n'aurais jamais dénichés seul, avec des routes de nuit absolument magiques."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#10b981,#4f8eff);">R</div><div><div class="review-name">Romain & Clara</div><div class="review-detail">Toscane · Voiture</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:0.56s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"On était 5 potes en van en Écosse. L'IA a géré les spots de stationnement légaux, les points de recharge, les pubs locaux… même nos disputes sur la destination suivante ont diminué."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#059669,#f59e0b);">K</div><div><div class="review-name">Kevin B.</div><div class="review-detail">Écosse · Van 5 pax</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:0.64s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Je fais de la moto depuis 20 ans et je pensais connaître les Alpes par cœur. LIBERTRIP m'a sorti 3 cols que je n'avais jamais empruntés. Du bitume de rêve, sans un seul touriste."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#dc2626,#f59e0b);">P</div><div><div class="review-name">Patrick H.</div><div class="review-detail">Alpes · Moto 20 ans d'expérience</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:0.72s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Famille de 4, enfants de 6 et 9 ans, road-trip en Croatie. L'IA a intégré les plages adaptées aux enfants, les restaurants avec menu enfant et les étapes courtes. Zéro crise dans la voiture."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#4f8eff,#8b5cf6);">N</div><div><div class="review-name">Nathalie & Éric</div><div class="review-detail">Croatie en famille · 9 jours</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:0.80s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Mon véhicule électrique me rendait nerveux pour les longs trajets. LIBERTRIP a planifié chaque borne Ionity sur mon parcours Portugal-Espagne avec les temps de pause optimaux. Stress zéro."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#22c55e,#4f8eff);">T</div><div><div class="review-name">Thomas G.</div><div class="review-detail">Portugal · Électrique</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:0.88s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"City-trip à Prague en 3 jours. J'avais peur de faire le "classique". L'IA m'a orienté vers des cafés de spécialité cachés dans des arrière-cours, des bars à absinthe locaux. Incroyable."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#f59e0b,#8b5cf6);">M</div><div><div class="review-name">Margot D.</div><div class="review-detail">City-trip Prague · Solo</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:0.96s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Le roadbook Sardaigne était tellement précis que le gendarme local nous a demandé si on était des journalistes. Il ne connaissait même pas la moitié des plages listées."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#ef4444,#f59e0b);">F</div><div><div class="review-name">Florian M.</div><div class="review-detail">Sardaigne · Voiture</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:1.04s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Randonnées dans les Écrins avec l'IA. Elle a croisé les conditions météo, les refuges disponibles et mon niveau de forme pour me générer un trek parfaitement calibré. J'ai adoré chaque journée."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#6366f1,#22c55e);">V</div><div><div class="review-name">Victor L.</div><div class="review-detail">Écrins · Rando 7 jours</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:1.12s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"J'ai utilisé LIBERTRIP pour préparer mon Van-trip au Portugal. Les spots de van-life sauvages recommandés étaient parfaits — et surtout légaux. C'est rare de trouver ça compilé proprement."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#0ea5e9,#8b5cf6);">O</div><div><div class="review-name">Océane F.</div><div class="review-detail">Portugal · Vanlife solo</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:1.20s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Algarve en couple, 6 jours. Chaque matin on recevait le programme du jour via le chat roadbook. On s'est sentis guidés sans jamais être contraints. La liberté avec un filet de sécurité."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#f472b6,#f59e0b);">I</div><div><div class="review-name">Inès & Sam</div><div class="review-detail">Algarve en couple</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:1.28s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Traversée des Dolomites à moto avec 3 amis. LIBERTRIP nous a sortis des sentiers battus façon rally, avec des points-de-vue absolument épiques. On a roulé 11 heures sans s'en rendre compte."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#dc2626,#6366f1);">B</div><div><div class="review-name">Bastien & co.</div><div class="review-detail">Dolomites · Moto x3</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:1.36s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Je gère une communauté voyage sur TikTok. J'ai testé LIBERTRIP pour créer du contenu. Résultat : 3 vidéos virales en 2 semaines grâce aux spots uniques trouvés en Sicile. Merci !"</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">L</div><div><div class="review-name">Léa créatrice</div><div class="review-detail">Sicile · Contenu TikTok</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:1.44s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Voyage gastronomique en Bourgogne. L'IA a intégré mes allergies alimentaires ET mes préférences de vins naturels dans l'itinéraire. J'ai mangé et bu comme jamais. Chapeau."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#8b5cf6,#f59e0b);">H</div><div><div class="review-name">Hugo C.</div><div class="review-detail">Bourgogne · Gastronomie</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:1.52s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Road-trip Norvège en voiture électrique avec 2 enfants. LIBERTRIP a jonglé entre autonomie des bornes, étapes adaptées aux enfants et paysages de fjords. Un sans-faute total."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#22c55e,#0ea5e9);">E</div><div><div class="review-name">Élise & David</div><div class="review-detail">Norvège · Famille électrique</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:1.60s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Séjour de 10 jours aux Canaries. Je voulais tout : surf, rando, gastronomie locale, plages secrètes. L'IA a tout combiné dans un planning logistiquement parfait. Je me suis senti invincible."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#f59e0b,#22c55e);">Q</div><div><div class="review-name">Quentin D.</div><div class="review-detail">Canaries · Multi-activités</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:1.68s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Weekend à Berlin pour 6 potes aux goûts très différents. L'IA a réussi à contenter le fan de musées, les fêtards, la foodie et les deux qui voulaient juste se balader. Exploit absolu."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#6366f1,#f472b6);">Z</div><div><div class="review-name">Zoé & potes</div><div class="review-detail">Berlin · City-trip x6</div></div></div>
-        </div>
-
-        <div class="review-card reveal-item" style="transition-delay:1.76s;">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">"Roadbook Lofoten pour mon voyage photo. L'IA a intégré les heures de lever/coucher du soleil pour chaque spot. J'ai shooté la golden hour à chaque fois. Résultat incroyable."</div>
-          <div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#0ea5e9,#ef4444);">G</div><div><div class="review-name">Guillaume R.</div><div class="review-detail">Lofoten · Photographe</div></div></div>
-        </div>
-
-      </div>
+      <div class="reviews-track" id="reviews-track"></div>
     </div>
 
     <div class="carousel-controls">
@@ -2748,46 +2607,45 @@ function showToast() {
   }, 4500);
 }
 
-// ─── REVIEWS CAROUSEL ───
-(function() {
+// ─── REVIEWS CAROUSEL — initialisé après renderReviews ───
+let _carouselPage = 0;
+
+function initCarousel() {
   const track = document.getElementById('reviews-track');
   if (!track) return;
   const cards = Array.from(track.querySelectorAll('.review-card'));
-  const total = cards.length;
-  let page = 0;
+  if (!cards.length) return;
+  _carouselPage = 0;
 
-  function perPage() {
-    return window.innerWidth <= 600 ? 1 : window.innerWidth <= 900 ? 2 : 3;
-  }
-  function maxPage() { return Math.ceil(total / perPage()) - 1; }
+  function perPage() { return window.innerWidth <= 600 ? 1 : window.innerWidth <= 900 ? 2 : 3; }
+  function maxPage() { return Math.max(0, Math.ceil(cards.length / perPage()) - 1); }
 
-  // Build dots
   const dotsContainer = document.getElementById('carousel-dots');
   function buildDots() {
+    if (!dotsContainer) return;
     dotsContainer.innerHTML = '';
     for (let i = 0; i <= maxPage(); i++) {
       const d = document.createElement('span');
-      d.className = 'carousel-dot' + (i === page ? ' active' : '');
+      d.className = 'carousel-dot' + (i === _carouselPage ? ' active' : '');
       d.addEventListener('click', () => goToPage(i));
       dotsContainer.appendChild(d);
     }
   }
 
   function goToPage(p) {
-    page = Math.max(0, Math.min(p, maxPage()));
+    _carouselPage = Math.max(0, Math.min(p, maxPage()));
     const pp = perPage();
     const cardW = cards[0].offsetWidth + 16;
-    track.style.transform = `translateX(-${page * pp * cardW}px)`;
-    document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === page));
+    track.style.transform = `translateX(-${_carouselPage * pp * cardW}px)`;
+    document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === _carouselPage));
     const prev = document.getElementById('rev-prev');
     const next = document.getElementById('rev-next');
-    if (prev) prev.disabled = page === 0;
-    if (next) next.disabled = page >= maxPage();
+    if (prev) prev.disabled = _carouselPage === 0;
+    if (next) next.disabled = _carouselPage >= maxPage();
   }
 
-  window.moveCarousel = function(dir) { goToPage(page + dir); };
+  window.moveCarousel = function(dir) { goToPage(_carouselPage + dir); };
 
-  // Init after DOM paint
   requestAnimationFrame(() => { buildDots(); goToPage(0); });
 
   let resizeTimer;
@@ -2795,7 +2653,7 @@ function showToast() {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => { buildDots(); goToPage(0); }, 200);
   });
-})();
+}
 
 // ─── FAQ ACCORDION ───
 function toggleFaq(item) {
@@ -3033,6 +2891,110 @@ function st(key) {
   return SITE_TRANSLATIONS[_siteLang]?.[key] || SITE_TRANSLATIONS.fr[key] || key;
 }
 
+// ── Avis multilingues ──
+const REVIEWS_DATA = {
+  fr: [
+    { text: '"J\'ai passé 3 heures sur Google pour préparer mon trip en Norvège. LIBERTRIP m\'a sorti un roadbook 10x meilleur en 1 minute. Littéralement."', name: 'Lucas M.', detail: 'Road-trip Norvège · Van', initial: 'L', grad: '#4f8eff,#8b5cf6' },
+    { text: '"Les cols qu\'il m\'a proposés pour la Corse, j\'aurais jamais trouvé ça tout seul. L\'IA connaît des spots que même les locaux ignorent."', name: 'Marco D.', detail: 'Cols corses · Moto', initial: 'M', grad: '#ff6b6b,#f5c842' },
+    { text: '"Mon itinéraire Tokyo en 5 jours était parfait. Transports, timing, restos hors-des-sentiers battus. J\'ai eu l\'impression d\'avoir un guide local dans la poche."', name: 'Sophie L.', detail: 'City-trip Tokyo · Transports', initial: 'S', grad: '#8b5cf6,#4f8eff' },
+    { text: '"Le roadbook Islande pour notre van-trip était dingue. Chaque spot recommandé était une claque visuelle, et les horaires étaient parfaits pour éviter les foules."', name: 'Julie & Tom', detail: 'Van-trip Islande · 12 jours', initial: 'J', grad: '#06b6d4,#4f8eff' },
+    { text: '"En solo en Espagne, j\'avais peur de m\'ennuyer. L\'IA m\'a concocté un itinéraire tellement dense et varié que je n\'ai même pas eu le temps de vérifier Instagram."', name: 'Anaïs R.', detail: 'Solo Espagne · Voiture', initial: 'A', grad: '#f59e0b,#ef4444' },
+    { text: '"Les spots Instagram que LIBERTRIP m\'a trouvés en Grèce… même mes abonnés me demandaient si c\'était du CGI. Ces endroits n\'existaient pas sur les guides classiques."', name: 'Camille V.', detail: 'Grèce · Spots secrets', initial: 'C', grad: '#8b5cf6,#ec4899' },
+    { text: '"Voyage de noces en Toscane. LIBERTRIP a trouvé des agriturismo que je n\'aurais jamais dénichés seul, avec des routes de nuit absolument magiques."', name: 'Romain & Clara', detail: 'Toscane · Voiture', initial: 'R', grad: '#10b981,#4f8eff' },
+    { text: '"On était 5 potes en van en Écosse. L\'IA a géré les spots de stationnement légaux, les points de recharge, les pubs locaux… même nos disputes ont diminué."', name: 'Kevin B.', detail: 'Écosse · Van 5 pax', initial: 'K', grad: '#059669,#f59e0b' },
+    { text: '"Je fais de la moto depuis 20 ans et je pensais connaître les Alpes par cœur. LIBERTRIP m\'a sorti 3 cols que je n\'avais jamais empruntés. Du bitume de rêve."', name: 'Patrick H.', detail: 'Alpes · Moto', initial: 'P', grad: '#dc2626,#f59e0b' },
+    { text: '"Famille de 4, enfants de 6 et 9 ans, road-trip en Croatie. L\'IA a intégré les plages adaptées aux enfants, les restaurants avec menu enfant. Zéro crise dans la voiture."', name: 'Nathalie & Éric', detail: 'Croatie en famille · 9 jours', initial: 'N', grad: '#4f8eff,#8b5cf6' },
+    { text: '"Mon véhicule électrique me rendait nerveux pour les longs trajets. LIBERTRIP a planifié chaque borne Ionity avec les temps de pause optimaux. Stress zéro."', name: 'Thomas G.', detail: 'Portugal · Électrique', initial: 'T', grad: '#22c55e,#4f8eff' },
+    { text: '"Algarve en couple, 6 jours. On s\'est sentis guidés sans jamais être contraints. La liberté avec un filet de sécurité."', name: 'Inès & Sam', detail: 'Algarve en couple', initial: 'I', grad: '#f472b6,#f59e0b' },
+  ],
+  en: [
+    { text: '"I spent 3 hours on Google planning my Norway trip. LIBERTRIP gave me a 10x better roadbook in 1 minute. Literally."', name: 'Lucas M.', detail: 'Norway road-trip · Van', initial: 'L', grad: '#4f8eff,#8b5cf6' },
+    { text: '"The mountain passes it suggested for Corsica — I would never have found those on my own. The AI knows spots even locals don\'t know."', name: 'Marco D.', detail: 'Corsican passes · Motorbike', initial: 'M', grad: '#ff6b6b,#f5c842' },
+    { text: '"My Tokyo itinerary for 5 days was perfect. Transport, timing, off-the-beaten-track restaurants. I felt like I had a local guide in my pocket."', name: 'Sophie L.', detail: 'City-trip Tokyo · Transit', initial: 'S', grad: '#8b5cf6,#4f8eff' },
+    { text: '"The Iceland roadbook for our van trip was insane. Every recommended spot was visually stunning, and the timing was perfect to avoid crowds."', name: 'Julie & Tom', detail: 'Iceland van trip · 12 days', initial: 'J', grad: '#06b6d4,#4f8eff' },
+    { text: '"Solo in Spain, I was worried about getting bored. The AI put together such a dense and varied itinerary I didn\'t even have time to check Instagram once."', name: 'Anaïs R.', detail: 'Solo Spain · Car', initial: 'A', grad: '#f59e0b,#ef4444' },
+    { text: '"The Instagram spots LIBERTRIP found in Greece… even my followers asked if it was CGI. These places weren\'t in any guide."', name: 'Camille V.', detail: 'Greece · Secret spots', initial: 'C', grad: '#8b5cf6,#ec4899' },
+    { text: '"Honeymoon in Tuscany. LIBERTRIP found agriturismos I never would have discovered alone, with magical night routes."', name: 'Romain & Clara', detail: 'Tuscany · Car', initial: 'R', grad: '#10b981,#4f8eff' },
+    { text: '"5 friends in a van in Scotland. The AI handled legal parking spots, charging points, local pubs… even our arguments about where to go next decreased."', name: 'Kevin B.', detail: 'Scotland · Van x5', initial: 'K', grad: '#059669,#f59e0b' },
+    { text: '"I\'ve been riding for 20 years and thought I knew the Alps by heart. LIBERTRIP gave me 3 passes I\'d never ridden. Dream tarmac, not a tourist in sight."', name: 'Patrick H.', detail: 'Alps · Motorbike', initial: 'P', grad: '#dc2626,#f59e0b' },
+    { text: '"Family of 4, kids aged 6 and 9, road-trip in Croatia. The AI included child-friendly beaches and kids\' menus. Zero tantrums in the car."', name: 'Nathalie & Eric', detail: 'Croatia with family · 9 days', initial: 'N', grad: '#4f8eff,#8b5cf6' },
+    { text: '"My EV made me nervous for long trips. LIBERTRIP planned every Ionity charger on my Portugal-Spain route with optimal break times. Zero stress."', name: 'Thomas G.', detail: 'Portugal · Electric', initial: 'T', grad: '#22c55e,#4f8eff' },
+    { text: '"Algarve as a couple, 6 days. We felt guided without ever feeling constrained. Freedom with a safety net."', name: 'Inès & Sam', detail: 'Algarve as a couple', initial: 'I', grad: '#f472b6,#f59e0b' },
+  ],
+  es: [
+    { text: '"Pasé 3 horas en Google preparando mi viaje a Noruega. LIBERTRIP me dio un roadbook 10 veces mejor en 1 minuto. Literalmente."', name: 'Lucas M.', detail: 'Road-trip Noruega · Van', initial: 'L', grad: '#4f8eff,#8b5cf6' },
+    { text: '"Los puertos que me propuso para Córcega, jamás los habría encontrado solo. La IA conoce spots que incluso los locales ignoran."', name: 'Marco D.', detail: 'Puertos corsos · Moto', initial: 'M', grad: '#ff6b6b,#f5c842' },
+    { text: '"Mi itinerario de Tokio de 5 días fue perfecto. Transportes, horarios, restaurantes fuera de lo común. Sentí que tenía un guía local en el bolsillo."', name: 'Sophie L.', detail: 'City-trip Tokio · Transporte', initial: 'S', grad: '#8b5cf6,#4f8eff' },
+    { text: '"El roadbook de Islandia para nuestro van-trip fue alucinante. Cada spot recomendado fue impactante visualmente, y los horarios perfectos para evitar las multitudes."', name: 'Julie & Tom', detail: 'Islandia en van · 12 días', initial: 'J', grad: '#06b6d4,#4f8eff' },
+    { text: '"Solo en España, tenía miedo de aburrirme. La IA me preparó un itinerario tan denso y variado que ni tuve tiempo de revisar Instagram."', name: 'Anaïs R.', detail: 'Solo España · Coche', initial: 'A', grad: '#f59e0b,#ef4444' },
+    { text: '"Los spots de Instagram que LIBERTRIP encontró en Grecia… hasta mis seguidores preguntaban si era CGI. Esos lugares no estaban en ninguna guía."', name: 'Camille V.', detail: 'Grecia · Spots secretos', initial: 'C', grad: '#8b5cf6,#ec4899' },
+    { text: '"Luna de miel en Toscana. LIBERTRIP encontró agriturismos que nunca habría descubierto solo, con rutas nocturnas absolutamente mágicas."', name: 'Romain & Clara', detail: 'Toscana · Coche', initial: 'R', grad: '#10b981,#4f8eff' },
+    { text: '"Éramos 5 amigos en van en Escocia. La IA gestionó los aparcamientos legales, los puntos de recarga, los pubs locales… hasta las discusiones disminuyeron."', name: 'Kevin B.', detail: 'Escocia · Van x5', initial: 'K', grad: '#059669,#f59e0b' },
+    { text: '"Llevo 20 años en moto y creía conocer los Alpes de memoria. LIBERTRIP me sacó 3 puertos que nunca había recorrido. Asfalto de ensueño, sin un solo turista."', name: 'Patrick H.', detail: 'Alpes · Moto', initial: 'P', grad: '#dc2626,#f59e0b' },
+    { text: '"Familia de 4, niños de 6 y 9 años, road-trip en Croacia. La IA incluyó playas para niños y menús infantiles. Cero llantos en el coche."', name: 'Nathalie & Éric', detail: 'Croacia en familia · 9 días', initial: 'N', grad: '#4f8eff,#8b5cf6' },
+    { text: '"Mi eléctrico me ponía nervioso para trayectos largos. LIBERTRIP planificó cada punto de recarga con los tiempos de pausa óptimos. Estrés cero."', name: 'Thomas G.', detail: 'Portugal · Eléctrico', initial: 'T', grad: '#22c55e,#4f8eff' },
+    { text: '"Algarve en pareja, 6 días. Nos sentimos guiados sin estar nunca limitados. La libertad con red de seguridad."', name: 'Inès & Sam', detail: 'Algarve en pareja', initial: 'I', grad: '#f472b6,#f59e0b' },
+  ],
+};
+
+function renderReviews(lang) {
+  const track = document.getElementById('reviews-track');
+  if (!track) return;
+  const reviews = REVIEWS_DATA[lang] || REVIEWS_DATA.fr;
+  track.innerHTML = reviews.map((r, i) => `
+    <div class="review-card reveal-item" style="transition-delay:${(i*0.08).toFixed(2)}s;">
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">${r.text}</div>
+      <div class="review-author">
+        <div class="review-avatar" style="background:linear-gradient(135deg,#${r.grad});">${r.initial}</div>
+        <div><div class="review-name">${r.name}</div><div class="review-detail">${r.detail}</div></div>
+      </div>
+    </div>`).join('');
+  // Rebuild carousel after re-render
+  requestAnimationFrame(initCarousel);
+}
+
+// ── FAQ multilingue — définie AVANT setSiteLang ──
+const FAQ_DATA = {
+  fr: [
+    { q: 'Sous quel format je reçois mon voyage ?', a: 'Tu reçois instantanément par email un lien unique vers ton "Roadbook Interactif". Il est optimisé à 100% pour ton smartphone (style application native) et accessible à vie, sans rien avoir à télécharger.' },
+    { q: 'Comment ça se passe si je veux modifier l\'itinéraire ?', a: 'Ton Roadbook intègre un chat copilote accessible en direct. Si tu prends du retard ou que tu veux changer de rythme, tu l\'écris simplement au chat ("Décale mon arrivée", "Trouve-moi un spot dodo plus proche") et l\'IA recalcule tout en 5 secondes.' },
+    { q: 'L\'offre "Aperçu Gratuit" demande-t-elle une carte bancaire ?', a: 'Absolument pas. Tu réponds aux questions, et l\'IA te génère immédiatement l\'itinéraire complet de ton JOUR 1. Pas d\'engagement, pas de carte bancaire requise. Tu ne payes que si tu veux débloquer le reste.' },
+    { q: 'Comment j\'utilise le Roadbook sur mon GPS en conduisant ?', a: 'Chaque étape contient un bouton magique. Un clic ouvre instantanément l\'itinéraire exact dans Google Maps, Apple Maps, Waze, ou CarPlay / Android Auto.' },
+    { q: 'Proposez-vous une garantie de remboursement ?', a: 'Oui. Si l\'itinéraire complet généré ne te convient pas du tout, tu as 14 jours pour contacter notre support et tu seras remboursé à 100%, sans discussion.' },
+  ],
+  en: [
+    { q: 'In what format do I receive my trip?', a: 'You instantly receive a unique link by email to your "Interactive Roadbook". It\'s 100% optimised for your smartphone (like a native app) and accessible for life, with nothing to download.' },
+    { q: 'What if I want to modify the itinerary?', a: 'Your Roadbook includes a live copilot chat. If you\'re running late or want to change pace, just write to the chat ("Delay my arrival", "Find me a closer place to sleep") and the AI recalculates everything in 5 seconds.' },
+    { q: 'Does the "Free Preview" offer require a credit card?', a: 'Absolutely not. You answer the questions, and the AI immediately generates the complete itinerary for your DAY 1. No commitment, no card required. You only pay if you want to unlock the rest.' },
+    { q: 'How do I use the Roadbook on my GPS while driving?', a: 'Each step contains a magic button. One click instantly opens the exact route in Google Maps, Apple Maps, Waze, or CarPlay / Android Auto.' },
+    { q: 'Do you offer a money-back guarantee?', a: 'Yes. If the generated itinerary doesn\'t suit you at all, you have 14 days to contact our support and you\'ll be refunded 100%, no questions asked.' },
+  ],
+  es: [
+    { q: '¿En qué formato recibo mi viaje?', a: 'Recibes instantáneamente por email un enlace único a tu "Roadbook Interactivo". Está 100% optimizado para tu smartphone (como una app nativa) y accesible de por vida, sin nada que descargar.' },
+    { q: '¿Qué pasa si quiero modificar el itinerario?', a: 'Tu Roadbook incluye un chat copiloto en directo. Si llegas tarde o quieres cambiar el ritmo, simplemente escríbelo en el chat y la IA lo recalcula todo en 5 segundos.' },
+    { q: '¿La oferta "Vista previa gratuita" requiere tarjeta bancaria?', a: 'Absolutamente no. Respondes a las preguntas y la IA genera inmediatamente el itinerario completo de tu DÍA 1. Sin compromiso, sin tarjeta. Solo pagas si quieres desbloquear el resto.' },
+    { q: '¿Cómo uso el Roadbook en mi GPS mientras conduzco?', a: 'Cada etapa contiene un botón mágico. Un clic abre instantáneamente la ruta exacta en Google Maps, Apple Maps, Waze, o CarPlay / Android Auto.' },
+    { q: '¿Ofrecen garantía de devolución?', a: 'Sí. Si el itinerario generado no te convence, tienes 14 días para contactar con nuestro soporte y te reembolsamos el 100%, sin preguntas.' },
+  ],
+};
+
+function renderFaq(lang) {
+  const list = document.getElementById('faq-list');
+  if (!list) return;
+  const items = FAQ_DATA[lang] || FAQ_DATA.fr;
+  list.innerHTML = items.map((item, i) => `
+    <div class="faq-item reveal-item" onclick="toggleFaq(this)" style="transition-delay:${(i+1)*0.1}s;">
+      <button class="faq-q">
+        <span>${item.q}</span>
+        <span class="faq-chevron">▾</span>
+      </button>
+      <div class="faq-body">
+        <div class="faq-body-inner">${item.a}</div>
+      </div>
+    </div>`).join('');
+}
+
 function setSiteLang(lang) {
   _siteLang = lang;
   localStorage.setItem('lb_lang', lang);
@@ -3060,49 +3022,9 @@ function setSiteLang(lang) {
 
   closeLangDropdown();
 
-  // Rebuilder la FAQ dans la bonne langue
+  // Rebuilder les contenus dynamiques dans la bonne langue
   renderFaq(lang);
-}
-
-// ── FAQ multilingue ──
-const FAQ_DATA = {
-  fr: [
-    { q: 'Sous quel format je reçois mon voyage ?', a: 'Tu reçois instantanément par email un lien unique vers ton "Roadbook Interactif". Il est optimisé à 100% pour ton smartphone (style application native) et accessible à vie, sans rien avoir à télécharger.' },
-    { q: 'Comment ça se passe si je veux modifier l\'itinéraire ?', a: 'Ton Roadbook intègre un chat copilote accessible en direct. Si tu prends du retard ou que tu veux changer de rythme, tu l\'écris simplement au chat ("Décale mon arrivée", "Trouve-moi un spot dodo plus proche") et l\'IA recalcule tout en 5 secondes.' },
-    { q: 'L\'offre "Aperçu Gratuit" demande-t-elle une carte bancaire ?', a: 'Absolument pas. Tu réponds aux questions, et l\'IA te génère immédiatement l\'itinéraire complet de ton JOUR 1. Pas d\'engagement, pas de carte bancaire requise. Tu ne payes que si tu veux débloquer le reste.' },
-    { q: 'Comment j\'utilise le Roadbook sur mon GPS en conduisant ?', a: 'Chaque étape contient un bouton magique. Un clic ouvre instantanément l\'itinéraire exact dans Google Maps, Apple Maps, Waze, ou CarPlay / Android Auto.' },
-    { q: 'Proposez-vous une garantie de remboursement ?', a: 'Oui. Si l\'itinéraire complet généré ne te convient pas du tout, tu as 14 jours pour contacter notre support et tu seras remboursé à 100%, sans discussion.' },
-  ],
-  en: [
-    { q: 'In what format do I receive my trip?', a: 'You instantly receive a unique link by email to your "Interactive Roadbook". It\'s 100% optimised for your smartphone (like a native app) and accessible for life, with nothing to download.' },
-    { q: 'What if I want to modify the itinerary?', a: 'Your Roadbook includes a live copilot chat. If you\'re running late or want to change pace, just write to the chat ("Delay my arrival", "Find me a closer place to sleep") and the AI recalculates everything in 5 seconds.' },
-    { q: 'Does the "Free Preview" offer require a credit card?', a: 'Absolutely not. You answer the questions, and the AI immediately generates the complete itinerary for your DAY 1. No commitment, no card required. You only pay if you want to unlock the rest.' },
-    { q: 'How do I use the Roadbook on my GPS while driving?', a: 'Each step contains a magic button. One click instantly opens the exact route in Google Maps, Apple Maps, Waze, or CarPlay / Android Auto.' },
-    { q: 'Do you offer a money-back guarantee?', a: 'Yes. If the generated itinerary doesn\'t suit you at all, you have 14 days to contact our support and you\'ll be refunded 100%, no questions asked.' },
-  ],
-  es: [
-    { q: '¿En qué formato recibo mi viaje?', a: 'Recibes instantáneamente por email un enlace único a tu "Roadbook Interactivo". Está 100% optimizado para tu smartphone (como una app nativa) y accesible de por vida, sin nada que descargar.' },
-    { q: '¿Qué pasa si quiero modificar el itinerario?', a: 'Tu Roadbook incluye un chat copiloto en directo. Si llegas tarde o quieres cambiar el ritmo, simplemente escríbelo en el chat ("Retrasa mi llegada", "Encuéntrame un sitio para dormir más cercano") y la IA lo recalcula todo en 5 segundos.' },
-    { q: '¿La oferta "Vista previa gratuita" requiere tarjeta bancaria?', a: 'Absolutamente no. Respondes a las preguntas y la IA genera inmediatamente el itinerario completo de tu DÍA 1. Sin compromiso, sin tarjeta. Solo pagas si quieres desbloquear el resto.' },
-    { q: '¿Cómo uso el Roadbook en mi GPS mientras conduzco?', a: 'Cada etapa contiene un botón mágico. Un clic abre instantáneamente la ruta exacta en Google Maps, Apple Maps, Waze, o CarPlay / Android Auto.' },
-    { q: '¿Ofrecen garantía de devolución?', a: 'Sí. Si el itinerario generado no te convence, tienes 14 días para contactar con nuestro soporte y te reembolsamos el 100%, sin preguntas.' },
-  ],
-};
-
-function renderFaq(lang) {
-  const list = document.getElementById('faq-list');
-  if (!list) return;
-  const items = FAQ_DATA[lang] || FAQ_DATA.fr;
-  list.innerHTML = items.map((item, i) => `
-    <div class="faq-item reveal-item" onclick="toggleFaq(this)" style="transition-delay:${(i+1)*0.1}s;">
-      <button class="faq-q">
-        <span>${item.q}</span>
-        <span class="faq-chevron">▾</span>
-      </button>
-      <div class="faq-body">
-        <div class="faq-body-inner">${item.a}</div>
-      </div>
-    </div>`).join('');
+  renderReviews(lang);
 }
 
 // ── Dropdown langue ──
@@ -3134,8 +3056,9 @@ document.addEventListener('click', e => {
 
 // Appliquer au chargement
 document.addEventListener('DOMContentLoaded', () => {
-  setSiteLang(_siteLang);
+  renderReviews(_siteLang);
   renderFaq(_siteLang);
+  setSiteLang(_siteLang);
 });
 </script>
 </body>
