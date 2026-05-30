@@ -9,6 +9,7 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* ── Thème sombre (défaut) ── */
   :root {
     --black: #000000;
     --card: #0a0a0a;
@@ -21,6 +22,31 @@
     --accent-2: #8b5cf6;
     --accent-glow: rgba(79,142,255,0.15);
     --gold: #f5c842;
+    --nav-bg: rgba(0,0,0,0.85);
+    --text-main: #ffffff;
+    --text-sub: #a0a0a0;
+    --input-bg: #0f0f0f;
+    --input-border: rgba(255,255,255,0.1);
+  }
+
+  /* ── Thème clair ── */
+  html.light {
+    --black: #f5f5f0;
+    --card: #ffffff;
+    --border: #e5e5e0;
+    --border-light: #d0d0cc;
+    --white: #111111;
+    --gray: #555555;
+    --gray-light: #777777;
+    --accent: #2563eb;
+    --accent-2: #7c3aed;
+    --accent-glow: rgba(37,99,235,0.12);
+    --gold: #c9820a;
+    --nav-bg: rgba(245,245,240,0.92);
+    --text-main: #111111;
+    --text-sub: #555555;
+    --input-bg: #ffffff;
+    --input-border: rgba(0,0,0,0.15);
   }
 
   html { scroll-behavior: smooth; }
@@ -1114,6 +1140,63 @@
     .nav-right-mobile .nav-cta { display: none; }
     .hero-h1 { font-size: 32px; }
   }
+
+  /* ── Thème & Langue toggles ── */
+  .site-theme-toggle {
+    background: var(--card); border: 1px solid var(--border-light);
+    border-radius: 8px; padding: 6px 10px; cursor: pointer;
+    font-size: 15px; line-height: 1; transition: background 0.2s;
+    color: var(--gray-light);
+  }
+  .site-theme-toggle:hover { background: var(--border); }
+
+  .site-lang-selector {
+    display: flex; gap: 2px;
+    background: var(--card); border: 1px solid var(--border-light);
+    border-radius: 8px; padding: 3px; overflow: hidden;
+  }
+  .site-lang-btn {
+    background: transparent; border: none; border-radius: 6px;
+    padding: 4px 7px; cursor: pointer; font-size: 15px;
+    transition: background 0.15s; opacity: 0.4;
+  }
+  .site-lang-btn:hover { opacity: 0.8; background: var(--border); }
+  .site-lang-btn.active { background: var(--border); opacity: 1; }
+  .site-lang-btn-mobile {
+    background: transparent; border: 1px solid var(--border-light);
+    border-radius: 7px; padding: 5px 8px; cursor: pointer; font-size: 15px;
+  }
+
+  /* Light mode overrides pour éléments spécifiques */
+  html.light body { color: var(--white); }
+  html.light .hero-h1 { color: var(--white); }
+  html.light .hero-sub { color: var(--gray); }
+  html.light .section-header h2 { color: var(--white); }
+  html.light .section-header p { color: var(--gray); }
+  html.light .bento-card { background: var(--card); border-color: var(--border); }
+  html.light .price-card { background: var(--card); border-color: var(--border); }
+  html.light .price-name, html.light .price-amount { color: var(--white); }
+  html.light .price-period, html.light .price-desc, html.light .price-features li { color: var(--gray); }
+  html.light .review-card { background: var(--card); border-color: var(--border); }
+  html.light .faq-item { background: var(--card); border-color: var(--border); }
+  html.light .faq-q { color: var(--white); }
+  html.light .faq-a { color: var(--gray); }
+  html.light .form-slide { background: var(--card); }
+  html.light .form-field { background: var(--input-bg); border-color: var(--input-border); color: var(--white); }
+  html.light .quiz-card { background: var(--card); border-color: var(--border); color: var(--white); }
+  html.light nav { background: var(--nav-bg) !important; border-bottom-color: var(--border); }
+  html.light .mobile-menu { background: var(--card); border-color: var(--border); }
+  html.light .glow-orb { opacity: 0.15; }
+  html.light .partners-bar { background: var(--card); border-color: var(--border); }
+  html.light .partner-item { color: var(--gray); }
+  html.light footer { background: var(--card); border-top-color: var(--border); }
+  html.light .tag { background: rgba(37,99,235,0.08); border-color: rgba(37,99,235,0.2); color: var(--accent); }
+  html.light .nav-links a { color: var(--gray); }
+  html.light .nav-links a:hover { color: var(--white); }
+  html.light .nav-account-link { color: var(--gray); }
+  html.light .logo-text { filter: invert(1); }
+  html.light .step-card { background: var(--card); border-color: var(--border); }
+  html.light .essential-tag { background: var(--card); border-color: var(--border); color: var(--white); }
 </style>
 </head>
 <body>
@@ -1129,13 +1212,21 @@
     <li><a href="#reviews">Avis</a></li>
   </ul>
   <!-- Desktop right -->
-  <div class="nav-right-desktop">
-    <a href="/mes-roadbooks" class="nav-account-link">Mon compte</a>
-    <button class="nav-cta" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})">Générer mon voyage →</button>
+  <div class="nav-right-desktop" style="display:flex;align-items:center;gap:8px;">
+    <div class="site-lang-selector">
+      <button class="site-lang-btn active" onclick="setSiteLang('fr')" data-lang="fr">🇫🇷</button>
+      <button class="site-lang-btn" onclick="setSiteLang('en')" data-lang="en">🇬🇧</button>
+      <button class="site-lang-btn" onclick="setSiteLang('es')" data-lang="es">🇪🇸</button>
+    </div>
+    <button class="site-theme-toggle" id="site-theme-btn" onclick="toggleSiteTheme()">🌙</button>
+    <a href="/mes-roadbooks" class="nav-account-link" data-i18n="navAccount">Mon compte</a>
+    <button class="nav-cta" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})" data-i18n="navCta">Générer mon voyage →</button>
   </div>
   <!-- Mobile right : bouton CTA + menu 3 points -->
-  <div class="nav-right-mobile">
-    <button class="nav-cta" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})">Générer →</button>
+  <div class="nav-right-mobile" style="display:flex;align-items:center;gap:6px;">
+    <button class="site-lang-btn-mobile" onclick="cycleSiteLang()" id="lang-flag-mobile">🇫🇷</button>
+    <button class="site-theme-toggle" onclick="toggleSiteTheme()" style="font-size:15px;padding:5px 8px;">🌙</button>
+    <button class="nav-cta" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})" data-i18n="navCtaMobile">Générer →</button>
     <button class="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -1159,30 +1250,29 @@
 
   <div class="tag hero-tag">
     <span class="dot"></span>
-    Copilote IA de voyage — Bêta ouverte
+    <span data-i18n="heroBadge">Copilote IA de voyage — Bêta ouverte</span>
   </div>
 
   <h1 class="hero-h1">
-    Arrête de planifier.<br>
-    <span class="gradient-text">Commence à voyager.</span>
+    <span data-i18n="heroH1a">Arrête de planifier.</span><br>
+    <span class="gradient-text" data-i18n="heroH1b">Commence à voyager.</span>
   </h1>
 
   <p class="hero-sub">
-    50 onglets ouverts, 3 heures perdues, un itinéraire qui ressemble à tout le monde.
-    LIBERTRIP génère ton roadbook ultra-personnalisé en <strong>60 secondes chrono</strong>.
+    <span data-i18n="heroSub">50 onglets ouverts, 3 heures perdues, un itinéraire qui ressemble à tout le monde. LIBERTRIP génère ton roadbook ultra-personnalisé en </span><strong data-i18n="heroSubBold">60 secondes chrono</strong><span data-i18n="heroSubEnd">.</span>
   </p>
 
   <div class="hero-cta-group">
     <button class="btn-primary" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})">
-      ✦ &nbsp;Générer mon voyage — C'est gratuit
+      <span data-i18n="heroBtn1">✦  Générer mon voyage — C'est gratuit</span>
     </button>
     <button class="btn-ghost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
-      Voir comment ça marche
+      <span data-i18n="heroBtn2">Voir comment ça marche</span>
     </button>
   </div>
 
   <div class="partners-bar">
-    <div class="partners-label">Compatible avec</div>
+    <div class="partners-label" data-i18n="partnersWith">Compatible avec</div>
     <div class="partners-list">
       <span class="partner-item">🗺️ Google Maps</span>
       <div class="partner-divider"></div>
@@ -1198,9 +1288,9 @@
 <!-- ─── CONCEPT / BENTO ─── -->
 <section id="concept">
   <div class="section-header reveal">
-    <div class="tag" style="margin-bottom:20px;"><span class="dot"></span>Le concept</div>
-    <h2>Un copilote. Pas un itinéraire de plus.</h2>
-    <p>LIBERTRIP ne te donne pas une liste de spots. Il pense comme toi, roule comme toi, et construit un roadbook que personne d'autre n'aura.</p>
+    <div class="tag" style="margin-bottom:20px;"><span class="dot"></span><span data-i18n="conceptTag">Le concept</span></div>
+    <h2 data-i18n="conceptH2">Un copilote. Pas un itinéraire de plus.</h2>
+    <p data-i18n="conceptSub">LIBERTRIP ne te donne pas une liste de spots. Il pense comme toi, roule comme toi, et construit un roadbook que personne d'autre n'aura.</p>
   </div>
 
   <div class="bento-grid reveal">
@@ -1289,9 +1379,9 @@
 <!-- ─── TARIFS ─── -->
 <section id="pricing">
   <div class="section-header reveal">
-    <div class="tag" style="margin-bottom:20px;"><span class="dot"></span>Tarifs</div>
-    <h2>Simple. Honnête. Efficace.</h2>
-    <p>Pas d'abonnement surprise. Paye le voyage que tu veux, quand tu veux.</p>
+    <div class="tag" style="margin-bottom:20px;"><span class="dot"></span><span data-i18n="pricingTag">Tarifs</span></div>
+    <h2 data-i18n="pricingH2">Simple. Honnête. Efficace.</h2>
+    <p data-i18n="pricingSub">Pas d'abonnement surprise. Paye le voyage que tu veux, quand tu veux.</p>
   </div>
 
   <div class="pricing-grid">
@@ -1307,7 +1397,7 @@
         <li>Ultra-personnalisé selon tes choix</li>
         <li>Accès immédiat, zéro engagement</li>
       </ul>
-      <button class="price-btn outline" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})">🚀 Générer mon Jour 1</button>
+      <button class="price-btn outline" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})" data-i18n="freeBtn">🚀 Générer mon Jour 1</button>
     </div>
 
     <!-- COL 2 (CENTRE STAR) : Roadbook Premium à Vie (14,99€) -->
@@ -1322,7 +1412,7 @@
         <li>Support IA 24/7 inclus</li>
         <li>Accès à vie, sans renouvellement</li>
       </ul>
-      <button class="price-btn btn-shimmer" onclick="goToCheckout('premium')">🔒 Débloquer mon voyage (14,99€)</button>
+      <button class="price-btn btn-shimmer" onclick="scrollToQuizWithIntent('premium')" data-i18n="premiumBtn">🚀 Générer et débloquer (14,99€)</button>
     </div>
 
     <!-- COL 3 : Explorateur Clé en Main (4,99€/mois) -->
@@ -1337,7 +1427,7 @@
         <li>Intégration GPS (Google Maps/Waze)</li>
         <li>Gestion véhicule électrique/moto/van</li>
       </ul>
-      <button class="price-btn solid" onclick="goToCheckout('aventurier')">💳 S'abonner (4,99€)</button>
+      <button class="price-btn solid" onclick="scrollToQuizWithIntent('aventurier')">🚀 Générer mon voyage</button>
     </div>
 
   </div>
@@ -1733,11 +1823,17 @@
         <button class="form-option quiz-card" onclick="selectBudget(this,'premium')" id="budget-premium"><span class="opt-icon">✨</span> Premium<div style="font-size:12px;color:var(--gray);margin-top:4px;">250€+/jour · Hôtels haut de gamme</div></button>
       </div>
       <div style="margin-top:20px;max-width:440px;margin-left:auto;margin-right:auto;">
-        <div style="font-size:13px;color:var(--gray);text-align:center;margin-bottom:10px;">Ou saisis ton budget total :</div>
-        <div style="display:flex;gap:10px;align-items:center;">
-          <input class="form-field" type="number" id="budget-custom" placeholder="Ex : 1500" min="0" style="flex:1;padding:14px 16px;font-size:15px;" oninput="onBudgetCustomInput(this)" />
-          <span style="color:var(--gray-light);font-size:15px;white-space:nowrap;">€ total</span>
+        <div style="font-size:13px;color:var(--gray);text-align:center;margin-bottom:10px;">Ou saisis ton budget précis :</div>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px;">
+          <input class="form-field" type="number" id="budget-custom" placeholder="Ex : 800" min="0" style="flex:1;padding:14px 16px;font-size:15px;" oninput="onBudgetCustomInput(this)" />
+          <span style="color:var(--gray-light);font-size:15px;white-space:nowrap;">€</span>
         </div>
+        <!-- Toggle par personne / total -->
+        <div style="display:flex;gap:0;border:1px solid rgba(255,255,255,0.12);border-radius:10px;overflow:hidden;max-width:300px;margin:0 auto;" id="budget-scope-toggle">
+          <button id="budget-scope-person" onclick="setBudgetScope('per_person')" style="flex:1;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:rgba(79,142,255,0.18);color:#4f8eff;font-weight:600;transition:all 0.2s;">Par personne</button>
+          <button id="budget-scope-total" onclick="setBudgetScope('total')" style="flex:1;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,0.4);transition:all 0.2s;">Total du groupe</button>
+        </div>
+        <div id="budget-scope-hint" style="font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin-top:8px;">Budget par personne — l'IA calculera le total selon le groupe</div>
       </div>
       <div style="text-align:center;margin-top:28px;">
         <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(9,10)">Suivant ➔</button>
@@ -2104,13 +2200,30 @@ function onBudgetCustomInput(el) {
   if (!isNaN(val) && val > 0) {
     formData['budget_amount'] = val;
     formData['budget_level']  = 'custom';
-    // Désélectionner les cartes catégorie
     ['budget-eco','budget-medium','budget-premium'].forEach(id => {
       const btn = document.getElementById(id);
       if (btn) btn.classList.remove('selected');
     });
   } else {
     formData['budget_amount'] = null;
+  }
+}
+
+// Toggle par personne / total groupe
+formData['budget_scope'] = 'per_person'; // défaut
+function setBudgetScope(scope) {
+  formData['budget_scope'] = scope;
+  const btnPerson = document.getElementById('budget-scope-person');
+  const btnTotal  = document.getElementById('budget-scope-total');
+  const hint      = document.getElementById('budget-scope-hint');
+  if (scope === 'per_person') {
+    btnPerson.style.background = 'rgba(79,142,255,0.18)'; btnPerson.style.color = '#4f8eff'; btnPerson.style.fontWeight = '600';
+    btnTotal.style.background  = 'transparent'; btnTotal.style.color = 'rgba(255,255,255,0.4)'; btnTotal.style.fontWeight = '400';
+    if (hint) hint.textContent = 'Budget par personne — l\'IA calculera le total selon le groupe';
+  } else {
+    btnTotal.style.background  = 'rgba(79,142,255,0.18)'; btnTotal.style.color = '#4f8eff'; btnTotal.style.fontWeight = '600';
+    btnPerson.style.background = 'transparent'; btnPerson.style.color = 'rgba(255,255,255,0.4)'; btnPerson.style.fontWeight = '400';
+    if (hint) hint.textContent = 'Budget total pour tout le groupe';
   }
 }
 
@@ -2255,7 +2368,9 @@ function generateTrip() {
     lodgings:        formData.lodgings        || [],
     budget_level:    formData.budget_level    || 'medium',
     budget_amount:   formData.budget_amount   || null,
+    budget_scope:    formData.budget_scope    || 'per_person',
     vehicle_range:   formData.vehicle_range   || null,
+    language:        localStorage.getItem('lb_lang') || 'fr',
     custom_notes:    (document.getElementById('custom-notes') || {}).value?.trim() || '',
   };
 
@@ -2273,9 +2388,23 @@ function generateTrip() {
     clearInterval(barInterval);
     fill.style.width = '100%';
 
-    // Redirection vers la page roadbook
+    // Si l'utilisateur venait d'une carte pricing, déclencher le checkout directement
+    const intent = sessionStorage.getItem('libertrip_intent');
+    sessionStorage.removeItem('libertrip_intent');
     setTimeout(() => {
-      window.location.href = '/roadbook/' + data.roadbook_id;
+      if (intent && data.roadbook_id) {
+        // Appel à create-checkout pour obtenir l'URL Stripe dynamique
+        fetch('/api/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ roadbook_id: data.roadbook_id })
+        })
+        .then(r => r.json())
+        .then(d => { if (d.url) window.location.href = d.url; else window.location.href = '/roadbook/' + data.roadbook_id; })
+        .catch(() => { window.location.href = '/roadbook/' + data.roadbook_id; });
+      } else {
+        window.location.href = '/roadbook/' + data.roadbook_id;
+      }
     }, 700);
   })
   .catch(err => {
@@ -2325,6 +2454,22 @@ const STRIPE_LINKS = {
   aventurier: 'https://buy.stripe.com/6oU00jce829Vg4gd6B3Ru01',
   premium:    'https://buy.stripe.com/9B6fZha6029VbO06Id3Ru00'
 };
+
+// Depuis la section pricing : scroll vers le formulaire
+// L'intention est mémorisée — après génération le paiement se déclenchera automatiquement
+function scrollToQuizWithIntent(plan) {
+  sessionStorage.setItem('libertrip_intent', plan);
+  const gen = document.getElementById('generator');
+  if (gen) {
+    gen.scrollIntoView({ behavior: 'smooth' });
+    // Petit flash pour attirer l'attention
+    setTimeout(() => {
+      gen.style.transition = 'box-shadow 0.3s';
+      gen.style.boxShadow = '0 0 0 3px rgba(79,142,255,0.4)';
+      setTimeout(() => gen.style.boxShadow = '', 1200);
+    }, 600);
+  }
+}
 
 function goToCheckout(plan, roadbookId, promoCode) {
   const base = STRIPE_LINKS[plan];
@@ -2591,6 +2736,158 @@ setTimeout(() => {
   showToast();
   scheduleNextToast();
 }, 5000);
+</script>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// THÈME CLAIR / SOMBRE — SITE
+// ══════════════════════════════════════════════════════════════
+(function() {
+  const saved = localStorage.getItem('lb_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  if (theme === 'light') document.documentElement.classList.add('light');
+  const btn = document.getElementById('site-theme-btn');
+  if (btn) btn.textContent = theme === 'light' ? '🌙' : '☀️';
+  document.querySelectorAll('.site-theme-toggle').forEach(b => b.textContent = theme === 'light' ? '🌙' : '☀️');
+})();
+
+function toggleSiteTheme() {
+  const isLight = document.documentElement.classList.toggle('light');
+  localStorage.setItem('lb_theme', isLight ? 'light' : 'dark');
+  document.querySelectorAll('.site-theme-toggle').forEach(b => b.textContent = isLight ? '🌙' : '☀️');
+}
+
+// ══════════════════════════════════════════════════════════════
+// TRADUCTIONS FR / EN / ES — SITE
+// ══════════════════════════════════════════════════════════════
+const SITE_TRANSLATIONS = {
+  fr: {
+    navAccount: 'Mon compte', navCta: 'Générer mon voyage →', navCtaMobile: 'Générer →',
+    navConcept: 'Concept', navHow: 'Comment ça marche', navPricing: 'Tarifs', navReviews: 'Avis',
+    heroBadge: 'Copilote IA de voyage — Bêta ouverte',
+    heroH1a: 'Arrête de planifier.', heroH1b: 'Commence à voyager.',
+    heroSub: '50 onglets ouverts, 3 heures perdues, un itinéraire qui ressemble à tout le monde. LIBERTRIP génère ton roadbook ultra-personnalisé en ',
+    heroSubBold: '60 secondes chrono', heroSubEnd: '.',
+    heroBtn1: '✦  Générer mon voyage — C\'est gratuit', heroBtn2: 'Voir comment ça marche',
+    partnersWith: 'Compatible avec',
+    conceptTag: 'Le concept',
+    conceptH2: 'Un copilote. Pas un itinéraire de plus.',
+    conceptSub: 'LIBERTRIP ne te donne pas une liste de spots. Il pense comme toi, roule comme toi, et construit un roadbook que personne d\'autre n\'aura.',
+    pricingTag: 'Tarifs', pricingH2: 'Simple. Honnête. Efficace.',
+    pricingSub: 'Pas d\'abonnement surprise. Paye le voyage que tu veux, quand tu veux.',
+    reviewsTag: 'Ils sont déjà partis', reviewsH2: 'Ce qu\'ils en disent',
+    reviewsSub: 'Pas de rédaction marketing. Juste des gens qui ont arrêté d\'ouvrir 50 onglets.',
+    freeCard: 'Découverte IA', freePeriod: 'Gratuit — sans carte bancaire',
+    premiumCard: 'Roadbook Premium à Vie', premiumPeriod: 'Paiement unique — pas d\'abonnement',
+    subCard: 'Explorateur Clé en Main', subPeriod: '/ mois · Engagement 6 mois minimum',
+    freeBtn: '🚀 Générer mon Jour 1',
+    premiumBtn: '🚀 Générer et débloquer (14,99€)',
+    subBtn: '🚀 Générer mon voyage',
+    howTag: 'Comment ça marche', howH2: '3 étapes. Zéro galère.',
+    step1T: 'Tu décris ton voyage.', step2T: 'L\'IA génère ton roadbook.', step3T: 'Tu pars. C\'est tout.',
+    generateBtn: '🗺️  Générer mon aperçu gratuit',
+  },
+  en: {
+    navAccount: 'My account', navCta: 'Generate my trip →', navCtaMobile: 'Generate →',
+    navConcept: 'Concept', navHow: 'How it works', navPricing: 'Pricing', navReviews: 'Reviews',
+    heroBadge: 'AI Travel Copilot — Open Beta',
+    heroH1a: 'Stop planning.', heroH1b: 'Start travelling.',
+    heroSub: '50 open tabs, 3 hours wasted, an itinerary that looks like everyone else\'s. LIBERTRIP generates your ultra-personalised roadbook in ',
+    heroSubBold: '60 seconds flat', heroSubEnd: '.',
+    heroBtn1: '✦  Generate my trip — It\'s free', heroBtn2: 'See how it works',
+    partnersWith: 'Compatible with',
+    conceptTag: 'The concept',
+    conceptH2: 'A copilot. Not just another itinerary.',
+    conceptSub: 'LIBERTRIP doesn\'t give you a list of spots. It thinks like you, drives like you, and builds a roadbook no one else will have.',
+    pricingTag: 'Pricing', pricingH2: 'Simple. Honest. Effective.',
+    pricingSub: 'No surprise subscription. Pay for the trip you want, when you want.',
+    reviewsTag: 'They\'ve already left', reviewsH2: 'What they say',
+    reviewsSub: 'No marketing copy. Just people who stopped opening 50 tabs.',
+    freeCard: 'AI Discovery', freePeriod: 'Free — no credit card',
+    premiumCard: 'Lifetime Premium Roadbook', premiumPeriod: 'One-time payment — no subscription',
+    subCard: 'Explorer All-Inclusive', subPeriod: '/ month · 6-month minimum',
+    freeBtn: '🚀 Generate my Day 1',
+    premiumBtn: '🚀 Generate & unlock (€14.99)',
+    subBtn: '🚀 Generate my trip',
+    howTag: 'How it works', howH2: '3 steps. Zero hassle.',
+    step1T: 'You describe your trip.', step2T: 'The AI generates your roadbook.', step3T: 'You go. That\'s it.',
+    generateBtn: '🗺️  Generate my free preview',
+  },
+  es: {
+    navAccount: 'Mi cuenta', navCta: 'Generar mi viaje →', navCtaMobile: 'Generar →',
+    navConcept: 'Concepto', navHow: 'Cómo funciona', navPricing: 'Precios', navReviews: 'Opiniones',
+    heroBadge: 'Copiloto IA de viaje — Beta abierta',
+    heroH1a: 'Deja de planificar.', heroH1b: 'Empieza a viajar.',
+    heroSub: '50 pestañas abiertas, 3 horas perdidas, un itinerario igual al de todos. LIBERTRIP genera tu roadbook ultra-personalizado en ',
+    heroSubBold: '60 segundos', heroSubEnd: '.',
+    heroBtn1: '✦  Generar mi viaje — Es gratis', heroBtn2: 'Ver cómo funciona',
+    partnersWith: 'Compatible con',
+    conceptTag: 'El concepto',
+    conceptH2: 'Un copiloto. No un itinerario más.',
+    conceptSub: 'LIBERTRIP no te da una lista de lugares. Piensa como tú, rueda como tú, y construye un roadbook que nadie más tendrá.',
+    pricingTag: 'Precios', pricingH2: 'Simple. Honesto. Eficaz.',
+    pricingSub: 'Sin sorpresas de suscripción. Paga el viaje que quieras, cuando quieras.',
+    reviewsTag: 'Ya se han ido', reviewsH2: 'Lo que dicen',
+    reviewsSub: 'Sin marketing. Solo personas que dejaron de abrir 50 pestañas.',
+    freeCard: 'Descubrimiento IA', freePeriod: 'Gratis — sin tarjeta',
+    premiumCard: 'Roadbook Premium de por vida', premiumPeriod: 'Pago único — sin suscripción',
+    subCard: 'Explorador Todo incluido', subPeriod: '/ mes · Mínimo 6 meses',
+    freeBtn: '🚀 Generar mi Día 1',
+    premiumBtn: '🚀 Generar y desbloquear (14,99€)',
+    subBtn: '🚀 Generar mi viaje',
+    howTag: 'Cómo funciona', howH2: '3 pasos. Sin complicaciones.',
+    step1T: 'Describes tu viaje.', step2T: 'La IA genera tu roadbook.', step3T: 'Te vas. Eso es todo.',
+    generateBtn: '🗺️  Generar mi vista previa gratuita',
+  }
+};
+
+let _siteLang = localStorage.getItem('lb_lang') || 'fr';
+const _FLAGS = { fr: '🇫🇷', en: '🇬🇧', es: '🇪🇸' };
+const _LANGS = ['fr', 'en', 'es'];
+
+function st(key) {
+  return SITE_TRANSLATIONS[_siteLang]?.[key] || SITE_TRANSLATIONS.fr[key] || key;
+}
+
+function setSiteLang(lang) {
+  _siteLang = lang;
+  localStorage.setItem('lb_lang', lang);
+  document.documentElement.lang = lang;
+
+  // Boutons actifs
+  document.querySelectorAll('.site-lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  const mob = document.getElementById('lang-flag-mobile');
+  if (mob) mob.textContent = _FLAGS[lang];
+
+  // Éléments data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    const v = SITE_TRANSLATIONS[lang]?.[k];
+    if (v) el.textContent = v;
+  });
+
+  // Maj nav links
+  const links = document.querySelectorAll('.nav-links li a');
+  const keys = ['navConcept','navHow','navPricing','navReviews'];
+  links.forEach((a, i) => { if (keys[i]) a.textContent = st(keys[i]); });
+
+  // Maj section headers via data-section
+  document.querySelectorAll('[data-section]').forEach(el => {
+    const s = el.dataset.section;
+    const sub = el.dataset.sub;
+    if (s && SITE_TRANSLATIONS[lang]?.[s]) el.textContent = SITE_TRANSLATIONS[lang][s];
+    if (sub && SITE_TRANSLATIONS[lang]?.[sub]) el.textContent = SITE_TRANSLATIONS[lang][sub];
+  });
+}
+
+function cycleSiteLang() {
+  const idx = (_LANGS.indexOf(_siteLang) + 1) % _LANGS.length;
+  setSiteLang(_LANGS[idx]);
+}
+
+// Appliquer au chargement
+document.addEventListener('DOMContentLoaded', () => setSiteLang(_siteLang));
 </script>
 </body>
 </html>
