@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 /* ── Design System ── */
+/* ── Thème sombre (défaut) ── */
 :root {
   --black:      #000000;
   --card:       #0f0f0f;
@@ -22,6 +23,29 @@
   --text:       rgba(255,255,255,0.85);
   --text-muted: rgba(255,255,255,0.4);
   --text-dim:   rgba(255,255,255,0.2);
+  --nav-bg:     rgba(0,0,0,0.92);
+  --step-bg:    #0f0f0f;
+  --overlay-bg: rgba(0,0,0,0.7);
+}
+
+/* ── Thème clair ── */
+html.light {
+  --black:      #f4f4f0;
+  --card:       #ffffff;
+  --card-2:     #f8f8f5;
+  --border:     rgba(0,0,0,0.08);
+  --border-lg:  rgba(0,0,0,0.14);
+  --accent:     #2563eb;
+  --accent-2:   #7c3aed;
+  --gold:       #c9820a;
+  --green:      #059669;
+  --red:        #dc2626;
+  --text:       rgba(0,0,0,0.85);
+  --text-muted: rgba(0,0,0,0.45);
+  --text-dim:   rgba(0,0,0,0.2);
+  --nav-bg:     rgba(244,244,240,0.95);
+  --step-bg:    #ffffff;
+  --overlay-bg: rgba(0,0,0,0.5);
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -55,7 +79,7 @@ h1, h2, h3, h4 { font-family: 'Syne', sans-serif; }
 /* ── Nav ── */
 nav {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(0,0,0,0.92);
+  background: var(--nav-bg);
   backdrop-filter: blur(20px) saturate(1.2);
   -webkit-backdrop-filter: blur(20px) saturate(1.2);
   border-bottom: 1px solid var(--border);
@@ -63,6 +87,25 @@ nav {
   padding-top: max(16px, env(safe-area-inset-top));
   display: flex; align-items: center; justify-content: space-between;
 }
+.theme-toggle {
+  background: var(--card); border: 1px solid var(--border-lg);
+  border-radius: 8px; padding: 6px 10px; cursor: pointer;
+  font-size: 16px; line-height: 1; transition: background 0.2s;
+  color: var(--text-muted);
+}
+.theme-toggle:hover { background: var(--card-2); }
+.lang-selector {
+  display: flex; gap: 2px;
+  background: var(--card); border: 1px solid var(--border-lg);
+  border-radius: 8px; padding: 3px; overflow: hidden;
+}
+.lang-btn {
+  background: transparent; border: none; border-radius: 6px;
+  padding: 4px 7px; cursor: pointer; font-size: 15px;
+  transition: background 0.15s; opacity: 0.45;
+}
+.lang-btn:hover { opacity: 0.8; background: var(--card-2); }
+.lang-btn.active { background: var(--card-2); opacity: 1; }
 /* Masque le contenu qui glisse sous la barre status iOS */
 nav::before {
   content: '';
@@ -268,7 +311,7 @@ nav::before {
   color: var(--accent); flex-shrink: 0; transition: background 0.2s;
 }
 .step-title:hover .info-icon { background: rgba(79,142,255,0.25); }
-.step-desc  { font-size: 15px; color: rgba(255,255,255,0.65); line-height: 1.6; margin-bottom: 10px; }
+.step-desc  { font-size: 15px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px; }
 
 .why-badge {
   display: inline-flex; align-items: center; gap: 6px;
@@ -622,9 +665,15 @@ nav::before {
   <a href="/" style="text-decoration:none">
     <span class="nav-logo logo-text">LIBERTRIP</span>
   </a>
-  <div style="display:flex;align-items:center;gap:10px;">
+  <div style="display:flex;align-items:center;gap:8px;">
     <span class="nav-badge" id="nav-status-badge">🗺️ Ton roadbook</span>
-    <button onclick="shareRoadbook()" title="Partager" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:7px 14px;color:rgba(255,255,255,0.7);cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">🔗 Partager</button>
+    <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" title="Changer le thème">🌙</button>
+    <div class="lang-selector" id="lang-selector">
+      <button class="lang-btn active" onclick="setLang('fr')" data-lang="fr">🇫🇷</button>
+      <button class="lang-btn" onclick="setLang('en')" data-lang="en">🇬🇧</button>
+      <button class="lang-btn" onclick="setLang('es')" data-lang="es">🇪🇸</button>
+    </div>
+    <button onclick="shareRoadbook()" title="Partager" style="background:var(--card);border:1px solid var(--border-lg);border-radius:8px;padding:7px 14px;color:var(--text-muted);cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:all 0.2s;">🔗 <span data-i18n="share">Partager</span></button>
   </div>
 </nav>
 
@@ -639,30 +688,30 @@ nav::before {
     </div>
 
     <!-- Logistique -->
-    <div class="section-title">Vue d'ensemble</div>
+    <div class="section-title" data-i18n="overview">Vue d'ensemble</div>
     <div class="logistics-grid" id="logistics-grid"></div>
 
     <!-- Budget -->
-    <div class="section-title">Budget estimé</div>
+    <div class="section-title" data-i18n="budget">Budget estimé</div>
     <div class="budget-strip" id="budget-strip"></div>
 
     <!-- Ce qu'il faut emporter -->
-    <div class="section-title" id="essentials-title" style="display:none">À emporter</div>
+    <div class="section-title" id="essentials-title" style="display:none" data-i18n="packing">À emporter</div>
     <div class="essentials-grid" id="essentials-grid"></div>
 
     <!-- Conseils pays -->
-    <div class="section-title" id="country-tips-title" style="display:none">À savoir sur la destination</div>
+    <div class="section-title" id="country-tips-title" style="display:none" data-i18n="countryTips">À savoir sur la destination</div>
     <div id="country-tips-grid" style="display:flex;flex-direction:column;gap:8px;margin-bottom:40px;"></div>
 
     <!-- Résumé du voyage -->
     <p id="journey-summary" style="color:var(--text-muted);font-size:16px;margin-bottom:48px;line-height:1.7;font-style:italic;"></p>
 
     <!-- ── JOUR 1 ── -->
-    <div class="section-title">Jour par jour</div>
+    <div class="section-title" data-i18n="dayByDay">Jour par jour</div>
 
     <div id="unlock-banner" class="unlock-banner" style="display:none">
       <span>✅</span>
-      <span class="unlock-banner-text">Voyage complet débloqué — tous tes jours sont disponibles !</span>
+      <span class="unlock-banner-text" data-i18n="unlocked">Voyage complet débloqué — tous tes jours sont disponibles !</span>
     </div>
 
     <div class="day-header">
@@ -811,11 +860,11 @@ function renderLogistics(logistics, criteria) {
   if (!logistics || !grid) return;
 
   const items = [
-    { icon:'📏', value: logistics.total_distance_km ? `${logistics.total_distance_km} km`  : '—', label:'Distance totale' },
-    { icon:'📅', value: `${criteria.days || logistics.total_days || '?'} jours`,  label:'Durée du voyage' },
-    { icon:'🚐', value: esc(logistics.vehicle_type || criteria.vehicle || '—'),    label:'Véhicule' },
-    { icon:'🌤️', value: esc(logistics.best_season || '—'),  label:'Meilleure saison' },
-    { icon:'⚡', value: esc(logistics.difficulty   || '—'),  label:'Difficulté' },
+    { icon:'📏', value: logistics.total_distance_km ? `${logistics.total_distance_km} km`  : '—', label: t('totalDist') },
+    { icon:'📅', value: `${criteria.days || logistics.total_days || '?'} jours`,  label: t('totalDays') },
+    { icon:'🚐', value: esc(logistics.vehicle_type || criteria.vehicle || '—'),    label: t('vehicle') },
+    { icon:'🌤️', value: esc(logistics.best_season || '—'),  label: t('season') },
+    { icon:'⚡', value: esc(logistics.difficulty   || '—'),  label: t('difficulty') },
   ];
 
   grid.innerHTML = items.map(i => `
@@ -843,23 +892,29 @@ function renderBudget(budget, breakdown, isPaid) {
   ].filter(i => i.val !== undefined);
 
   const lockHint = !isPaid
-    ? `<div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:6px;">🔒 Détail du budget inclus dans le voyage complet</div>`
+    ? `<div style="font-size:11px;color:var(--text-dim);margin-top:6px;" data-i18n="budgetLock">${t('budgetLock')}</div>`
     : '';
+
+  const labels = {
+    'Carburant': t('fuel'), 'Nuits': t('nights'),
+    'Nourriture': t('food'), 'Activités': t('activities')
+  };
 
   el.innerHTML = `
     <div class="budget-items">
       ${items.map(i => {
         const hasDetails = i.details && i.details.length;
+        const label = labels[i.label] || i.label;
         return `
         <div class="budget-item ${hasDetails ? 'has-tooltip' : ''}" ${hasDetails ? `data-details="${esc(JSON.stringify(i.details))}"` : ''}>
-          <div class="budget-item-label">${esc(i.label)}${hasDetails ? ' <span style="opacity:.5;font-size:10px;">ⓘ</span>' : ''}</div>
+          <div class="budget-item-label">${esc(label)}${hasDetails ? ' <span style="opacity:.5;font-size:10px;">ⓘ</span>' : ''}</div>
           <div class="budget-item-val">${i.val}€</div>
           ${hasDetails ? `<div class="budget-tooltip" role="tooltip">${i.details.map(d => `<div class="budget-tooltip-line">• ${esc(d)}</div>`).join('')}</div>` : ''}
         </div>`;
       }).join('')}
     </div>
     <div>
-      <div class="budget-total-label">Budget estimé total</div>
+      <div class="budget-total-label" data-i18n="budgetTotal">${t('budgetTotal')}</div>
       <div class="budget-total">${budget.total_eur || '—'}€</div>
       ${lockHint}
     </div>`;
@@ -910,7 +965,7 @@ function renderStep(step) {
     : '';
 
   const secretBadge = isSecret
-    ? `<div class="secret-badge">⭐ Spot secret</div>` : '';
+    ? `<div class="secret-badge">${t('secretSpot')}</div>` : '';
 
   const gps = step.location
     ? gpsButtons(step.location.lat, step.location.lng, step.location.name)
@@ -1087,12 +1142,12 @@ async function triggerFullGeneration(roadbookId) {
     section.innerHTML = `
       <div style="text-align:center;padding:80px 20px;">
         <div style="font-size:48px;margin-bottom:20px;animation:spin 1.5s linear infinite">✨</div>
-        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:12px;color:#fff;">
-          Génération de ton voyage complet…
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:12px;color:var(--text);">
+          ${t('generating')}
         </div>
-        <div style="font-size:15px;color:rgba(255,255,255,0.5);max-width:360px;margin:0 auto;line-height:1.6;margin-bottom:28px;">
-          Jour ${currentDay} sur ${totalDays} en cours…<br>
-          <span style="color:rgba(255,255,255,0.3);font-size:13px;">${doneCount} jour${doneCount>1?'s':''} prêt${doneCount>1?'s':''} sur ${toGenerate}</span>
+        <div style="font-size:15px;color:var(--text-muted);max-width:360px;margin:0 auto;line-height:1.6;margin-bottom:28px;">
+          ${t('day')} ${currentDay} / ${totalDays}…<br>
+          <span style="color:var(--text-dim);font-size:13px;">${doneCount} / ${toGenerate}</span>
         </div>
         <div style="background:rgba(255,255,255,0.08);border-radius:99px;height:6px;max-width:280px;margin:0 auto;">
           <div style="background:linear-gradient(90deg,#4f8eff,#8b5cf6);height:6px;border-radius:99px;width:${pct}%;transition:width 0.4s ease;"></div>
@@ -1171,7 +1226,7 @@ async function init() {
     // Titre page
     document.title = `${criteria.destination || 'Mon voyage'} — LIBERTRIP`;
     document.getElementById('nav-status-badge').textContent =
-      isPaid ? '✅ Voyage complet' : '🗺️ Aperçu Jour 1';
+      isPaid ? t('completeTrip') : t('journeyRoadbook');
 
     // Hero
     document.getElementById('hero-title').textContent =
@@ -1526,7 +1581,7 @@ function openPlaceModal(stepKey) {
 
   const accessSection = ap ? `
     <div style="background:rgba(79,142,255,0.06);border:1px solid rgba(79,142,255,0.15);border-radius:12px;padding:14px;margin-bottom:14px;">
-      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">Point d'accès recommandé</div>
+      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">${t('accessPoint')}</div>
       <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:4px;">${esc(ap.label || '')}</div>
       ${ap.note ? `<div style="font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:10px;line-height:1.5;">${esc(ap.note)}</div>` : ''}
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -1542,7 +1597,7 @@ function openPlaceModal(stepKey) {
   // place_info : infos factuelles uniquement si disponibles
   const placeInfoBlock = (step.place_info && step.place_info !== 'null' && step.place_info.trim())
     ? `<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 14px;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:14px;">
-        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">À savoir</div>
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;">${t('placeInfo')}</div>
         ${esc(step.place_info)}
        </div>`
     : '';
@@ -1558,7 +1613,7 @@ function openPlaceModal(stepKey) {
       ${step.why_chosen ? `<div class="place-modal-why">✓ ${esc(step.why_chosen)}</div>` : ''}
       ${step.transport_tip ? `<div class="place-modal-transport">🗺️ ${esc(step.transport_tip)}</div>` : ''}
       ${accessSection}
-      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:8px;">Lieu exact</div>
+      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;">${t('exactPlace')}</div>
       <div class="place-modal-btns">
         <a href="${mapsUrl}" target="_blank" rel="noopener" class="gps-btn maps">🗺️ Google Maps</a>
         <a href="${wazeUrl}" target="_blank" rel="noopener" class="gps-btn waze">🚙 Waze</a>
@@ -1586,6 +1641,146 @@ document.addEventListener('keydown', e => {
 
 <!-- ── Modale Lieu ── -->
 <div class="place-modal-overlay" id="place-modal-overlay"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// THÈME CLAIR / SOMBRE
+// ══════════════════════════════════════════════════════════════
+(function() {
+  const saved = localStorage.getItem('lb_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  if (theme === 'light') document.documentElement.classList.add('light');
+  document.getElementById('theme-btn').textContent = theme === 'light' ? '🌙' : '☀️';
+})();
+
+function toggleTheme() {
+  const isLight = document.documentElement.classList.toggle('light');
+  localStorage.setItem('lb_theme', isLight ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = isLight ? '🌙' : '☀️';
+}
+
+// ══════════════════════════════════════════════════════════════
+// TRADUCTIONS FR / EN / ES
+// ══════════════════════════════════════════════════════════════
+const TRANSLATIONS = {
+  fr: {
+    share: 'Partager',
+    overview: 'Vue d\'ensemble',
+    budget: 'Budget estimé',
+    perPerson: '/pers.',
+    budgetTotal: 'Budget estimé total',
+    budgetLock: '🔒 Détail du budget inclus dans le voyage complet',
+    packing: 'À emporter',
+    countryTips: 'À savoir sur la destination',
+    dayByDay: 'Jour par jour',
+    unlocked: '✅ Voyage complet débloqué — tous tes jours sont disponibles !',
+    loading: 'Chargement de ton roadbook…',
+    fuel: 'Carburant', nights: 'Nuits', food: 'Nourriture', activities: 'Activités',
+    totalDays: 'Durée du voyage', totalDist: 'Distance totale', vehicle: 'Véhicule',
+    season: 'Meilleure saison', difficulty: 'Difficulté',
+    accessPoint: 'Point d\'accès recommandé', placeInfo: 'À savoir', exactPlace: 'Lieu exact',
+    secretSpot: '⭐ Spot secret',
+    unlockTitle: '🔒 Débloquer le voyage complet',
+    unlockSub: 'Accède aux jours suivants, aux spots secrets et au budget détaillé.',
+    unlockBtn: '✨ Débloquer mon voyage — 14,99€',
+    generating: 'Génération de ton voyage complet…',
+    genSub: 'L\'IA prépare tous tes jours avec détails, spots secrets et adresses locales.',
+    genHint: 'Ça prend environ 20-30 secondes.',
+    day: 'Jour',
+    night: 'Nuit du Jour',
+    roadbookOf: 'Ton roadbook',
+    completeTrip: '✅ Voyage complet',
+    journeyRoadbook: '🗺️ Ton roadbook',
+  },
+  en: {
+    share: 'Share',
+    overview: 'Overview',
+    budget: 'Estimated Budget',
+    perPerson: '/pers.',
+    budgetTotal: 'Total estimated budget',
+    budgetLock: '🔒 Budget details included in the full trip',
+    packing: 'What to bring',
+    countryTips: 'Know before you go',
+    dayByDay: 'Day by day',
+    unlocked: '✅ Full trip unlocked — all your days are available!',
+    loading: 'Loading your roadbook…',
+    fuel: 'Fuel', nights: 'Nights', food: 'Food', activities: 'Activities',
+    totalDays: 'Trip duration', totalDist: 'Total distance', vehicle: 'Vehicle',
+    season: 'Best season', difficulty: 'Difficulty',
+    accessPoint: 'Recommended access point', placeInfo: 'Good to know', exactPlace: 'Exact location',
+    secretSpot: '⭐ Secret spot',
+    unlockTitle: '🔒 Unlock the full trip',
+    unlockSub: 'Access all days, secret spots and detailed budget.',
+    unlockBtn: '✨ Unlock my trip — €14.99',
+    generating: 'Generating your full trip…',
+    genSub: 'The AI is preparing all your days with details, secret spots and local addresses.',
+    genHint: 'This takes about 20-30 seconds.',
+    day: 'Day',
+    night: 'Night of Day',
+    roadbookOf: 'Your roadbook',
+    completeTrip: '✅ Full trip',
+    journeyRoadbook: '🗺️ Your roadbook',
+  },
+  es: {
+    share: 'Compartir',
+    overview: 'Resumen',
+    budget: 'Presupuesto estimado',
+    perPerson: '/pers.',
+    budgetTotal: 'Presupuesto total estimado',
+    budgetLock: '🔒 Detalle del presupuesto incluido en el viaje completo',
+    packing: 'Qué llevar',
+    countryTips: 'Lo que debes saber',
+    dayByDay: 'Día a día',
+    unlocked: '✅ Viaje completo desbloqueado — ¡todos tus días están disponibles!',
+    loading: 'Cargando tu roadbook…',
+    fuel: 'Combustible', nights: 'Noches', food: 'Comida', activities: 'Actividades',
+    totalDays: 'Duración del viaje', totalDist: 'Distancia total', vehicle: 'Vehículo',
+    season: 'Mejor temporada', difficulty: 'Dificultad',
+    accessPoint: 'Punto de acceso recomendado', placeInfo: 'Útil saber', exactPlace: 'Lugar exacto',
+    secretSpot: '⭐ Lugar secreto',
+    unlockTitle: '🔒 Desbloquear el viaje completo',
+    unlockSub: 'Accede a todos los días, lugares secretos y presupuesto detallado.',
+    unlockBtn: '✨ Desbloquear mi viaje — 14,99€',
+    generating: 'Generando tu viaje completo…',
+    genSub: 'La IA está preparando todos tus días con detalles, lugares secretos y direcciones locales.',
+    genHint: 'Esto tarda unos 20-30 segundos.',
+    day: 'Día',
+    night: 'Noche del Día',
+    roadbookOf: 'Tu roadbook',
+    completeTrip: '✅ Viaje completo',
+    journeyRoadbook: '🗺️ Tu roadbook',
+  }
+};
+
+let _lang = localStorage.getItem('lb_lang') || 'fr';
+
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('lb_lang', lang);
+  // Mettre à jour les boutons actifs
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === lang);
+  });
+  // Traduire tous les éléments data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (TRANSLATIONS[lang]?.[key]) el.textContent = TRANSLATIONS[lang][key];
+  });
+  // Mettre à jour le loader
+  const lt = document.querySelector('.loader-text');
+  if (lt) lt.textContent = t('loading');
+  // html lang attr
+  document.documentElement.lang = lang;
+}
+
+function t(key) {
+  return TRANSLATIONS[_lang]?.[key] || TRANSLATIONS.fr[key] || key;
+}
+
+// Appliquer la langue sauvegardée au chargement
+document.addEventListener('DOMContentLoaded', () => setLang(_lang));
+</script>
 
 </body>
 </html>
