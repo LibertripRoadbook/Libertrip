@@ -669,7 +669,7 @@
     flex: 0 0 calc((100% - 32px) / 3);
     min-width: 0;
   }
-  .review-card:hover { border-color: #2a2a2a; box-shadow: 0 8px 40px rgba(0,0,0,0.4); }
+  .review-card:hover { border-color: var(--border-light); box-shadow: 0 8px 40px rgba(0,0,0,0.15); }
   .review-stars { color: var(--gold); font-size: 13px; letter-spacing: 2px; margin-bottom: 12px; }
   .review-text { font-size: 14px; font-weight: 300; color: var(--gray-light); line-height: 1.7; margin-bottom: 16px; font-style: italic; }
   .review-author { display: flex; align-items: center; gap: 10px; }
@@ -720,7 +720,7 @@
   #faq { position: relative; }
   .faq-list { display: flex; flex-direction: column; gap: 12px; max-width: 860px; margin: 0 auto; }
   .faq-item {
-    background: #0d0d0d;
+    background: var(--card);
     border: 1px solid var(--border);
     border-radius: 16px;
     overflow: hidden;
@@ -1200,7 +1200,13 @@
   html.light .price-name, html.light .price-amount { color: var(--white); }
   html.light .price-period, html.light .price-desc, html.light .price-features li { color: var(--gray); }
   html.light .review-card { background: var(--card); border-color: var(--border); }
+  html.light .review-card:hover { border-color: var(--border-light); }
+  html.light .review-text { color: #444; }
+  html.light .review-name { color: #111; }
+  html.light .review-stars { color: var(--gold); }
   html.light .faq-item { background: var(--card); border-color: var(--border); }
+  html.light .faq-q { color: #111 !important; }
+  html.light .faq-chevron { color: #555; }
   html.light .faq-q { color: var(--white); }
   html.light .faq-a { color: var(--gray); }
   html.light .form-slide { background: var(--card); }
