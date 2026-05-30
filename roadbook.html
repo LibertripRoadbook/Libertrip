@@ -55,12 +55,20 @@ h1, h2, h3, h4 { font-family: 'Syne', sans-serif; }
 /* ── Nav ── */
 nav {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(0,0,0,0.85);
-  backdrop-filter: blur(16px);
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
   border-bottom: 1px solid var(--border);
   padding: 16px 24px;
   padding-top: max(16px, env(safe-area-inset-top));
   display: flex; align-items: center; justify-content: space-between;
+}
+/* Masque le contenu qui glisse sous la barre status iOS */
+nav::before {
+  content: '';
+  position: absolute; top: calc(-1 * env(safe-area-inset-top)); left: 0; right: 0;
+  height: env(safe-area-inset-top);
+  background: #000;
 }
 
 .nav-logo { font-size: 20px; letter-spacing: -0.5px; }
@@ -209,8 +217,9 @@ nav {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   border-radius: 100px; padding: 6px 16px;
   font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
-  color: #fff;
+  color: #fff; flex-shrink: 0; text-align: center;
 }
+.day-pill-date { font-size: 10px; font-weight: 400; opacity: 0.75; display: block; margin-top: 1px; }
 .day-title { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
 .day-theme { font-size: 15px; color: var(--text-muted); margin-top: 2px; }
 
@@ -641,6 +650,10 @@ nav {
     <div class="section-title" id="essentials-title" style="display:none">À emporter</div>
     <div class="essentials-grid" id="essentials-grid"></div>
 
+    <!-- Conseils pays -->
+    <div class="section-title" id="country-tips-title" style="display:none">À savoir sur la destination</div>
+    <div id="country-tips-grid" style="display:flex;flex-direction:column;gap:8px;margin-bottom:40px;"></div>
+
     <!-- Résumé du voyage -->
     <p id="journey-summary" style="color:var(--text-muted);font-size:16px;margin-bottom:48px;line-height:1.7;font-style:italic;"></p>
 
@@ -653,7 +666,7 @@ nav {
     </div>
 
     <div class="day-header">
-      <div class="day-pill">Jour 1</div>
+      <div class="day-pill" id="day1-pill">Jour 1</div>
       <div>
         <div class="day-title" id="day1-title"></div>
         <div class="day-theme" id="day1-theme"></div>
@@ -815,16 +828,23 @@ function renderLogistics(logistics, criteria) {
 
 // ── 4. Rendu du budget ───────────────────────────────────────────────────────
 
-function renderBudget(budget, breakdown) {
+function renderBudget(budget, breakdown, isPaid) {
   const el = document.getElementById('budget-strip');
   if (!budget || !el) return;
 
+  // Détail breakdown uniquement si payé (premium)
+  const bd = isPaid ? breakdown : null;
+
   const items = [
-    { label:'Carburant',  val: budget.fuel_eur,           details: breakdown?.fuel_detail },
-    { label:'Nuits',      val: budget.accommodation_eur,  details: breakdown?.accommodation_detail },
-    { label:'Nourriture', val: budget.food_eur,           details: breakdown?.food_detail },
-    { label:'Activités',  val: budget.activities_eur,     details: breakdown?.activities_detail },
+    { label:'Carburant',  val: budget.fuel_eur,           details: bd?.fuel_detail },
+    { label:'Nuits',      val: budget.accommodation_eur,  details: bd?.accommodation_detail },
+    { label:'Nourriture', val: budget.food_eur,           details: bd?.food_detail },
+    { label:'Activités',  val: budget.activities_eur,     details: bd?.activities_detail },
   ].filter(i => i.val !== undefined);
+
+  const lockHint = !isPaid
+    ? `<div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:6px;">🔒 Détail du budget inclus dans le voyage complet</div>`
+    : '';
 
   el.innerHTML = `
     <div class="budget-items">
@@ -841,7 +861,20 @@ function renderBudget(budget, breakdown) {
     <div>
       <div class="budget-total-label">Budget estimé total</div>
       <div class="budget-total">${budget.total_eur || '—'}€</div>
+      ${lockHint}
     </div>`;
+}
+
+// ── 4b. Helper date d'un jour ────────────────────────────────────────────────
+
+function dayDate(dayNumber) {
+  if (!window._departureDate) return null;
+  try {
+    const d = new Date(window._departureDate);
+    if (isNaN(d)) return null;
+    d.setDate(d.getDate() + (dayNumber - 1));
+    return d.toLocaleDateString('fr-FR', { weekday:'short', day:'numeric', month:'short' });
+  } catch(e) { return null; }
 }
 
 // ── 5. Rendu des essentials ──────────────────────────────────────────────────
@@ -852,6 +885,19 @@ function renderEssentials(items) {
   if (!items || !items.length || !grid) return;
   title.style.display = '';
   grid.innerHTML = items.map(i => `<div class="essential-tag">🎒 ${esc(i)}</div>`).join('');
+}
+
+// ── 5b. Conseils pays ────────────────────────────────────────────────────────
+
+function renderCountryTips(tips) {
+  const grid  = document.getElementById('country-tips-grid');
+  const title = document.getElementById('country-tips-title');
+  if (!tips || !tips.length || !grid) return;
+  title.style.display = '';
+  grid.innerHTML = tips.map(t => `
+    <div style="background:rgba(245,200,66,0.05);border:1px solid rgba(245,200,66,0.15);border-radius:10px;padding:11px 14px;font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5;">
+      ⚠️ ${esc(t)}
+    </div>`).join('');
 }
 
 // ── 6. Rendu d'une étape ─────────────────────────────────────────────────────
@@ -916,6 +962,10 @@ function renderStep(step) {
 function renderDay1(day1) {
   document.getElementById('day1-title').textContent = day1.title || 'Jour 1';
   document.getElementById('day1-theme').textContent = day1.theme || '';
+  // Date sur le pill Jour 1
+  const d1 = dayDate(1);
+  const pill1 = document.getElementById('day1-pill');
+  if (d1 && pill1) pill1.innerHTML = `Jour 1<span class="day-pill-date">${d1}</span>`;
 
   // Timeline
   const timeline = document.getElementById('day1-timeline');
@@ -967,7 +1017,7 @@ function renderFullDays(daysArr) {
     return `
       <div class="full-day-section">
         <div class="day-header">
-          <div class="day-pill">Jour ${day.day}</div>
+          <div class="day-pill">Jour ${day.day}${dayDate(day.day) ? `<span class="day-pill-date">${dayDate(day.day)}</span>` : ''}</div>
           <div>
             <div class="day-title">${esc(day.title)}</div>
             <div class="day-theme">${esc(day.theme || '')}</div>
@@ -1129,10 +1179,14 @@ async function init() {
     document.getElementById('hero-sub').textContent =
       logistics.summary || 'Ton roadbook personnalisé est prêt.';
 
+    // Calcul de la date de départ pour afficher les dates sur les jours
+    window._departureDate = criteria.departure_date || null;
+
     // Sections
     renderLogistics(logistics, criteria);
-    renderBudget(logistics.budget_estimated, logistics.budget_breakdown);
+    renderBudget(logistics.budget_estimated, logistics.budget_breakdown, isPaid);
     renderEssentials(logistics.packing_essentials);
+    renderCountryTips(logistics.country_tips);
 
     // Résumé
     if (logistics.summary) {
