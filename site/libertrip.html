@@ -2948,7 +2948,7 @@ function renderReviews(lang) {
   if (!track) return;
   const reviews = REVIEWS_DATA[lang] || REVIEWS_DATA.fr;
   track.innerHTML = reviews.map((r, i) => `
-    <div class="review-card reveal-item" style="transition-delay:${(i*0.08).toFixed(2)}s;">
+    <div class="review-card" style="opacity:1;transform:none;">
       <div class="review-stars">★★★★★</div>
       <div class="review-text">${r.text}</div>
       <div class="review-author">
@@ -2956,7 +2956,6 @@ function renderReviews(lang) {
         <div><div class="review-name">${r.name}</div><div class="review-detail">${r.detail}</div></div>
       </div>
     </div>`).join('');
-  // Rebuild carousel after re-render
   requestAnimationFrame(initCarousel);
 }
 
@@ -2990,7 +2989,7 @@ function renderFaq(lang) {
   if (!list) return;
   const items = FAQ_DATA[lang] || FAQ_DATA.fr;
   list.innerHTML = items.map((item, i) => `
-    <div class="faq-item reveal-item" onclick="toggleFaq(this)" style="transition-delay:${(i+1)*0.1}s;">
+    <div class="faq-item" onclick="toggleFaq(this)" style="opacity:1;transform:none;">
       <button class="faq-q">
         <span>${item.q}</span>
         <span class="faq-chevron">▾</span>
