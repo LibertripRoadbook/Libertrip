@@ -1141,31 +1141,53 @@
     .hero-h1 { font-size: 32px; }
   }
 
-  /* ── Thème & Langue toggles ── */
-  .site-theme-toggle {
+  /* ── Thème & langue toggle SVG ── */
+  html.light .site-lang-selector,
+  html.light .lang-dropdown-trigger { color: var(--gray); }
+  html.light .lang-dropdown-menu-global { background: #fff; border-color: var(--border); box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
+  html.light .lang-dropdown-menu-global button { color: var(--gray); }
+  html.light .lang-dropdown-menu-global button:hover { background: var(--border); color: var(--white); }
+
+  .theme-icon-btn {
+    background: var(--card); border: 1px solid var(--border-light);
+    border-radius: 8px; width: 34px; height: 34px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray-light); transition: background 0.2s, color 0.2s;
+    flex-shrink: 0;
+  }
+  .theme-icon-btn:hover { background: var(--border-light); color: var(--white); }
+  .theme-icon-btn .icon-sun { display: none; }
+  .theme-icon-btn .icon-moon { display: block; }
+  html.light .theme-icon-btn .icon-sun { display: block; }
+  html.light .theme-icon-btn .icon-moon { display: none; }
+
+  /* ── Dropdown langue ── */
+  .lang-dropdown { position: relative; }
+  .lang-dropdown-trigger {
+    display: flex; align-items: center; gap: 6px;
     background: var(--card); border: 1px solid var(--border-light);
     border-radius: 8px; padding: 6px 10px; cursor: pointer;
-    font-size: 15px; line-height: 1; transition: background 0.2s;
-    color: var(--gray-light);
+    font-size: 13px; color: var(--gray-light); font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s, color 0.2s; white-space: nowrap;
   }
-  .site-theme-toggle:hover { background: var(--border); }
-
-  .site-lang-selector {
-    display: flex; gap: 2px;
+  .lang-dropdown-trigger:hover { background: var(--border-light); color: var(--white); }
+  .lang-trigger-mobile { padding: 6px 8px; font-size: 15px; }
+  .lang-dropdown-menu-global {
+    position: fixed; z-index: 9999;
     background: var(--card); border: 1px solid var(--border-light);
-    border-radius: 8px; padding: 3px; overflow: hidden;
+    border-radius: 10px; padding: 6px; min-width: 150px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    animation: fadeInDown 0.15s ease;
   }
-  .site-lang-btn {
-    background: transparent; border: none; border-radius: 6px;
-    padding: 4px 7px; cursor: pointer; font-size: 15px;
-    transition: background 0.15s; opacity: 0.4;
+  @keyframes fadeInDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  .lang-dropdown-menu-global button {
+    display: flex; align-items: center; gap: 10px; width: 100%;
+    background: transparent; border: none; border-radius: 7px;
+    padding: 9px 12px; font-size: 14px; font-family: 'DM Sans', sans-serif;
+    color: var(--gray-light); cursor: pointer; transition: background 0.15s, color 0.15s;
   }
-  .site-lang-btn:hover { opacity: 0.8; background: var(--border); }
-  .site-lang-btn.active { background: var(--border); opacity: 1; }
-  .site-lang-btn-mobile {
-    background: transparent; border: 1px solid var(--border-light);
-    border-radius: 7px; padding: 5px 8px; cursor: pointer; font-size: 15px;
-  }
+  .lang-dropdown-menu-global button:hover { background: var(--border); color: var(--white); }
+  .lang-dropdown-menu-global button[data-lang].active-lang { color: var(--accent); font-weight: 600; }
 
   /* Light mode overrides pour éléments spécifiques */
   html.light body { color: var(--white); }
@@ -1206,32 +1228,56 @@
   <div class="nav-logo">LIBERTRIP</div>
   <!-- Desktop links -->
   <ul class="nav-links">
-    <li><a href="#concept">Concept</a></li>
-    <li><a href="#how">Comment ça marche</a></li>
-    <li><a href="#pricing">Tarifs</a></li>
-    <li><a href="#reviews">Avis</a></li>
+    <li><a href="#concept" data-i18n="navConcept">Concept</a></li>
+    <li><a href="#how" data-i18n="navHow">Comment ça marche</a></li>
+    <li><a href="#pricing" data-i18n="navPricing">Tarifs</a></li>
+    <li><a href="#reviews" data-i18n="navReviews">Avis</a></li>
   </ul>
   <!-- Desktop right -->
-  <div class="nav-right-desktop" style="display:flex;align-items:center;gap:8px;">
-    <div class="site-lang-selector">
-      <button class="site-lang-btn active" onclick="setSiteLang('fr')" data-lang="fr">🇫🇷</button>
-      <button class="site-lang-btn" onclick="setSiteLang('en')" data-lang="en">🇬🇧</button>
-      <button class="site-lang-btn" onclick="setSiteLang('es')" data-lang="es">🇪🇸</button>
+  <div class="nav-right-desktop">
+    <!-- Dropdown langue -->
+    <div class="lang-dropdown" id="lang-dropdown">
+      <button class="lang-dropdown-trigger" onclick="toggleLangDropdown()" id="lang-trigger">
+        <span id="lang-flag-current">🇫🇷</span>
+        <span id="lang-name-current">Français</span>
+        <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div class="lang-dropdown-menu" id="lang-menu">
+        <button onclick="setSiteLang('fr')" data-lang="fr"><span>🇫🇷</span> Français</button>
+        <button onclick="setSiteLang('en')" data-lang="en"><span>🇬🇧</span> English</button>
+        <button onclick="setSiteLang('es')" data-lang="es"><span>🇪🇸</span> Español</button>
+      </div>
     </div>
-    <button class="site-theme-toggle" id="site-theme-btn" onclick="toggleSiteTheme()">🌙</button>
+    <!-- Thème toggle SVG -->
+    <button class="theme-icon-btn" id="site-theme-btn" onclick="toggleSiteTheme()" aria-label="Toggle theme">
+      <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    </button>
     <a href="/mes-roadbooks" class="nav-account-link" data-i18n="navAccount">Mon compte</a>
     <button class="nav-cta" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})" data-i18n="navCta">Générer mon voyage →</button>
   </div>
-  <!-- Mobile right : bouton CTA + menu 3 points -->
-  <div class="nav-right-mobile" style="display:flex;align-items:center;gap:6px;">
-    <button class="site-lang-btn-mobile" onclick="cycleSiteLang()" id="lang-flag-mobile">🇫🇷</button>
-    <button class="site-theme-toggle" onclick="toggleSiteTheme()" style="font-size:15px;padding:5px 8px;">🌙</button>
+  <!-- Mobile right -->
+  <div class="nav-right-mobile">
+    <button class="lang-dropdown-trigger lang-trigger-mobile" onclick="toggleLangDropdown()" id="lang-trigger-mobile">
+      <span id="lang-flag-mobile">🇫🇷</span>
+      <svg width="8" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <button class="theme-icon-btn" onclick="toggleSiteTheme()">
+      <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    </button>
     <button class="nav-cta" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})" data-i18n="navCtaMobile">Générer →</button>
     <button class="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
   </div>
 </nav>
+<!-- Dropdown langue (partagé desktop+mobile, positionné par JS) -->
+<div class="lang-dropdown-menu-global" id="lang-menu-global" style="display:none;">
+  <button onclick="setSiteLang('fr');closeLangDropdown()" data-lang="fr"><span>🇫🇷</span> Français</button>
+  <button onclick="setSiteLang('en');closeLangDropdown()" data-lang="en"><span>🇬🇧</span> English</button>
+  <button onclick="setSiteLang('es');closeLangDropdown()" data-lang="es"><span>🇪🇸</span> Español</button>
+</div>
 <!-- Menu mobile déroulant -->
 <div id="mobile-menu" class="mobile-menu">
   <a href="#concept" onclick="toggleMobileMenu()">Concept</a>
@@ -1345,31 +1391,31 @@
 <section id="how" style="max-width:none; background:linear-gradient(to bottom, var(--black), #050508, var(--black));">
   <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
     <div class="section-header reveal">
-      <div class="tag" style="margin-bottom:20px;"><span class="dot"></span>Comment ça marche</div>
-      <h2>De 0 à roadbook en 3 étapes</h2>
-      <p>Pas de compte à créer. Pas de galère. Juste toi, tes préférences, et l'IA.</p>
+      <div class="tag" style="margin-bottom:20px;"><span class="dot"></span><span data-i18n="howTag">Comment ça marche</span></div>
+      <h2 data-i18n="howH2">De 0 à roadbook en 3 étapes</h2>
+      <p data-i18n="howSub">Pas de compte à créer. Pas de galère. Juste toi, tes préférences, et l'IA.</p>
     </div>
 
     <div class="steps">
       <div class="step">
         <div class="step-num">01</div>
         <div class="step-content">
-          <h3>Tu décris ton voyage en 60 secondes</h3>
-          <p>Destination, dates, type de véhicule, vibe recherchée. Quelques questions simples — zéro blabla inutile.</p>
+          <h3 data-i18n="step1T">Tu décris ton voyage en 60 secondes</h3>
+          <p data-i18n="step1P">Destination, dates, type de véhicule, vibe recherchée. Quelques questions simples — zéro blabla inutile.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">02</div>
         <div class="step-content">
-          <h3>L'IA construit ton roadbook sur-mesure</h3>
-          <p>Elle croise des milliers de données (routes, spots, météo, horaires) pour te livrer un itinéraire optimisé que personne d'autre n'aura.</p>
+          <h3 data-i18n="step2T">L'IA construit ton roadbook sur-mesure</h3>
+          <p data-i18n="step2P">Elle croise des milliers de données (routes, spots, météo, horaires) pour te livrer un itinéraire optimisé que personne d'autre n'aura.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">03</div>
         <div class="step-content">
-          <h3>Tu pars. C'est tout.</h3>
-          <p>Roadbook interactif sur ton téléphone, intégré direct dans Maps ou Waze. Aucune impression. Aucun stress. Juste la route.</p>
+          <h3 data-i18n="step3T">Tu pars. C'est tout.</h3>
+          <p data-i18n="step3P">Roadbook interactif sur ton téléphone, intégré direct dans Maps ou Waze. Aucune impression. Aucun stress. Juste la route.</p>
         </div>
       </div>
     </div>
@@ -1388,46 +1434,46 @@
 
     <!-- COL 1 : Découverte IA (0€) -->
     <div class="price-card reveal-item">
-      <div class="price-name">Découverte IA</div>
+      <div class="price-name" data-i18n="freeCard">Découverte IA</div>
       <div class="price-amount">0€</div>
-      <div class="price-period">Gratuit — sans carte bancaire</div>
-      <div class="price-desc">Teste la puissance de Libertrip. Reçois instantanément l'itinéraire complet et ultra-personnalisé de ton JOUR 1, configuré selon tes critères.</div>
+      <div class="price-period" data-i18n="freePeriod">Gratuit — sans carte bancaire</div>
+      <div class="price-desc" data-i18n="freeDesc">Teste la puissance de Libertrip. Reçois instantanément l'itinéraire complet et ultra-personnalisé de ton JOUR 1, configuré selon tes critères.</div>
       <ul class="price-features">
-        <li>Itinéraire complet du Jour 1</li>
-        <li>Ultra-personnalisé selon tes choix</li>
-        <li>Accès immédiat, zéro engagement</li>
+        <li data-i18n="freeFeat1">Itinéraire complet du Jour 1</li>
+        <li data-i18n="freeFeat2">Ultra-personnalisé selon tes choix</li>
+        <li data-i18n="freeFeat3">Accès immédiat, zéro engagement</li>
       </ul>
       <button class="price-btn outline" onclick="document.getElementById('generator').scrollIntoView({behavior:'smooth'})" data-i18n="freeBtn">🚀 Générer mon Jour 1</button>
     </div>
 
     <!-- COL 2 (CENTRE STAR) : Roadbook Premium à Vie (14,99€) -->
     <div class="price-card premium-star reveal-item" style="transition-delay:0.12s;">
-      <div class="badge-star">✨ MEILLEURE OFFRE</div>
-      <div class="price-name" style="margin-top:28px;">Roadbook Premium à Vie</div>
+      <div class="badge-star" data-i18n="bestOffer">✨ MEILLEURE OFFRE</div>
+      <div class="price-name" style="margin-top:28px;" data-i18n="premiumCard">Roadbook Premium à Vie</div>
       <div class="price-amount">14,99€</div>
-      <div class="price-period">Paiement unique — pas d'abonnement</div>
-      <div class="price-desc">Idéal si tu as un seul grand voyage de prévu et que tu veux l'itinéraire premium complet sans engagement.</div>
+      <div class="price-period" data-i18n="premiumPeriod">Paiement unique — pas d'abonnement</div>
+      <div class="price-desc" data-i18n="premiumDesc">Idéal si tu as un seul grand voyage de prévu et que tu veux l'itinéraire premium complet sans engagement.</div>
       <ul class="price-features">
-        <li>Toutes les options premium débloquées à vie pour ton voyage</li>
-        <li>Support IA 24/7 inclus</li>
-        <li>Accès à vie, sans renouvellement</li>
+        <li data-i18n="premiumFeat1">Toutes les options premium débloquées à vie pour ton voyage</li>
+        <li data-i18n="premiumFeat2">Support IA 24/7 inclus</li>
+        <li data-i18n="premiumFeat3">Accès à vie, sans renouvellement</li>
       </ul>
       <button class="price-btn btn-shimmer" onclick="scrollToQuizWithIntent('premium')" data-i18n="premiumBtn">🚀 Générer et débloquer (14,99€)</button>
     </div>
 
     <!-- COL 3 : Explorateur Clé en Main (4,99€/mois) -->
     <div class="price-card featured reveal-item" style="transition-delay:0.24s;">
-      <div class="price-name">Explorateur Clé en Main</div>
+      <div class="price-name" data-i18n="subCard">Explorateur Clé en Main</div>
       <div class="price-amount">4,99€</div>
-      <div class="price-period">/ mois · Engagement 6 mois minimum</div>
-      <div class="price-desc">Accès illimité à tous tes roadbooks. Génère autant d'itinéraires complets que tu veux, partout en Europe.</div>
+      <div class="price-period" data-i18n="subPeriod">/ mois · Engagement 6 mois minimum</div>
+      <div class="price-desc" data-i18n="subDesc">Accès illimité à tous tes roadbooks. Génère autant d'itinéraires complets que tu veux, partout en Europe.</div>
       <ul class="price-features">
-        <li>Itinéraires complets (tous les jours)</li>
-        <li>Spots secrets Instagram/TikTok</li>
-        <li>Intégration GPS (Google Maps/Waze)</li>
-        <li>Gestion véhicule électrique/moto/van</li>
+        <li data-i18n="subFeat1">Itinéraires complets (tous les jours)</li>
+        <li data-i18n="subFeat2">Spots secrets Instagram/TikTok</li>
+        <li data-i18n="subFeat3">Intégration GPS (Google Maps/Waze)</li>
+        <li data-i18n="subFeat4">Gestion véhicule électrique/moto/van</li>
       </ul>
-      <button class="price-btn solid" onclick="scrollToQuizWithIntent('aventurier')">🚀 Générer mon voyage</button>
+      <button class="price-btn solid" onclick="scrollToQuizWithIntent('aventurier')" data-i18n="subBtn">🚀 Générer mon voyage</button>
     </div>
 
   </div>
@@ -1436,9 +1482,9 @@
 <!-- ─── AVIS ─── -->
 <section id="reviews">
   <div class="section-header reveal">
-    <div class="tag" style="margin-bottom:20px;"><span class="dot"></span>Ils sont déjà partis</div>
-    <h2>Ce qu'ils en disent</h2>
-    <p>Pas de rédaction marketing. Juste des gens qui ont arrêté d'ouvrir 50 onglets.</p>
+    <div class="tag" style="margin-bottom:20px;"><span class="dot"></span><span data-i18n="reviewsTag">Ils sont déjà partis</span></div>
+    <h2 data-i18n="reviewsH2">Ce qu'ils en disent</h2>
+    <p data-i18n="reviewsSub">Pas de rédaction marketing. Juste des gens qui ont arrêté d'ouvrir 50 onglets.</p>
   </div>
 
   <div class="reviews-carousel-wrapper reveal">
@@ -1688,7 +1734,7 @@
       <div style="font-size:60px;margin-bottom:20px;line-height:1;">🚀</div>
       <div class="form-q" style="font-size:clamp(24px,4vw,34px);margin-bottom:0;">Prêt pour ton voyage de rêve ?</div>
       <div class="form-hint" style="font-size:16px;max-width:400px;margin:14px auto 36px;line-height:1.6;">Découvre une nouvelle façon de planifier. Clique sur tes choix, notre IA s'occupe du reste.</div>
-      <button class="btn-next" style="background:linear-gradient(135deg,var(--accent),var(--accent-2));padding:18px 44px;font-size:17px;border-radius:14px;margin:0 auto;display:inline-block;" onclick="goToSlide(1,2)">🗺️ &nbsp;Générer mon aperçu gratuit</button>
+      <button class="btn-next" style="background:linear-gradient(135deg,var(--accent),var(--accent-2));padding:18px 44px;font-size:17px;border-radius:14px;margin:0 auto;display:inline-block;" onclick="goToSlide(1,2)" data-i18n="generateBtn">🗺️  Générer mon aperçu gratuit</button>
     </div>
 
     <!-- PAGE 2 : Profil voyageur (auto-advance) -->
@@ -1912,7 +1958,7 @@
         <p style="font-size:12px;color:var(--gray);margin-top:10px;text-align:center;">Pas de spam. Promis sur la route.</p>
       </div>
       <div style="text-align:center;margin-top:32px;">
-        <button class="btn-next" style="background:linear-gradient(135deg,var(--accent),var(--accent-2));font-size:17px;padding:18px 44px;border-radius:14px;" id="btn-generate" onclick="generateTrip()">Générer mon aperçu gratuit 🚀</button>
+        <button class="btn-next" style="background:linear-gradient(135deg,var(--accent),var(--accent-2));font-size:17px;padding:18px 44px;border-radius:14px;" id="btn-generate" onclick="generateTrip()" data-i18n="generateBtnFinal">Générer mon aperçu gratuit 🚀</button>
         <div id="generate-error" style="display:none;margin-top:16px;color:#F87171;font-size:14px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:10px;padding:12px 16px;"></div>
       </div>
     </div>
@@ -2742,20 +2788,18 @@ setTimeout(() => {
 // ══════════════════════════════════════════════════════════════
 // THÈME CLAIR / SOMBRE — SITE
 // ══════════════════════════════════════════════════════════════
+// Init thème au plus tôt (avant DOMContentLoaded pour éviter le flash)
 (function() {
   const saved = localStorage.getItem('lb_theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const theme = saved || (prefersDark ? 'dark' : 'light');
-  if (theme === 'light') document.documentElement.classList.add('light');
-  const btn = document.getElementById('site-theme-btn');
-  if (btn) btn.textContent = theme === 'light' ? '🌙' : '☀️';
-  document.querySelectorAll('.site-theme-toggle').forEach(b => b.textContent = theme === 'light' ? '🌙' : '☀️');
+  if ((saved || (prefersDark ? 'dark' : 'light')) === 'light') {
+    document.documentElement.classList.add('light');
+  }
 })();
 
 function toggleSiteTheme() {
   const isLight = document.documentElement.classList.toggle('light');
   localStorage.setItem('lb_theme', isLight ? 'light' : 'dark');
-  document.querySelectorAll('.site-theme-toggle').forEach(b => b.textContent = isLight ? '🌙' : '☀️');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -2771,80 +2815,102 @@ const SITE_TRANSLATIONS = {
     heroSubBold: '60 secondes chrono', heroSubEnd: '.',
     heroBtn1: '✦  Générer mon voyage — C\'est gratuit', heroBtn2: 'Voir comment ça marche',
     partnersWith: 'Compatible avec',
-    conceptTag: 'Le concept',
-    conceptH2: 'Un copilote. Pas un itinéraire de plus.',
+    conceptTag: 'Le concept', conceptH2: 'Un copilote. Pas un itinéraire de plus.',
     conceptSub: 'LIBERTRIP ne te donne pas une liste de spots. Il pense comme toi, roule comme toi, et construit un roadbook que personne d\'autre n\'aura.',
     pricingTag: 'Tarifs', pricingH2: 'Simple. Honnête. Efficace.',
     pricingSub: 'Pas d\'abonnement surprise. Paye le voyage que tu veux, quand tu veux.',
+    bestOffer: '✨ MEILLEURE OFFRE',
+    freeCard: 'Découverte IA', freePeriod: 'Gratuit — sans carte bancaire',
+    freeDesc: 'Teste la puissance de Libertrip. Reçois instantanément l\'itinéraire complet et ultra-personnalisé de ton JOUR 1.',
+    freeFeat1: 'Itinéraire complet du Jour 1', freeFeat2: 'Ultra-personnalisé selon tes choix', freeFeat3: 'Accès immédiat, zéro engagement',
+    premiumCard: 'Roadbook Premium à Vie', premiumPeriod: 'Paiement unique — pas d\'abonnement',
+    premiumDesc: 'Idéal si tu as un seul grand voyage de prévu et que tu veux l\'itinéraire premium complet sans engagement.',
+    premiumFeat1: 'Toutes les options premium débloquées à vie', premiumFeat2: 'Support IA 24/7 inclus', premiumFeat3: 'Accès à vie, sans renouvellement',
+    subCard: 'Explorateur Clé en Main', subPeriod: '/ mois · Engagement 6 mois minimum',
+    subDesc: 'Accès illimité à tous tes roadbooks. Génère autant d\'itinéraires complets que tu veux, partout en Europe.',
+    subFeat1: 'Itinéraires complets (tous les jours)', subFeat2: 'Spots secrets Instagram/TikTok', subFeat3: 'Intégration GPS (Google Maps/Waze)', subFeat4: 'Gestion véhicule électrique/moto/van',
+    freeBtn: '🚀 Générer mon Jour 1', premiumBtn: '🚀 Générer et débloquer (14,99€)', subBtn: '🚀 Générer mon voyage',
     reviewsTag: 'Ils sont déjà partis', reviewsH2: 'Ce qu\'ils en disent',
     reviewsSub: 'Pas de rédaction marketing. Juste des gens qui ont arrêté d\'ouvrir 50 onglets.',
-    freeCard: 'Découverte IA', freePeriod: 'Gratuit — sans carte bancaire',
-    premiumCard: 'Roadbook Premium à Vie', premiumPeriod: 'Paiement unique — pas d\'abonnement',
-    subCard: 'Explorateur Clé en Main', subPeriod: '/ mois · Engagement 6 mois minimum',
-    freeBtn: '🚀 Générer mon Jour 1',
-    premiumBtn: '🚀 Générer et débloquer (14,99€)',
-    subBtn: '🚀 Générer mon voyage',
-    howTag: 'Comment ça marche', howH2: '3 étapes. Zéro galère.',
-    step1T: 'Tu décris ton voyage.', step2T: 'L\'IA génère ton roadbook.', step3T: 'Tu pars. C\'est tout.',
-    generateBtn: '🗺️  Générer mon aperçu gratuit',
+    howTag: 'Comment ça marche', howH2: 'De 0 à roadbook en 3 étapes',
+    howSub: 'Pas de compte à créer. Pas de galère. Juste toi, tes préférences, et l\'IA.',
+    step1T: 'Tu décris ton voyage en 60 secondes', step1P: 'Destination, dates, type de véhicule, vibe recherchée. Quelques questions simples — zéro blabla inutile.',
+    step2T: 'L\'IA construit ton roadbook sur-mesure', step2P: 'Elle croise des milliers de données (routes, spots, météo, horaires) pour te livrer un itinéraire optimisé que personne d\'autre n\'aura.',
+    step3T: 'Tu pars. C\'est tout.', step3P: 'Roadbook interactif sur ton téléphone, intégré direct dans Maps ou Waze. Aucune impression. Aucun stress. Juste la route.',
+    generateBtn: '🗺️  Générer mon aperçu gratuit', generateBtnFinal: 'Générer mon aperçu gratuit 🚀',
   },
   en: {
     navAccount: 'My account', navCta: 'Generate my trip →', navCtaMobile: 'Generate →',
     navConcept: 'Concept', navHow: 'How it works', navPricing: 'Pricing', navReviews: 'Reviews',
     heroBadge: 'AI Travel Copilot — Open Beta',
     heroH1a: 'Stop planning.', heroH1b: 'Start travelling.',
-    heroSub: '50 open tabs, 3 hours wasted, an itinerary that looks like everyone else\'s. LIBERTRIP generates your ultra-personalised roadbook in ',
+    heroSub: '50 open tabs, 3 hours wasted, an itinerary like everyone else\'s. LIBERTRIP generates your ultra-personalised roadbook in ',
     heroSubBold: '60 seconds flat', heroSubEnd: '.',
     heroBtn1: '✦  Generate my trip — It\'s free', heroBtn2: 'See how it works',
     partnersWith: 'Compatible with',
-    conceptTag: 'The concept',
-    conceptH2: 'A copilot. Not just another itinerary.',
+    conceptTag: 'The concept', conceptH2: 'A copilot. Not just another itinerary.',
     conceptSub: 'LIBERTRIP doesn\'t give you a list of spots. It thinks like you, drives like you, and builds a roadbook no one else will have.',
     pricingTag: 'Pricing', pricingH2: 'Simple. Honest. Effective.',
-    pricingSub: 'No surprise subscription. Pay for the trip you want, when you want.',
+    pricingSub: 'No surprise subscriptions. Pay for the trip you want, when you want.',
+    bestOffer: '✨ BEST OFFER',
+    freeCard: 'AI Discovery', freePeriod: 'Free — no credit card',
+    freeDesc: 'Test the power of Libertrip. Instantly receive the complete ultra-personalised itinerary for your DAY 1.',
+    freeFeat1: 'Complete Day 1 itinerary', freeFeat2: 'Ultra-personalised to your choices', freeFeat3: 'Instant access, zero commitment',
+    premiumCard: 'Lifetime Premium Roadbook', premiumPeriod: 'One-time payment — no subscription',
+    premiumDesc: 'Ideal if you have one big trip planned and want the complete premium itinerary with no commitment.',
+    premiumFeat1: 'All premium options unlocked for life', premiumFeat2: '24/7 AI support included', premiumFeat3: 'Lifetime access, no renewal',
+    subCard: 'All-Inclusive Explorer', subPeriod: '/ month · 6-month minimum',
+    subDesc: 'Unlimited access to all your roadbooks. Generate as many complete itineraries as you want, anywhere in Europe.',
+    subFeat1: 'Complete itineraries (all days)', subFeat2: 'Secret Instagram/TikTok spots', subFeat3: 'GPS integration (Google Maps/Waze)', subFeat4: 'EV/motorbike/van management',
+    freeBtn: '🚀 Generate my Day 1', premiumBtn: '🚀 Generate & unlock (€14.99)', subBtn: '🚀 Generate my trip',
     reviewsTag: 'They\'ve already left', reviewsH2: 'What they say',
     reviewsSub: 'No marketing copy. Just people who stopped opening 50 tabs.',
-    freeCard: 'AI Discovery', freePeriod: 'Free — no credit card',
-    premiumCard: 'Lifetime Premium Roadbook', premiumPeriod: 'One-time payment — no subscription',
-    subCard: 'Explorer All-Inclusive', subPeriod: '/ month · 6-month minimum',
-    freeBtn: '🚀 Generate my Day 1',
-    premiumBtn: '🚀 Generate & unlock (€14.99)',
-    subBtn: '🚀 Generate my trip',
-    howTag: 'How it works', howH2: '3 steps. Zero hassle.',
-    step1T: 'You describe your trip.', step2T: 'The AI generates your roadbook.', step3T: 'You go. That\'s it.',
-    generateBtn: '🗺️  Generate my free preview',
+    howTag: 'How it works', howH2: 'From 0 to roadbook in 3 steps',
+    howSub: 'No account needed. No hassle. Just you, your preferences, and the AI.',
+    step1T: 'You describe your trip in 60 seconds', step1P: 'Destination, dates, vehicle type, vibe. A few simple questions — zero fluff.',
+    step2T: 'The AI builds your custom roadbook', step2P: 'It cross-references thousands of data points (routes, spots, weather, schedules) to deliver an optimised itinerary no one else will have.',
+    step3T: 'You go. That\'s it.', step3P: 'Interactive roadbook on your phone, integrated directly with Maps or Waze. No printing. No stress. Just the road.',
+    generateBtn: '🗺️  Generate my free preview', generateBtnFinal: 'Generate my free preview 🚀',
   },
   es: {
     navAccount: 'Mi cuenta', navCta: 'Generar mi viaje →', navCtaMobile: 'Generar →',
     navConcept: 'Concepto', navHow: 'Cómo funciona', navPricing: 'Precios', navReviews: 'Opiniones',
     heroBadge: 'Copiloto IA de viaje — Beta abierta',
     heroH1a: 'Deja de planificar.', heroH1b: 'Empieza a viajar.',
-    heroSub: '50 pestañas abiertas, 3 horas perdidas, un itinerario igual al de todos. LIBERTRIP genera tu roadbook ultra-personalizado en ',
+    heroSub: '50 pestañas abiertas, 3 horas perdidas, un itinerario como el de todos. LIBERTRIP genera tu roadbook ultra-personalizado en ',
     heroSubBold: '60 segundos', heroSubEnd: '.',
     heroBtn1: '✦  Generar mi viaje — Es gratis', heroBtn2: 'Ver cómo funciona',
     partnersWith: 'Compatible con',
-    conceptTag: 'El concepto',
-    conceptH2: 'Un copiloto. No un itinerario más.',
+    conceptTag: 'El concepto', conceptH2: 'Un copiloto. No un itinerario más.',
     conceptSub: 'LIBERTRIP no te da una lista de lugares. Piensa como tú, rueda como tú, y construye un roadbook que nadie más tendrá.',
     pricingTag: 'Precios', pricingH2: 'Simple. Honesto. Eficaz.',
-    pricingSub: 'Sin sorpresas de suscripción. Paga el viaje que quieras, cuando quieras.',
+    pricingSub: 'Sin suscripciones sorpresa. Paga el viaje que quieras, cuando quieras.',
+    bestOffer: '✨ MEJOR OFERTA',
+    freeCard: 'Descubrimiento IA', freePeriod: 'Gratis — sin tarjeta',
+    freeDesc: 'Prueba el poder de Libertrip. Recibe al instante el itinerario completo y ultra-personalizado de tu DÍA 1.',
+    freeFeat1: 'Itinerario completo del Día 1', freeFeat2: 'Ultra-personalizado según tus elecciones', freeFeat3: 'Acceso inmediato, sin compromiso',
+    premiumCard: 'Roadbook Premium de por vida', premiumPeriod: 'Pago único — sin suscripción',
+    premiumDesc: 'Ideal si tienes un gran viaje planeado y quieres el itinerario premium completo sin compromiso.',
+    premiumFeat1: 'Todas las opciones premium desbloqueadas de por vida', premiumFeat2: 'Soporte IA 24/7 incluido', premiumFeat3: 'Acceso de por vida, sin renovación',
+    subCard: 'Explorador Todo incluido', subPeriod: '/ mes · Mínimo 6 meses',
+    subDesc: 'Acceso ilimitado a todos tus roadbooks. Genera tantos itinerarios completos como quieras, por toda Europa.',
+    subFeat1: 'Itinerarios completos (todos los días)', subFeat2: 'Lugares secretos Instagram/TikTok', subFeat3: 'Integración GPS (Google Maps/Waze)', subFeat4: 'Gestión vehículo eléctrico/moto/van',
+    freeBtn: '🚀 Generar mi Día 1', premiumBtn: '🚀 Generar y desbloquear (14,99€)', subBtn: '🚀 Generar mi viaje',
     reviewsTag: 'Ya se han ido', reviewsH2: 'Lo que dicen',
     reviewsSub: 'Sin marketing. Solo personas que dejaron de abrir 50 pestañas.',
-    freeCard: 'Descubrimiento IA', freePeriod: 'Gratis — sin tarjeta',
-    premiumCard: 'Roadbook Premium de por vida', premiumPeriod: 'Pago único — sin suscripción',
-    subCard: 'Explorador Todo incluido', subPeriod: '/ mes · Mínimo 6 meses',
-    freeBtn: '🚀 Generar mi Día 1',
-    premiumBtn: '🚀 Generar y desbloquear (14,99€)',
-    subBtn: '🚀 Generar mi viaje',
-    howTag: 'Cómo funciona', howH2: '3 pasos. Sin complicaciones.',
-    step1T: 'Describes tu viaje.', step2T: 'La IA genera tu roadbook.', step3T: 'Te vas. Eso es todo.',
-    generateBtn: '🗺️  Generar mi vista previa gratuita',
+    howTag: 'Cómo funciona', howH2: 'De 0 a roadbook en 3 pasos',
+    howSub: 'Sin cuenta que crear. Sin complicaciones. Solo tú, tus preferencias y la IA.',
+    step1T: 'Describes tu viaje en 60 segundos', step1P: 'Destino, fechas, tipo de vehículo, ambiente buscado. Unas preguntas simples — sin rodeos.',
+    step2T: 'La IA construye tu roadbook a medida', step2P: 'Cruza miles de datos (rutas, lugares, clima, horarios) para entregarte un itinerario optimizado que nadie más tendrá.',
+    step3T: 'Te vas. Eso es todo.', step3P: 'Roadbook interactivo en tu teléfono, integrado directamente en Maps o Waze. Sin imprimir. Sin estrés. Solo la carretera.',
+    generateBtn: '🗺️  Generar mi vista previa gratuita', generateBtnFinal: 'Generar mi vista previa gratuita 🚀',
   }
 };
 
 let _siteLang = localStorage.getItem('lb_lang') || 'fr';
-const _FLAGS = { fr: '🇫🇷', en: '🇬🇧', es: '🇪🇸' };
-const _LANGS = ['fr', 'en', 'es'];
+const _FLAGS    = { fr: '🇫🇷', en: '🇬🇧', es: '🇪🇸' };
+const _LANGNAMES= { fr: 'Français', en: 'English', es: 'Español' };
+const _LANGS    = ['fr', 'en', 'es'];
 
 function st(key) {
   return SITE_TRANSLATIONS[_siteLang]?.[key] || SITE_TRANSLATIONS.fr[key] || key;
@@ -2855,36 +2921,55 @@ function setSiteLang(lang) {
   localStorage.setItem('lb_lang', lang);
   document.documentElement.lang = lang;
 
-  // Boutons actifs
-  document.querySelectorAll('.site-lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
-  const mob = document.getElementById('lang-flag-mobile');
-  if (mob) mob.textContent = _FLAGS[lang];
+  // Mettre à jour le trigger desktop
+  const flagCurrent = document.getElementById('lang-flag-current');
+  const nameCurrent = document.getElementById('lang-name-current');
+  const flagMobile  = document.getElementById('lang-flag-mobile');
+  if (flagCurrent) flagCurrent.textContent = _FLAGS[lang];
+  if (nameCurrent) nameCurrent.textContent = _LANGNAMES[lang];
+  if (flagMobile)  flagMobile.textContent  = _FLAGS[lang];
 
-  // Éléments data-i18n
+  // Marquer bouton actif dans le menu
+  document.querySelectorAll('.lang-dropdown-menu-global button[data-lang]').forEach(b => {
+    b.classList.toggle('active-lang', b.dataset.lang === lang);
+  });
+
+  // Traduire tous les éléments data-i18n
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.dataset.i18n;
     const v = SITE_TRANSLATIONS[lang]?.[k];
-    if (v) el.textContent = v;
+    if (v !== undefined) el.textContent = v;
   });
 
-  // Maj nav links
-  const links = document.querySelectorAll('.nav-links li a');
-  const keys = ['navConcept','navHow','navPricing','navReviews'];
-  links.forEach((a, i) => { if (keys[i]) a.textContent = st(keys[i]); });
-
-  // Maj section headers via data-section
-  document.querySelectorAll('[data-section]').forEach(el => {
-    const s = el.dataset.section;
-    const sub = el.dataset.sub;
-    if (s && SITE_TRANSLATIONS[lang]?.[s]) el.textContent = SITE_TRANSLATIONS[lang][s];
-    if (sub && SITE_TRANSLATIONS[lang]?.[sub]) el.textContent = SITE_TRANSLATIONS[lang][sub];
-  });
+  closeLangDropdown();
 }
 
-function cycleSiteLang() {
-  const idx = (_LANGS.indexOf(_siteLang) + 1) % _LANGS.length;
-  setSiteLang(_LANGS[idx]);
+// ── Dropdown langue ──
+let _langOpen = false;
+function toggleLangDropdown() {
+  _langOpen = !_langOpen;
+  const menu   = document.getElementById('lang-menu-global');
+  // Positionner sous le bouton trigger
+  const trigger = document.getElementById('lang-trigger') || document.getElementById('lang-trigger-mobile');
+  if (_langOpen && trigger) {
+    const rect = trigger.getBoundingClientRect();
+    menu.style.top  = (rect.bottom + 6) + 'px';
+    menu.style.left = rect.left + 'px';
+    menu.style.display = 'block';
+  } else {
+    menu.style.display = 'none';
+  }
 }
+function closeLangDropdown() {
+  _langOpen = false;
+  const menu = document.getElementById('lang-menu-global');
+  if (menu) menu.style.display = 'none';
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.lang-dropdown') && !e.target.closest('.lang-trigger-mobile') && !e.target.closest('.lang-dropdown-menu-global')) {
+    closeLangDropdown();
+  }
+});
 
 // Appliquer au chargement
 document.addEventListener('DOMContentLoaded', () => setSiteLang(_siteLang));
