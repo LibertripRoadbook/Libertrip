@@ -1219,6 +1219,36 @@
   html.light .step-content p { color: var(--gray); }
   html.light .step::before { background: var(--border); }
   html.light .steps { --line-color: var(--border); }
+  /* Toast light mode */
+  html.light .toast { background: #ffffff; border-color: var(--border); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+  html.light .toast-title { color: #111; }
+  html.light .toast-msg { color: #555; }
+  /* Partners bar light mode */
+  html.light .partners-bar { background: #ffffff; border-color: var(--border); }
+  html.light .partners-label { color: var(--gray); }
+  html.light .partner-item { color: #333; }
+  html.light .partner-divider { background: var(--border); }
+  /* Bento cards light mode */
+  html.light .bento-card h3 { color: var(--white); }
+  html.light .bento-card p { color: var(--gray); }
+  html.light .bento-stat { color: var(--white); }
+  html.light .bento-stat-label { color: var(--gray); }
+  html.light .pill { background: rgba(37,99,235,0.1); color: var(--accent); }
+  html.light .bento-card bc-6 p { color: var(--white); }
+  /* FAQ light mode */
+  html.light .faq-q { color: var(--white); }
+  html.light .faq-q:hover { color: var(--accent); }
+  html.light .faq-body-inner { color: var(--gray); }
+  html.light .faq-chevron { color: var(--gray); }
+  html.light .faq-item:hover { border-color: var(--border-light); box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+  /* Form light mode */
+  html.light .form-wrapper { background: #ffffff; box-shadow: 0 4px 40px rgba(0,0,0,0.08); }
+  html.light .form-q { color: var(--white); }
+  html.light .form-hint { color: var(--gray); }
+  html.light .quiz-card-rythme { background: var(--card); border-color: var(--border); color: var(--white); }
+  html.light .form-slide { background: transparent; }
+  html.light .day-btn { background: var(--card); border-color: var(--border); color: var(--white); }
+  html.light #days-count { color: var(--white); -webkit-text-fill-color: var(--white); }
   html.light .tag { background: rgba(37,99,235,0.08); border-color: rgba(37,99,235,0.2); color: var(--accent); }
   html.light .nav-links a { color: var(--gray); }
   html.light .nav-links a:hover { color: var(--white); }
@@ -1345,9 +1375,9 @@
     <!-- Carte principale -->
     <div class="bento-card bc-1 bento-large-card">
       <div class="content">
-        <span class="pill">✦ IA sur-mesure</span>
-        <h3>Ton voyage. Vraiment le tien.</h3>
-        <p>L'IA analyse ton véhicule, ton heure de départ, tes préférences (cols, spots cachés, villes, tranquillité…) et génère un itinéraire logistiquement parfait — avec les temps de trajet réels, les pauses intelligentes, et zéro mauvaise surprise.</p>
+        <span class="pill">✦ <span data-i18n="bentoPill">IA sur-mesure</span></span>
+        <h3 data-i18n="bentoH1">Ton voyage. Vraiment le tien.</h3>
+        <p data-i18n="bentoP1">L'IA analyse ton véhicule, ton heure de départ, tes préférences (cols, spots cachés, villes, tranquillité…) et génère un itinéraire logistiquement parfait — avec les temps de trajet réels, les pauses intelligentes, et zéro mauvaise surprise.</p>
       </div>
       <div class="bento-visual">🗺️</div>
     </div>
@@ -1357,34 +1387,34 @@
       <span class="bento-icon">⚡</span>
       <div>
         <div class="bento-stat">60s</div>
-        <div class="bento-stat-label">pour un roadbook complet</div>
+        <div class="bento-stat-label" data-i18n="bento60s">pour un roadbook complet</div>
       </div>
     </div>
 
     <!-- Route / motards -->
     <div class="bento-card bc-3">
-      <span class="pill">🏍️ Road-trip</span>
-      <h3>Pour les vrais coureurs de routes</h3>
-      <p>Cols mythiques, routes panoramiques, spots viraux TikTok/Instagram. LIBERTRIP trouve ce que Google Maps ignore.</p>
+      <span class="pill">🏍️ <span data-i18n="bentoPill3">Road-trip</span></span>
+      <h3 data-i18n="bentoH3">Pour les vrais coureurs de routes</h3>
+      <p data-i18n="bentoP3">Cols mythiques, routes panoramiques, spots viraux TikTok/Instagram. LIBERTRIP trouve ce que Google Maps ignore.</p>
     </div>
 
     <!-- Citadins -->
     <div class="bento-card bc-4">
-      <span class="pill purple">🏙️ Citadins</span>
-      <h3>Maîtrise la ville comme un local</h3>
-      <p>Bus, tram, métro : l'IA optimise chaque connexion pour que tu ne rates jamais rien.</p>
+      <span class="pill purple">🏙️ <span data-i18n="bentoPill4">Citadins</span></span>
+      <h3 data-i18n="bentoH4">Maîtrise la ville comme un local</h3>
+      <p data-i18n="bentoP4">Bus, tram, métro : l'IA optimise chaque connexion pour que tu ne rates jamais rien.</p>
     </div>
 
     <!-- Export -->
     <div class="bento-card bc-5">
-      <span class="pill gold">📲 Prêt à l'emploi</span>
-      <h3>Balancé direct sur ton téléphone</h3>
-      <p>Un tap et ton roadbook est dans Google Maps ou Waze. Pas besoin d'imprimer quoi que ce soit.</p>
+      <span class="pill gold">📲 <span data-i18n="bentoPill5">Prêt à l'emploi</span></span>
+      <h3 data-i18n="bentoH5">Balancé direct sur ton téléphone</h3>
+      <p data-i18n="bentoP5">Un tap et ton roadbook est dans Google Maps ou Waze. Pas besoin d'imprimer quoi que ce soit.</p>
     </div>
 
     <!-- Claim large -->
     <div class="bento-card bc-6" style="text-align:center; background: linear-gradient(135deg, rgba(79,142,255,0.06) 0%, rgba(139,92,246,0.06) 100%);">
-      <p style="font-family:'Syne',sans-serif; font-size:clamp(22px,3vw,36px); font-weight:700; color:var(--white); letter-spacing:-0.02em; max-width:700px; margin:0 auto;">"Prends les clés. On s'occupe du reste."</p>
+      <p style="font-family:'Syne',sans-serif; font-size:clamp(22px,3vw,36px); font-weight:700; color:var(--white); letter-spacing:-0.02em; max-width:700px; margin:0 auto;" data-i18n="bentoQuote">"Prends les clés. On s'occupe du reste."</p>
     </div>
   </div>
 </section>
@@ -1645,72 +1675,19 @@
 <!-- ─── FAQ ─── -->
 <section id="faq">
   <div class="section-header reveal">
-    <div class="tag" style="margin-bottom:20px;"><span class="dot"></span>Questions fréquentes</div>
-    <h2>Tout ce que tu veux savoir.</h2>
-    <p>Des réponses claires, sans jargon. Parce que ton énergie doit aller à la route, pas aux FAQ.</p>
+    <div class="tag" style="margin-bottom:20px;"><span class="dot"></span><span data-i18n="faqTag">Questions fréquentes</span></div>
+    <h2 data-i18n="faqH2">Tout ce que tu veux savoir.</h2>
+    <p data-i18n="faqSub">Des réponses claires, sans jargon. Parce que ton énergie doit aller à la route, pas aux FAQ.</p>
   </div>
-
-  <div class="faq-list reveal">
-
-    <div class="faq-item reveal-item" onclick="toggleFaq(this)" style="transition-delay:0.1s;">
-      <button class="faq-q">
-        <span>Sous quel format je reçois mon voyage ?</span>
-        <span class="faq-chevron">▾</span>
-      </button>
-      <div class="faq-body">
-        <div class="faq-body-inner">Tu reçois instantanément par email un lien unique vers ton "Roadbook Interactif". Il est optimisé à 100% pour ton smartphone (style application native) et accessible à vie, sans rien avoir à télécharger.</div>
-      </div>
-    </div>
-
-    <div class="faq-item reveal-item" onclick="toggleFaq(this)" style="transition-delay:0.2s;">
-      <button class="faq-q">
-        <span>Comment ça se passe si je veux modifier l'itinéraire ?</span>
-        <span class="faq-chevron">▾</span>
-      </button>
-      <div class="faq-body">
-        <div class="faq-body-inner">C'est la magie de l'IA ! Ton Roadbook intègre un chat copilote accessible en direct. D'ailleurs, nos utilisateurs modifient souvent leur trajet en cours de route pour rallonger leurs étapes : les itinéraires sont tellement fous qu'ils s'arrêtent toutes les 20 minutes pour prendre des photos. Si tu prends du retard ou que tu veux changer de rythme, tu l'écris simplement au chat ("Décale mon arrivée", "Trouve-moi un spot dodo plus proche") et l'IA recalcule tout en 5 secondes.</div>
-      </div>
-    </div>
-
-    <div class="faq-item reveal-item" onclick="toggleFaq(this)" style="transition-delay:0.3s;">
-      <button class="faq-q">
-        <span>L'offre "Aperçu Gratuit" demande-t-elle une carte bancaire ?</span>
-        <span class="faq-chevron">▾</span>
-      </button>
-      <div class="faq-body">
-        <div class="faq-body-inner">Absolument pas. Tu réponds aux questions, et l'IA te génère immédiatement la logistique globale et l'itinéraire complet de ton JOUR 1. Pas d'engagement, pas de carte bancaire requise. Vous ne payez que si vous adorez le concept et voulez débloquer le reste.</div>
-      </div>
-    </div>
-
-    <div class="faq-item reveal-item" onclick="toggleFaq(this)" style="transition-delay:0.4s;">
-      <button class="faq-q">
-        <span>Comment j'utilise le Roadbook sur mon GPS en conduisant ?</span>
-        <span class="faq-chevron">▾</span>
-      </button>
-      <div class="faq-body">
-        <div class="faq-body-inner">Chaque étape, point de vue secret ou hébergement de ton carnet contient un bouton magique. Un clic dessus ouvre instantanément l'itinéraire exact dans Google Maps, Apple Maps, Waze, ou ton système de navigation embarqué (CarPlay / Android Auto).</div>
-      </div>
-    </div>
-
-    <div class="faq-item reveal-item" onclick="toggleFaq(this)" style="transition-delay:0.5s;">
-      <button class="faq-q">
-        <span>Proposez-vous une garantie de remboursement ?</span>
-        <span class="faq-chevron">▾</span>
-      </button>
-      <div class="faq-body">
-        <div class="faq-body-inner">Oui. Nous sommes tellement sûrs de la précision de notre IA que si l'itinéraire complet généré ne te convient pas du tout, tu as 14 jours pour envoyer un message à notre support et tu seras remboursé à 100%, sans discussion.</div>
-      </div>
-    </div>
-
-  </div>
+  <div class="faq-list reveal" id="faq-list"></div>
 </section>
 
 <!-- ─── GÉNÉRATEUR / FORMULAIRE ─── -->
 <section id="generator" style="padding:120px 24px;">
   <div style="text-align:center;margin-bottom:56px;" class="reveal">
-    <div class="tag" style="margin-bottom:20px;display:inline-flex;"><span class="dot"></span>Essaie maintenant</div>
-    <h2 style="font-size:clamp(36px,5vw,60px);letter-spacing:-0.03em;">Génère ton roadbook.<br>Gratuit. En 60 secondes.</h2>
-    <p style="color:var(--gray-light);font-size:17px;font-weight:300;max-width:440px;margin:16px auto 0;">Réponds à quelques questions et laisse l'IA faire le reste.</p>
+    <div class="tag" style="margin-bottom:20px;display:inline-flex;"><span class="dot"></span><span data-i18n="tryNow">Essaie maintenant</span></div>
+    <h2 style="font-size:clamp(36px,5vw,60px);letter-spacing:-0.03em;" data-i18n="genTitle">Génère ton roadbook.<br>Gratuit. En 60 secondes.</h2>
+    <p style="color:var(--gray-light);font-size:17px;font-weight:300;max-width:440px;margin:16px auto 0;" data-i18n="genSub">Réponds à quelques questions et laisse l'IA faire le reste.</p>
   </div>
 
   <div class="form-wrapper reveal">
@@ -1818,22 +1795,22 @@
     <div class="form-slide" id="slide-6">
       <div class="form-q" style="text-align:center;" data-i18n="q6">Configure ton tempo ⏱️</div>
       <div style="display:flex;flex-direction:column;align-items:center;margin:28px 0 24px;">
-        <div style="font-size:12px;color:var(--gray-light);margin-bottom:16px;text-transform:uppercase;letter-spacing:0.07em;">Nombre de jours du voyage</div>
+        <div style="font-size:12px;color:var(--gray-light);margin-bottom:16px;text-transform:uppercase;letter-spacing:0.07em;" data-i18n="labelDays">Nombre de jours du voyage</div>
         <div style="display:flex;align-items:center;gap:28px;">
           <button class="day-btn" onclick="changeDays(-1)">−</button>
           <div id="days-count" style="font-family:'Syne',sans-serif;font-size:56px;font-weight:800;min-width:80px;text-align:center;background:linear-gradient(135deg,var(--white) 40%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">7</div>
           <button class="day-btn" onclick="changeDays(1)">+</button>
         </div>
-        <div style="font-size:13px;color:var(--gray);margin-top:6px;">jours</div>
+        <div style="font-size:13px;color:var(--gray);margin-top:6px;" data-i18n="labelDaysUnit">jours</div>
       </div>
-      <div style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;text-align:center;margin-bottom:14px;">Rythme de voyage</div>
+      <div style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;text-align:center;margin-bottom:14px;" data-i18n="labelRhythm">Rythme de voyage</div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-        <button class="quiz-card-rythme" onclick="selectRythme(this,'slow')"><span class="opt-icon">🧘</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Slow Travel</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">Moins de 100km/j</div></button>
-        <button class="quiz-card-rythme" onclick="selectRythme(this,'equilibre')"><span class="opt-icon">⛰️</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Équilibré</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">100–200km/j</div></button>
-        <button class="quiz-card-rythme" onclick="selectRythme(this,'rouleur')"><span class="opt-icon">🏁</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Grand Rouleur</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">+200km/j</div></button>
+        <button class="quiz-card-rythme" onclick="selectRythme(this,'slow')"><span class="opt-icon">🧘</span><div style="margin-top:6px;font-size:13px;font-weight:500;" data-i18n="rhythmSlow">Slow Travel</div><div style="font-size:11px;color:var(--gray);margin-top:2px;" data-i18n="rhythmSlowSub">Moins de 100km/j</div></button>
+        <button class="quiz-card-rythme" onclick="selectRythme(this,'equilibre')"><span class="opt-icon">⛰️</span><div style="margin-top:6px;font-size:13px;font-weight:500;" data-i18n="rhythmBal">Équilibré</div><div style="font-size:11px;color:var(--gray);margin-top:2px;" data-i18n="rhythmBalSub">100–200km/j</div></button>
+        <button class="quiz-card-rythme" onclick="selectRythme(this,'rouleur')"><span class="opt-icon">🏁</span><div style="margin-top:6px;font-size:13px;font-weight:500;" data-i18n="rhythmFast">Grand Rouleur</div><div style="font-size:11px;color:var(--gray);margin-top:2px;" data-i18n="rhythmFastSub">+200km/j</div></button>
       </div>
       <div style="text-align:center;margin-top:32px;">
-        <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(6,7)">Continuer ➔</button>
+        <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(6,7)" data-i18n="continueBtn">Continuer ➔</button>
       </div>
     </div>
 
@@ -2573,6 +2550,57 @@ if (notesTA && notesCount) {
 }
 
 // ─── TOAST NOTIFICATIONS FOMO (100 notifications) ───
+const TOAST_MESSAGES = {
+  en: [
+    "🔥 Thomas just generated his Switzerland itinerary (4 days)",
+    "⚡ Manon unlocked her Roadbook for Northern Italy as a couple!",
+    "🏍️ A biker just planned his passes in the Dolomites",
+    "🚐 Lucas created his Van road trip in Scotland (10 days)",
+    "✨ Chloe is preparing her solo city-trip in Amsterdam",
+    "🔥 Maxime just launched generation for Iceland (7 days)",
+    "⚡ Sarah set up her family trip to Spain",
+    "🚗 Nicolas just generated his route on the French Riviera",
+    "✨ Inès found her secret Instagram spots in Greece",
+    "🚐 Julien is exploring Brittany by Van (5 days)",
+    "🔥 Léa just created her gastronomic itinerary in Tuscany",
+    "🏍️ A group of bikers planned the Route des Grandes Alpes",
+    "⚡ Enzo just unlocked his roadbook for Portugal",
+    "✨ Camille is planning a quiet weekend in the Loire Valley",
+    "🚗 Alexandre generated his road trip in Norway (12 days)",
+    "🔥 Clara just found her wild hikes in Madeira",
+    "🚐 Antoine set up his sleep spots for the Landes by Van",
+    "⚡ Mathilde generated her intense city-trip to London",
+    "✨ Hugo is exploring Andalusia as a couple (8 days)",
+    "🏍️ A female biker just planned her route in the Cévennes",
+    "🔥 Valentine unlocked her hidden spots in Corsica (6 days)",
+    "⚡ Bastien just generated his custom trip to Morocco",
+    "🚗 Elodie is preparing her itinerary on the Algarve coast",
+    "✨ Arthur created his Bavarian Castles themed trip",
+    "🚀 A TikTok user just generated the perfect trip (15 days)"
+  ],
+  es: [
+    "🔥 Thomas acaba de generar su itinerario en Suiza (4 días)",
+    "⚡ Manon desbloqueó su Roadbook para el Norte de Italia en pareja!",
+    "🏍️ Un motorista acaba de planificar sus puertos en los Dolomitas",
+    "🚐 Lucas creó su road trip en Van por Escocia (10 días)",
+    "✨ Chloé prepara su city-trip en solitario a Ámsterdam",
+    "🔥 Maxime acaba de lanzar la generación para Islandia (7 días)",
+    "⚡ Sarah configuró su viaje en familia a España",
+    "🚗 Nicolás acaba de generar su ruta por la Costa Azul",
+    "✨ Inès encontró sus spots secretos de Instagram en Grecia",
+    "🚐 Julien explora Bretaña en Van (5 días)",
+    "🔥 Léa acaba de crear su itinerario gastronómico en Toscana",
+    "⚡ Enzo acaba de desbloquear su roadbook para Portugal",
+    "✨ Camille planifica un fin de semana tranquilo en el Valle del Loira",
+    "🚗 Alexandre generó su road trip en Noruega (12 días)",
+    "⚡ Mathilde generó su city-trip intenso a Londres",
+    "✨ Hugo explora Andalucía en pareja (8 días)",
+    "🔥 Valentine desbloqueó sus spots ocultos en Córcega (6 días)",
+    "⚡ Bastien acaba de generar su viaje personalizado a Marruecos",
+    "🚀 Un usuario de TikTok acaba de generar el viaje perfecto (15 días)"
+  ],
+};
+
 const toastMessages = [
   "🔥 Thomas vient de générer son itinéraire en Suisse (4 jours)",
   "⚡ Manon a débloqué son Roadbook pour l'Italie du Nord en couple !",
@@ -2686,15 +2714,20 @@ function shuffleArray(arr) {
   return a;
 }
 
+function getToastPool() {
+  return TOAST_MESSAGES[_siteLang] || toastMessages;
+}
+
 let shuffledToasts = shuffleArray(toastMessages);
 let toastIdx = 0;
 
 function showToast() {
-  if (toastIdx >= shuffledToasts.length) {
-    shuffledToasts = shuffleArray(toastMessages);
+  const pool = getToastPool();
+  if (toastIdx >= pool.length) {
+    shuffledToasts = shuffleArray(pool);
     toastIdx = 0;
   }
-  const fullText = shuffledToasts[toastIdx++];
+  const fullText = (shuffledToasts[toastIdx] !== undefined ? shuffledToasts : shuffleArray(pool))[toastIdx++] || pool[0];
 
   // Extract emoji (first "word")
   const spaceIdx = fullText.indexOf(' ');
@@ -2703,7 +2736,7 @@ function showToast() {
 
   const toast = document.getElementById('main-toast');
   document.getElementById('toast-emoji').textContent = emoji;
-  document.getElementById('toast-title').textContent = 'En direct';
+  document.getElementById('toast-title').textContent = (SITE_TRANSLATIONS[_siteLang]?.liveLabel) || 'En direct';
   document.getElementById('toast-msg').textContent = msg;
 
   toast.classList.remove('hide');
@@ -2854,6 +2887,20 @@ const SITE_TRANSLATIONS = {
     q9: 'Quel est ton budget pour ce voyage ? 💰', q9sub: 'L\'IA adaptera ses recommandations à ton enveloppe',
     q10: 'Coche tes 3 priorités absolues pour ce voyage 🏔️', q10sub: 'Sélectionne jusqu\'à 3 options',
     continueBtn: 'Continuer ➔', nextBtn: 'Suivant ➔',
+    labelDays: 'Nombre de jours du voyage', labelDaysUnit: 'jours', labelRhythm: 'Rythme de voyage',
+    rhythmSlow: 'Slow Travel', rhythmSlowSub: 'Moins de 100km/j',
+    rhythmBal: 'Équilibré', rhythmBalSub: '100–200km/j',
+    rhythmFast: 'Grand Rouleur', rhythmFastSub: '+200km/j',
+    tryNow: 'Essaie maintenant', genTitle: 'Génère ton roadbook.\nGratuit. En 60 secondes.', genSub: 'Réponds à quelques questions et laisse l\'IA faire le reste.',
+    bentoPill: 'IA sur-mesure', bentoH1: 'Ton voyage. Vraiment le tien.',
+    bentoP1: 'L\'IA analyse ton véhicule, ton heure de départ, tes préférences (cols, spots cachés, villes, tranquillité…) et génère un itinéraire logistiquement parfait — avec les temps de trajet réels, les pauses intelligentes, et zéro mauvaise surprise.',
+    bento60s: 'pour un roadbook complet',
+    bentoPill3: 'Road-trip', bentoH3: 'Pour les vrais coureurs de routes', bentoP3: 'Cols mythiques, routes panoramiques, spots viraux TikTok/Instagram. LIBERTRIP trouve ce que Google Maps ignore.',
+    bentoPill4: 'Citadins', bentoH4: 'Maîtrise la ville comme un local', bentoP4: 'Bus, tram, métro : l\'IA optimise chaque connexion pour que tu ne rates jamais rien.',
+    bentoPill5: 'Prêt à l\'emploi', bentoH5: 'Balancé direct sur ton téléphone', bentoP5: 'Un tap et ton roadbook est dans Google Maps ou Waze. Pas besoin d\'imprimer quoi que ce soit.',
+    bentoQuote: '"Prends les clés. On s\'occupe du reste."',
+    faqTag: 'Questions fréquentes', faqH2: 'Tout ce que tu veux savoir.', faqSub: 'Des réponses claires, sans jargon. Parce que ton énergie doit aller à la route, pas aux FAQ.',
+    liveLabel: 'En direct',
   },
   en: {
     navAccount: 'My account', navCta: 'Generate my trip →', navCtaMobile: 'Generate →',
@@ -2900,6 +2947,20 @@ const SITE_TRANSLATIONS = {
     q9: 'What\'s your budget for this trip? 💰', q9sub: 'The AI will tailor its recommendations to your budget',
     q10: 'Pick your 3 top priorities for this trip 🏔️', q10sub: 'Select up to 3 options',
     continueBtn: 'Continue ➔', nextBtn: 'Next ➔',
+    labelDays: 'Number of trip days', labelDaysUnit: 'days', labelRhythm: 'Travel pace',
+    rhythmSlow: 'Slow Travel', rhythmSlowSub: 'Less than 100km/day',
+    rhythmBal: 'Balanced', rhythmBalSub: '100–200km/day',
+    rhythmFast: 'Fast Rider', rhythmFastSub: '+200km/day',
+    tryNow: 'Try it now', genTitle: 'Generate your roadbook.\nFree. In 60 seconds.', genSub: 'Answer a few questions and let the AI do the rest.',
+    bentoPill: 'AI-powered', bentoH1: 'Your trip. Truly yours.',
+    bentoP1: 'The AI analyses your vehicle, departure time, preferences (mountain passes, hidden spots, cities, peace…) and generates a logistically perfect itinerary — with real travel times, smart breaks, and zero bad surprises.',
+    bento60s: 'for a complete roadbook',
+    bentoPill3: 'Road-trip', bentoH3: 'For real road warriors', bentoP3: 'Legendary passes, panoramic roads, viral TikTok/Instagram spots. LIBERTRIP finds what Google Maps misses.',
+    bentoPill4: 'City explorers', bentoH4: 'Master the city like a local', bentoP4: 'Bus, tram, metro: the AI optimises every connection so you never miss a thing.',
+    bentoPill5: 'Ready to use', bentoH5: 'Sent straight to your phone', bentoP5: 'One tap and your roadbook is in Google Maps or Waze. No printing needed.',
+    bentoQuote: '"Take the keys. We handle the rest."',
+    faqTag: 'Frequently asked questions', faqH2: 'Everything you want to know.', faqSub: 'Clear answers, no jargon. Because your energy should go to the road, not the FAQ.',
+    liveLabel: 'Live',
   },
   es: {
     navAccount: 'Mi cuenta', navCta: 'Generar mi viaje →', navCtaMobile: 'Generar →',
@@ -2946,6 +3007,20 @@ const SITE_TRANSLATIONS = {
     q9: '¿Cuál es tu presupuesto para este viaje? 💰', q9sub: 'La IA adaptará sus recomendaciones a tu presupuesto',
     q10: 'Elige tus 3 prioridades absolutas para este viaje 🏔️', q10sub: 'Selecciona hasta 3 opciones',
     continueBtn: 'Continuar ➔', nextBtn: 'Siguiente ➔',
+    labelDays: 'Número de días del viaje', labelDaysUnit: 'días', labelRhythm: 'Ritmo de viaje',
+    rhythmSlow: 'Slow Travel', rhythmSlowSub: 'Menos de 100km/día',
+    rhythmBal: 'Equilibrado', rhythmBalSub: '100–200km/día',
+    rhythmFast: 'Gran Rodador', rhythmFastSub: '+200km/día',
+    tryNow: 'Pruébalo ahora', genTitle: 'Genera tu roadbook.\nGratis. En 60 segundos.', genSub: 'Responde unas preguntas y deja que la IA haga el resto.',
+    bentoPill: 'IA a medida', bentoH1: 'Tu viaje. Realmente el tuyo.',
+    bentoP1: 'La IA analiza tu vehículo, hora de salida, preferencias (puertos, spots ocultos, ciudades, tranquilidad…) y genera un itinerario logísticamente perfecto — con tiempos de trayecto reales, pausas inteligentes, y cero malas sorpresas.',
+    bento60s: 'para un roadbook completo',
+    bentoPill3: 'Road-trip', bentoH3: 'Para los verdaderos amantes de la carretera', bentoP3: 'Puertos míticos, rutas panorámicas, spots virales TikTok/Instagram. LIBERTRIP encuentra lo que Google Maps ignora.',
+    bentoPill4: 'Urbanitas', bentoH4: 'Domina la ciudad como un local', bentoP4: 'Bus, tranvía, metro: la IA optimiza cada conexión para que no te pierdas nada.',
+    bentoPill5: 'Listo para usar', bentoH5: 'Directo a tu teléfono', bentoP5: 'Un tap y tu roadbook está en Google Maps o Waze. Sin necesidad de imprimir nada.',
+    bentoQuote: '"Coge las llaves. Nosotros nos encargamos del resto."',
+    faqTag: 'Preguntas frecuentes', faqH2: 'Todo lo que quieres saber.', faqSub: 'Respuestas claras, sin jerga. Porque tu energía debe ir a la carretera, no a las FAQ.',
+    liveLabel: 'En directo',
   }
 };
 
@@ -2984,6 +3059,50 @@ function setSiteLang(lang) {
   });
 
   closeLangDropdown();
+
+  // Rebuilder la FAQ dans la bonne langue
+  renderFaq(lang);
+}
+
+// ── FAQ multilingue ──
+const FAQ_DATA = {
+  fr: [
+    { q: 'Sous quel format je reçois mon voyage ?', a: 'Tu reçois instantanément par email un lien unique vers ton "Roadbook Interactif". Il est optimisé à 100% pour ton smartphone (style application native) et accessible à vie, sans rien avoir à télécharger.' },
+    { q: 'Comment ça se passe si je veux modifier l\'itinéraire ?', a: 'Ton Roadbook intègre un chat copilote accessible en direct. Si tu prends du retard ou que tu veux changer de rythme, tu l\'écris simplement au chat ("Décale mon arrivée", "Trouve-moi un spot dodo plus proche") et l\'IA recalcule tout en 5 secondes.' },
+    { q: 'L\'offre "Aperçu Gratuit" demande-t-elle une carte bancaire ?', a: 'Absolument pas. Tu réponds aux questions, et l\'IA te génère immédiatement l\'itinéraire complet de ton JOUR 1. Pas d\'engagement, pas de carte bancaire requise. Tu ne payes que si tu veux débloquer le reste.' },
+    { q: 'Comment j\'utilise le Roadbook sur mon GPS en conduisant ?', a: 'Chaque étape contient un bouton magique. Un clic ouvre instantanément l\'itinéraire exact dans Google Maps, Apple Maps, Waze, ou CarPlay / Android Auto.' },
+    { q: 'Proposez-vous une garantie de remboursement ?', a: 'Oui. Si l\'itinéraire complet généré ne te convient pas du tout, tu as 14 jours pour contacter notre support et tu seras remboursé à 100%, sans discussion.' },
+  ],
+  en: [
+    { q: 'In what format do I receive my trip?', a: 'You instantly receive a unique link by email to your "Interactive Roadbook". It\'s 100% optimised for your smartphone (like a native app) and accessible for life, with nothing to download.' },
+    { q: 'What if I want to modify the itinerary?', a: 'Your Roadbook includes a live copilot chat. If you\'re running late or want to change pace, just write to the chat ("Delay my arrival", "Find me a closer place to sleep") and the AI recalculates everything in 5 seconds.' },
+    { q: 'Does the "Free Preview" offer require a credit card?', a: 'Absolutely not. You answer the questions, and the AI immediately generates the complete itinerary for your DAY 1. No commitment, no card required. You only pay if you want to unlock the rest.' },
+    { q: 'How do I use the Roadbook on my GPS while driving?', a: 'Each step contains a magic button. One click instantly opens the exact route in Google Maps, Apple Maps, Waze, or CarPlay / Android Auto.' },
+    { q: 'Do you offer a money-back guarantee?', a: 'Yes. If the generated itinerary doesn\'t suit you at all, you have 14 days to contact our support and you\'ll be refunded 100%, no questions asked.' },
+  ],
+  es: [
+    { q: '¿En qué formato recibo mi viaje?', a: 'Recibes instantáneamente por email un enlace único a tu "Roadbook Interactivo". Está 100% optimizado para tu smartphone (como una app nativa) y accesible de por vida, sin nada que descargar.' },
+    { q: '¿Qué pasa si quiero modificar el itinerario?', a: 'Tu Roadbook incluye un chat copiloto en directo. Si llegas tarde o quieres cambiar el ritmo, simplemente escríbelo en el chat ("Retrasa mi llegada", "Encuéntrame un sitio para dormir más cercano") y la IA lo recalcula todo en 5 segundos.' },
+    { q: '¿La oferta "Vista previa gratuita" requiere tarjeta bancaria?', a: 'Absolutamente no. Respondes a las preguntas y la IA genera inmediatamente el itinerario completo de tu DÍA 1. Sin compromiso, sin tarjeta. Solo pagas si quieres desbloquear el resto.' },
+    { q: '¿Cómo uso el Roadbook en mi GPS mientras conduzco?', a: 'Cada etapa contiene un botón mágico. Un clic abre instantáneamente la ruta exacta en Google Maps, Apple Maps, Waze, o CarPlay / Android Auto.' },
+    { q: '¿Ofrecen garantía de devolución?', a: 'Sí. Si el itinerario generado no te convence, tienes 14 días para contactar con nuestro soporte y te reembolsamos el 100%, sin preguntas.' },
+  ],
+};
+
+function renderFaq(lang) {
+  const list = document.getElementById('faq-list');
+  if (!list) return;
+  const items = FAQ_DATA[lang] || FAQ_DATA.fr;
+  list.innerHTML = items.map((item, i) => `
+    <div class="faq-item reveal-item" onclick="toggleFaq(this)" style="transition-delay:${(i+1)*0.1}s;">
+      <button class="faq-q">
+        <span>${item.q}</span>
+        <span class="faq-chevron">▾</span>
+      </button>
+      <div class="faq-body">
+        <div class="faq-body-inner">${item.a}</div>
+      </div>
+    </div>`).join('');
 }
 
 // ── Dropdown langue ──
@@ -3014,7 +3133,10 @@ document.addEventListener('click', e => {
 });
 
 // Appliquer au chargement
-document.addEventListener('DOMContentLoaded', () => setSiteLang(_siteLang));
+document.addEventListener('DOMContentLoaded', () => {
+  setSiteLang(_siteLang);
+  renderFaq(_siteLang);
+});
 </script>
 </body>
 </html>
