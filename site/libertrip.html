@@ -2343,14 +2343,30 @@ for (let i = 2; i <= totalSlides; i++) {
   if (s) s.style.display = 'none';
 }
 
-// Date min = aujourd'hui
-const dateInput = document.getElementById('departure-date');
+// Date min = aujourd'hui + auto-calcul du nombre de jours depuis départ+retour
+const dateInput   = document.getElementById('departure-date');
+const returnInput = document.getElementById('return-date');
 if (dateInput) {
   const today = new Date().toISOString().split('T')[0];
   dateInput.min = today;
   dateInput.addEventListener('change', () => {
     if (dateInput.value && dateInput.value < today) dateInput.value = today;
+    autoCalcDays();
   });
+}
+if (returnInput) {
+  returnInput.addEventListener('change', autoCalcDays);
+}
+function autoCalcDays() {
+  const dep = (document.getElementById('departure-date') || {}).value;
+  const ret = (document.getElementById('return-date')    || {}).value;
+  if (!dep || !ret) return;
+  const diff = Math.round((new Date(ret) - new Date(dep)) / (1000 * 60 * 60 * 24));
+  if (diff > 0 && diff <= 60) {
+    selectedDays = diff;
+    const el = document.getElementById('days-count');
+    if (el) el.textContent = diff;
+  }
 }
 
 // Compteur caractères notes perso
