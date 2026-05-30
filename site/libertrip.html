@@ -1211,7 +1211,14 @@
   html.light .glow-orb { opacity: 0.15; }
   html.light .partners-bar { background: var(--card); border-color: var(--border); }
   html.light .partner-item { color: var(--gray); }
-  html.light footer { background: var(--card); border-top-color: var(--border); }
+  html.light footer { background: var(--black); border-top-color: var(--border); }
+  .how-section { background: linear-gradient(to bottom, var(--black), #050508, var(--black)); }
+  html.light .how-section { background: linear-gradient(to bottom, var(--black), #ebebeb, var(--black)); }
+  html.light .step-num { background: var(--card); border-color: var(--border); color: var(--gray); }
+  html.light .step-content h3 { color: var(--white); }
+  html.light .step-content p { color: var(--gray); }
+  html.light .step::before { background: var(--border); }
+  html.light .steps { --line-color: var(--border); }
   html.light .tag { background: rgba(37,99,235,0.08); border-color: rgba(37,99,235,0.2); color: var(--accent); }
   html.light .nav-links a { color: var(--gray); }
   html.light .nav-links a:hover { color: var(--white); }
@@ -1242,11 +1249,6 @@
         <span id="lang-name-current">Français</span>
         <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </button>
-      <div class="lang-dropdown-menu" id="lang-menu">
-        <button onclick="setSiteLang('fr')" data-lang="fr"><span>🇫🇷</span> Français</button>
-        <button onclick="setSiteLang('en')" data-lang="en"><span>🇬🇧</span> English</button>
-        <button onclick="setSiteLang('es')" data-lang="es"><span>🇪🇸</span> Español</button>
-      </div>
     </div>
     <!-- Thème toggle SVG -->
     <button class="theme-icon-btn" id="site-theme-btn" onclick="toggleSiteTheme()" aria-label="Toggle theme">
@@ -1388,7 +1390,7 @@
 </section>
 
 <!-- ─── COMMENT ÇA MARCHE ─── -->
-<section id="how" style="max-width:none; background:linear-gradient(to bottom, var(--black), #050508, var(--black));">
+<section id="how" style="max-width:none;" class="how-section">
   <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
     <div class="section-header reveal">
       <div class="tag" style="margin-bottom:20px;"><span class="dot"></span><span data-i18n="howTag">Comment ça marche</span></div>
@@ -1732,31 +1734,31 @@
     <!-- PAGE 1 : Écran de bienvenue -->
     <div class="form-slide active" id="slide-1" style="text-align:center;padding:32px 0 16px;">
       <div style="font-size:60px;margin-bottom:20px;line-height:1;">🚀</div>
-      <div class="form-q" style="font-size:clamp(24px,4vw,34px);margin-bottom:0;">Prêt pour ton voyage de rêve ?</div>
-      <div class="form-hint" style="font-size:16px;max-width:400px;margin:14px auto 36px;line-height:1.6;">Découvre une nouvelle façon de planifier. Clique sur tes choix, notre IA s'occupe du reste.</div>
+      <div class="form-q" style="font-size:clamp(24px,4vw,34px);margin-bottom:0;" data-i18n="q1title">Prêt pour ton voyage de rêve ?</div>
+      <div class="form-hint" style="font-size:16px;max-width:400px;margin:14px auto 36px;line-height:1.6;" data-i18n="q1sub">Découvre une nouvelle façon de planifier. Clique sur tes choix, notre IA s'occupe du reste.</div>
       <button class="btn-next" style="background:linear-gradient(135deg,var(--accent),var(--accent-2));padding:18px 44px;font-size:17px;border-radius:14px;margin:0 auto;display:inline-block;" onclick="goToSlide(1,2)" data-i18n="generateBtn">🗺️  Générer mon aperçu gratuit</button>
     </div>
 
     <!-- PAGE 2 : Profil voyageur (auto-advance) -->
     <div class="form-slide" id="slide-2">
-      <div class="form-q" style="text-align:center;">Avec qui pars-tu à l'aventure ? 👥</div>
+      <div class="form-q" style="text-align:center;" data-i18n="q2">Avec qui pars-tu à l'aventure ? 👥</div>
       <div class="form-options quiz-grid" style="margin-top:28px;">
-        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'companions','solo',2)"><span class="opt-icon">🏄</span> En solo</button>
-        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'companions','couple',2)"><span class="opt-icon">🤍</span> En couple</button>
-        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'companions','potes',2)"><span class="opt-icon">🎒</span> Entre potes</button>
-        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'companions','famille',2)"><span class="opt-icon">👨‍👩‍👧‍👦</span> En famille<div style="font-size:12px;color:var(--gray);margin-top:3px;">avec enfants</div></button>
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'companions','solo',2)"><span class="opt-icon">🏄</span> <span data-i18n="optSolo">En solo</span></button>
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'companions','couple',2)"><span class="opt-icon">🤍</span> <span data-i18n="optCouple">En couple</span></button>
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'companions','potes',2)"><span class="opt-icon">🎒</span> <span data-i18n="optPotes">Entre potes</span></button>
+        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'companions','famille',2)"><span class="opt-icon">👨‍👩‍👧‍👦</span> <span data-i18n="optFamille">En famille</span><div style="font-size:12px;color:var(--gray);margin-top:3px;" data-i18n="optFamilleSub">avec enfants</div></button>
       </div>
     </div>
 
     <!-- PAGE 3 : Destination (auto-advance + champ texte si Autre) -->
     <div class="form-slide" id="slide-3">
-      <div class="form-q" style="text-align:center;">Où veux-tu poser tes bagages ? 🌍</div>
+      <div class="form-q" style="text-align:center;" data-i18n="q3">Où veux-tu poser tes bagages ? 🌍</div>
       <div class="form-options quiz-grid" style="margin-top:28px;" id="dest-grid">
         <button class="form-option quiz-card" onclick="selectAndAdvance(this,'destination','suisse',3)"><span class="opt-icon">🇨🇭</span> Suisse</button>
         <button class="form-option quiz-card" onclick="selectAndAdvance(this,'destination','italie',3)"><span class="opt-icon">🇮🇹</span> Italie</button>
         <button class="form-option quiz-card" onclick="selectAndAdvance(this,'destination','france',3)"><span class="opt-icon">🇫🇷</span> France</button>
         <button class="form-option quiz-card" onclick="selectAndAdvance(this,'destination','espagne',3)"><span class="opt-icon">🇪🇸</span> Espagne</button>
-        <button class="form-option quiz-card quiz-card-full" id="btn-autre-dest" onclick="toggleDestAutre(this)"><span class="opt-icon">🗺️</span> Autre destination</button>
+        <button class="form-option quiz-card quiz-card-full" id="btn-autre-dest" onclick="toggleDestAutre(this)"><span class="opt-icon">🗺️</span> <span data-i18n="optAutreDest">Autre destination</span></button>
       </div>
       <div id="autre-dest-field" style="display:none;margin-top:16px;">
         <input class="form-field" type="text" placeholder="Saisir le pays ou la région..." id="destination-custom">
@@ -1768,7 +1770,7 @@
 
     <!-- PAGE 4 : Véhicule (auto-advance) -->
     <div class="form-slide" id="slide-4">
-      <div class="form-q" style="text-align:center;">Quel sera ton moyen de transport ? 🚘</div>
+      <div class="form-q" style="text-align:center;" data-i18n="q4">Quel sera ton moyen de transport ? 🚘</div>
       <div class="form-options quiz-grid" style="margin-top:28px;">
         <button class="form-option quiz-card" onclick="selectAndAdvance(this,'vehicle','voiture',4)"><span class="opt-icon">🚗</span> Voiture classique<div style="font-size:12px;color:var(--gray);margin-top:3px;">Citadine</div></button>
         <button class="form-option quiz-card" onclick="selectVehicleElectric(this)"><span class="opt-icon">🔌</span> Véhicule Électrique<div style="font-size:12px;color:var(--gray);margin-top:3px;">Bornes de recharge</div></button>
@@ -1791,7 +1793,7 @@
 
     <!-- PAGE 5 : Logistique départ + retour -->
     <div class="form-slide" id="slide-5">
-      <div class="form-q" style="text-align:center;">Où et quand commence ton voyage ? 🏁</div>
+      <div class="form-q" style="text-align:center;" data-i18n="q5">Où et quand commence ton voyage ? 🏁</div>
       <div style="display:flex;flex-direction:column;gap:16px;margin-top:28px;">
         <input class="form-field" type="text" placeholder="Ville ou lieu de départ exact (ex: Aéroport de Genève, Gare de Lyon...)" id="departure-place">
         <div style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:-6px;">Départ</div>
@@ -1814,7 +1816,7 @@
 
     <!-- PAGE 6 : Durée et rythme -->
     <div class="form-slide" id="slide-6">
-      <div class="form-q" style="text-align:center;">Configure ton tempo ⏱️</div>
+      <div class="form-q" style="text-align:center;" data-i18n="q6">Configure ton tempo ⏱️</div>
       <div style="display:flex;flex-direction:column;align-items:center;margin:28px 0 24px;">
         <div style="font-size:12px;color:var(--gray-light);margin-bottom:16px;text-transform:uppercase;letter-spacing:0.07em;">Nombre de jours du voyage</div>
         <div style="display:flex;align-items:center;gap:28px;">
@@ -1837,12 +1839,12 @@
 
     <!-- PAGE 7 : Logement (choix multiple) -->
     <div class="form-slide" id="slide-7">
-      <div class="form-q" style="text-align:center;">Où est-ce qu'on s'arrête dormir le soir ? 🛌</div>
+      <div class="form-q" style="text-align:center;" data-i18n="q7">Où est-ce qu'on s'arrête dormir le soir ? 🛌</div>
       <div class="form-options quiz-grid" style="margin-top:28px;">
-        <button class="form-option quiz-card" onclick="toggleMulti(this)"><span class="opt-icon">🏕️</span> Camping / Nature</button>
-        <button class="form-option quiz-card" onclick="toggleMulti(this)"><span class="opt-icon">🏡</span> AirBnb de charme</button>
-        <button class="form-option quiz-card" onclick="toggleMulti(this)"><span class="opt-icon">🏨</span> Hôtels d'exception & Spas</button>
-        <button class="form-option quiz-card" onclick="toggleMulti(this)"><span class="opt-icon">🤫</span> Peu importe</button>
+        <button class="form-option quiz-card" onclick="toggleMulti(this)"><span class="opt-icon">🏕️</span> <span data-i18n="optCamping">Camping / Nature</span></button>
+        <button class="form-option quiz-card" onclick="toggleMulti(this)"><span class="opt-icon">🏡</span> <span data-i18n="optAirbnb">AirBnb de charme</span></button>
+        <button class="form-option quiz-card" onclick="toggleMulti(this)"><span class="opt-icon">🏨</span> <span data-i18n="optHotel">Hôtels d'exception & Spas</span></button>
+        <button class="form-option quiz-card" onclick="toggleMulti(this)"><span class="opt-icon">🤫</span> <span data-i18n="optPeuImporte">Peu importe</span></button>
       </div>
       <div style="text-align:center;margin-top:32px;">
         <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(7,8)">Suivant ➔</button>
@@ -1851,7 +1853,7 @@
 
     <!-- PAGE 8 : Gastronomie (auto-advance) -->
     <div class="form-slide" id="slide-8">
-      <div class="form-q" style="text-align:center;">Côté nourriture, quelle est la politique ? 🍽️</div>
+      <div class="form-q" style="text-align:center;" data-i18n="q8">Côté nourriture, quelle est la politique ? 🍽️</div>
       <div class="form-options quiz-grid quiz-grid-3" style="margin-top:28px;">
         <button class="form-option quiz-card" onclick="selectAndAdvance(this,'food','economique',8)"><span class="opt-icon">🥪</span> Sur le pouce<div style="font-size:12px;color:var(--gray);margin-top:4px;">Économique, sandwichs, fast-food</div></button>
         <button class="form-option quiz-card" onclick="selectAndAdvance(this,'food','local',8)"><span class="opt-icon">🍕</span> Bon rapport qualité/prix<div style="font-size:12px;color:var(--gray);margin-top:4px;">Petits restos locaux, brasseries</div></button>
@@ -1861,8 +1863,8 @@
 
     <!-- PAGE 9 : Budget -->
     <div class="form-slide" id="slide-9">
-      <div class="form-q" style="text-align:center;">Quel est ton budget pour ce voyage ? 💰</div>
-      <div style="font-size:13px;color:var(--gray);text-align:center;margin:8px 0 24px;">L'IA adaptera ses recommandations à ton enveloppe</div>
+      <div class="form-q" style="text-align:center;" data-i18n="q9">Quel est ton budget pour ce voyage ? 💰</div>
+      <div style="font-size:13px;color:var(--gray);text-align:center;margin:8px 0 24px;" data-i18n="q9sub">L'IA adaptera ses recommandations à ton enveloppe</div>
       <div class="form-options quiz-grid quiz-grid-3" style="margin-top:0;">
         <button class="form-option quiz-card" onclick="selectBudget(this,'eco')" id="budget-eco"><span class="opt-icon">🎒</span> Économique<div style="font-size:12px;color:var(--gray);margin-top:4px;">40-80€/jour · Camping, auberges</div></button>
         <button class="form-option quiz-card" onclick="selectBudget(this,'medium')" id="budget-medium"><span class="opt-icon">🏨</span> Confortable<div style="font-size:12px;color:var(--gray);margin-top:4px;">100-180€/jour · Hôtels 3★, Airbnb</div></button>
@@ -1888,8 +1890,8 @@
 
     <!-- PAGE 10 : Centres d'intérêts (max 3) -->
     <div class="form-slide" id="slide-10">
-      <div class="form-q" style="text-align:center;">Coche tes 3 priorités absolues pour ce voyage 🏔️</div>
-      <div style="font-size:13px;color:var(--gray);text-align:center;margin:8px 0 24px;">Sélectionne jusqu'à 3 options</div>
+      <div class="form-q" style="text-align:center;" data-i18n="q10">Coche tes 3 priorités absolues pour ce voyage 🏔️</div>
+      <div style="font-size:13px;color:var(--gray);text-align:center;margin:8px 0 24px;" data-i18n="q10sub">Sélectionne jusqu'à 3 options</div>
       <div class="form-options quiz-grid" style="margin-top:0;">
         <button class="form-option quiz-card" onclick="toggleMax3(this)"><span class="opt-icon">📸</span> Spots Secrets & Instagrammables</button>
         <button class="form-option quiz-card" onclick="toggleMax3(this)"><span class="opt-icon">🥾</span> Randonnées & Nature sauvage</button>
@@ -2838,6 +2840,20 @@ const SITE_TRANSLATIONS = {
     step2T: 'L\'IA construit ton roadbook sur-mesure', step2P: 'Elle croise des milliers de données (routes, spots, météo, horaires) pour te livrer un itinéraire optimisé que personne d\'autre n\'aura.',
     step3T: 'Tu pars. C\'est tout.', step3P: 'Roadbook interactif sur ton téléphone, intégré direct dans Maps ou Waze. Aucune impression. Aucun stress. Juste la route.',
     generateBtn: '🗺️  Générer mon aperçu gratuit', generateBtnFinal: 'Générer mon aperçu gratuit 🚀',
+    // Quiz form
+    q1title: 'Prêt pour ton voyage de rêve ?', q1sub: 'Découvre une nouvelle façon de planifier. Clique sur tes choix, notre IA s\'occupe du reste.',
+    q2: 'Avec qui pars-tu à l\'aventure ? 👥',
+    optSolo: 'En solo', optCouple: 'En couple', optPotes: 'Entre potes', optFamille: 'En famille', optFamilleSub: 'avec enfants',
+    q3: 'Où veux-tu poser tes bagages ? 🌍', optAutreDest: 'Autre destination',
+    q4: 'Quel sera ton moyen de transport ? 🚘',
+    q5: 'Où et quand commence ton voyage ? 🏁',
+    q6: 'Configure ton tempo ⏱️',
+    q7: 'Où est-ce qu\'on s\'arrête dormir le soir ? 🛌',
+    optCamping: 'Camping / Nature', optAirbnb: 'AirBnb de charme', optHotel: 'Hôtels d\'exception & Spas', optPeuImporte: 'Peu importe',
+    q8: 'Côté nourriture, quelle est la politique ? 🍽️',
+    q9: 'Quel est ton budget pour ce voyage ? 💰', q9sub: 'L\'IA adaptera ses recommandations à ton enveloppe',
+    q10: 'Coche tes 3 priorités absolues pour ce voyage 🏔️', q10sub: 'Sélectionne jusqu\'à 3 options',
+    continueBtn: 'Continuer ➔', nextBtn: 'Suivant ➔',
   },
   en: {
     navAccount: 'My account', navCta: 'Generate my trip →', navCtaMobile: 'Generate →',
@@ -2871,6 +2887,19 @@ const SITE_TRANSLATIONS = {
     step2T: 'The AI builds your custom roadbook', step2P: 'It cross-references thousands of data points (routes, spots, weather, schedules) to deliver an optimised itinerary no one else will have.',
     step3T: 'You go. That\'s it.', step3P: 'Interactive roadbook on your phone, integrated directly with Maps or Waze. No printing. No stress. Just the road.',
     generateBtn: '🗺️  Generate my free preview', generateBtnFinal: 'Generate my free preview 🚀',
+    q1title: 'Ready for your dream trip?', q1sub: 'Discover a new way to plan. Click your choices, our AI handles the rest.',
+    q2: 'Who\'s coming on the adventure? 👥',
+    optSolo: 'Solo', optCouple: 'Couple', optPotes: 'With friends', optFamille: 'With family', optFamilleSub: 'with children',
+    q3: 'Where do you want to go? 🌍', optAutreDest: 'Other destination',
+    q4: 'What\'s your mode of transport? 🚘',
+    q5: 'Where and when does your trip start? 🏁',
+    q6: 'Set your pace ⏱️',
+    q7: 'Where do you sleep at night? 🛌',
+    optCamping: 'Camping / Nature', optAirbnb: 'Charming Airbnb', optHotel: 'Hotels & Spas', optPeuImporte: 'Doesn\'t matter',
+    q8: 'What\'s the food plan? 🍽️',
+    q9: 'What\'s your budget for this trip? 💰', q9sub: 'The AI will tailor its recommendations to your budget',
+    q10: 'Pick your 3 top priorities for this trip 🏔️', q10sub: 'Select up to 3 options',
+    continueBtn: 'Continue ➔', nextBtn: 'Next ➔',
   },
   es: {
     navAccount: 'Mi cuenta', navCta: 'Generar mi viaje →', navCtaMobile: 'Generar →',
@@ -2904,6 +2933,19 @@ const SITE_TRANSLATIONS = {
     step2T: 'La IA construye tu roadbook a medida', step2P: 'Cruza miles de datos (rutas, lugares, clima, horarios) para entregarte un itinerario optimizado que nadie más tendrá.',
     step3T: 'Te vas. Eso es todo.', step3P: 'Roadbook interactivo en tu teléfono, integrado directamente en Maps o Waze. Sin imprimir. Sin estrés. Solo la carretera.',
     generateBtn: '🗺️  Generar mi vista previa gratuita', generateBtnFinal: 'Generar mi vista previa gratuita 🚀',
+    q1title: '¿Listo para tu viaje de ensueño?', q1sub: 'Descubre una nueva forma de planificar. Haz clic en tus elecciones, nuestra IA se encarga del resto.',
+    q2: '¿Con quién vas a la aventura? 👥',
+    optSolo: 'Solo', optCouple: 'En pareja', optPotes: 'Con amigos', optFamille: 'En familia', optFamilleSub: 'con niños',
+    q3: '¿Dónde quieres ir? 🌍', optAutreDest: 'Otro destino',
+    q4: '¿Cuál será tu medio de transporte? 🚘',
+    q5: '¿Dónde y cuándo empieza tu viaje? 🏁',
+    q6: 'Configura tu ritmo ⏱️',
+    q7: '¿Dónde dormís por la noche? 🛌',
+    optCamping: 'Camping / Naturaleza', optAirbnb: 'Airbnb encantador', optHotel: 'Hoteles & Spas', optPeuImporte: 'Da igual',
+    q8: '¿Cuál es el plan para comer? 🍽️',
+    q9: '¿Cuál es tu presupuesto para este viaje? 💰', q9sub: 'La IA adaptará sus recomendaciones a tu presupuesto',
+    q10: 'Elige tus 3 prioridades absolutas para este viaje 🏔️', q10sub: 'Selecciona hasta 3 opciones',
+    continueBtn: 'Continuar ➔', nextBtn: 'Siguiente ➔',
   }
 };
 
