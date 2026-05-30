@@ -94,18 +94,7 @@ nav {
   color: var(--text-muted);
 }
 .theme-toggle:hover { background: var(--card-2); }
-.lang-selector {
-  display: flex; gap: 2px;
-  background: var(--card); border: 1px solid var(--border-lg);
-  border-radius: 8px; padding: 3px; overflow: hidden;
-}
-.lang-btn {
-  background: transparent; border: none; border-radius: 6px;
-  padding: 4px 7px; cursor: pointer; font-size: 15px;
-  transition: background 0.15s; opacity: 0.45;
-}
-.lang-btn:hover { opacity: 0.8; background: var(--card-2); }
-.lang-btn.active { background: var(--card-2); opacity: 1; }
+/* lang dropdown inline styles — see nav HTML */
 /* Masque le contenu qui glisse sous la barre status iOS */
 nav::before {
   content: '';
@@ -667,13 +656,24 @@ nav::before {
   </a>
   <div style="display:flex;align-items:center;gap:8px;">
     <span class="nav-badge" id="nav-status-badge">🗺️ Ton roadbook</span>
-    <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" title="Changer le thème">🌙</button>
-    <div class="lang-selector" id="lang-selector">
-      <button class="lang-btn active" onclick="setLang('fr')" data-lang="fr">🇫🇷</button>
-      <button class="lang-btn" onclick="setLang('en')" data-lang="en">🇬🇧</button>
-      <button class="lang-btn" onclick="setLang('es')" data-lang="es">🇪🇸</button>
+    <!-- Dropdown langue -->
+    <div style="position:relative;">
+      <button class="theme-toggle" id="rb-lang-trigger" onclick="toggleRbLangDropdown()" style="display:flex;align-items:center;gap:5px;padding:6px 10px;font-size:13px;color:var(--text-muted);">
+        <span id="rb-lang-flag">🇫🇷</span>
+        <svg width="8" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div id="rb-lang-menu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--card);border:1px solid var(--border-lg);border-radius:10px;padding:6px;min-width:140px;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+        <button onclick="setLang('fr')" data-lang="fr" style="display:flex;align-items:center;gap:8px;width:100%;background:transparent;border:none;border-radius:7px;padding:8px 10px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text-muted);cursor:pointer;transition:background 0.15s;"><span>🇫🇷</span> Français</button>
+        <button onclick="setLang('en')" data-lang="en" style="display:flex;align-items:center;gap:8px;width:100%;background:transparent;border:none;border-radius:7px;padding:8px 10px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text-muted);cursor:pointer;transition:background 0.15s;"><span>🇬🇧</span> English</button>
+        <button onclick="setLang('es')" data-lang="es" style="display:flex;align-items:center;gap:8px;width:100%;background:transparent;border:none;border-radius:7px;padding:8px 10px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text-muted);cursor:pointer;transition:background 0.15s;"><span>🇪🇸</span> Español</button>
+      </div>
     </div>
-    <button onclick="shareRoadbook()" title="Partager" style="background:var(--card);border:1px solid var(--border-lg);border-radius:8px;padding:7px 14px;color:var(--text-muted);cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:all 0.2s;">🔗 <span data-i18n="share">Partager</span></button>
+    <!-- Thème SVG -->
+    <button class="theme-toggle theme-icon-toggle" id="theme-btn" onclick="toggleTheme()" title="Changer le thème" style="width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;">
+      <svg class="rb-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      <svg class="rb-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+    <button onclick="shareRoadbook()" style="background:var(--card);border:1px solid var(--border-lg);border-radius:8px;padding:7px 14px;color:var(--text-muted);cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;transition:all 0.2s;">🔗 <span data-i18n="share">Partager</span></button>
   </div>
 </nav>
 
@@ -1649,16 +1649,38 @@ document.addEventListener('keydown', e => {
 (function() {
   const saved = localStorage.getItem('lb_theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const theme = saved || (prefersDark ? 'dark' : 'light');
-  if (theme === 'light') document.documentElement.classList.add('light');
-  document.getElementById('theme-btn').textContent = theme === 'light' ? '🌙' : '☀️';
+  if ((saved || (prefersDark ? 'dark' : 'light')) === 'light') {
+    document.documentElement.classList.add('light');
+  }
+  updateThemeIcons();
 })();
+
+function updateThemeIcons() {
+  const isLight = document.documentElement.classList.contains('light');
+  document.querySelectorAll('.rb-icon-sun').forEach(el => el.style.display = isLight ? 'block' : 'none');
+  document.querySelectorAll('.rb-icon-moon').forEach(el => el.style.display = isLight ? 'none' : 'block');
+}
 
 function toggleTheme() {
   const isLight = document.documentElement.classList.toggle('light');
   localStorage.setItem('lb_theme', isLight ? 'light' : 'dark');
-  document.getElementById('theme-btn').textContent = isLight ? '🌙' : '☀️';
+  updateThemeIcons();
 }
+
+// ── Dropdown langue roadbook ──
+let _rbLangOpen = false;
+function toggleRbLangDropdown() {
+  _rbLangOpen = !_rbLangOpen;
+  const menu = document.getElementById('rb-lang-menu');
+  if (menu) menu.style.display = _rbLangOpen ? 'block' : 'none';
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#rb-lang-trigger') && !e.target.closest('#rb-lang-menu')) {
+    _rbLangOpen = false;
+    const menu = document.getElementById('rb-lang-menu');
+    if (menu) menu.style.display = 'none';
+  }
+});
 
 // ══════════════════════════════════════════════════════════════
 // TRADUCTIONS FR / EN / ES
@@ -1755,13 +1777,22 @@ const TRANSLATIONS = {
 
 let _lang = localStorage.getItem('lb_lang') || 'fr';
 
+const _RB_FLAGS = { fr: '🇫🇷', en: '🇬🇧', es: '🇪🇸' };
+
 function setLang(lang) {
   _lang = lang;
   localStorage.setItem('lb_lang', lang);
-  // Mettre à jour les boutons actifs
-  document.querySelectorAll('.lang-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.lang === lang);
-  });
+  document.documentElement.lang = lang;
+
+  // Mettre à jour le flag dans le trigger
+  const flagEl = document.getElementById('rb-lang-flag');
+  if (flagEl) flagEl.textContent = _RB_FLAGS[lang] || '🇫🇷';
+
+  // Fermer le dropdown
+  _rbLangOpen = false;
+  const menu = document.getElementById('rb-lang-menu');
+  if (menu) menu.style.display = 'none';
+
   // Traduire tous les éléments data-i18n
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.dataset.i18n;
@@ -1770,8 +1801,6 @@ function setLang(lang) {
   // Mettre à jour le loader
   const lt = document.querySelector('.loader-text');
   if (lt) lt.textContent = t('loading');
-  // html lang attr
-  document.documentElement.lang = lang;
 }
 
 function t(key) {
