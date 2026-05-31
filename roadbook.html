@@ -537,15 +537,60 @@ html.light .dpc-theme { color: rgba(0,0,0,0.5); }
 
 /* ── Essentials ── */
 .essentials-grid {
-  display: flex; flex-wrap: wrap; gap: 10px;
+  display: flex; flex-direction: column; gap: 8px;
   margin-bottom: 48px;
 }
-.essential-tag {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px; padding: 7px 14px;
-  font-size: 14px; color: var(--text-muted);
+.checklist-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 16px;
+  cursor: pointer; transition: all 0.2s; user-select: none;
 }
+.checklist-item:hover { border-color: var(--accent); }
+.checklist-item.checked { opacity: 0.5; }
+.checklist-item.checked .checklist-text { text-decoration: line-through; }
+.checklist-checkbox {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--border-lg); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; transition: all 0.2s;
+}
+.checklist-item.checked .checklist-checkbox {
+  background: var(--green); border-color: var(--green); color: #fff;
+}
+.checklist-text { font-size: 14px; color: var(--text); line-height: 1.4; flex: 1; }
+.checklist-progress {
+  font-size: 12px; color: var(--text-muted);
+  margin-bottom: 12px; text-align: right;
+}
+
+/* ── Album photos par étape ── */
+.step-album-toggle {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--text-dim); cursor: pointer;
+  background: none; border: none; font-family: 'DM Sans', sans-serif;
+  padding: 4px 0; margin-top: 8px; transition: color 0.2s;
+}
+.step-album-toggle:hover { color: var(--accent); }
+.step-album {
+  display: none; margin-top: 12px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+}
+.step-album-item {
+  aspect-ratio: 1; border-radius: 8px; overflow: hidden;
+  background: var(--card-2); position: relative; cursor: pointer;
+}
+.step-album-item img, .step-album-item video {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.step-album-add {
+  border: 2px dashed var(--border-lg); display: flex;
+  align-items: center; justify-content: center;
+  font-size: 24px; color: var(--text-dim); cursor: pointer;
+  transition: border-color 0.2s;
+}
+.step-album-add:hover { border-color: var(--accent); }
 
 /* ── Footer ── */
 .page-footer {
@@ -697,13 +742,58 @@ html.light .dpc-theme { color: rgba(0,0,0,0.5); }
     <div class="section-title" data-i18n="overview">Vue d'ensemble</div>
     <div class="logistics-grid" id="logistics-grid"></div>
 
-    <!-- Budget -->
+    <!-- Budget estimé + tracker dépenses -->
     <div class="section-title" data-i18n="budget">Budget estimé</div>
     <div class="budget-strip" id="budget-strip"></div>
 
-    <!-- Ce qu'il faut emporter -->
-    <div class="section-title" id="essentials-title" style="display:none" data-i18n="packing">À emporter</div>
-    <div class="essentials-grid" id="essentials-grid"></div>
+    <!-- Budget tracker (dépenses réelles) -->
+    <div id="budget-tracker-wrap" style="display:none;margin-bottom:40px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="font-size:13px;font-weight:600;color:var(--text);">💸 Suivi de mes dépenses</div>
+        <button onclick="toggleExpenseForm()" style="font-size:12px;background:var(--card-2);border:1px solid var(--border-lg);border-radius:8px;padding:6px 12px;cursor:pointer;color:var(--text-muted);font-family:'DM Sans',sans-serif;" id="expense-form-toggle">+ Ajouter une dépense</button>
+      </div>
+      <!-- Barre de progression globale -->
+      <div style="background:var(--card-2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+          <div style="font-size:13px;color:var(--text-muted);">Total dépensé</div>
+          <div style="font-size:18px;font-weight:700;color:var(--text);" id="tracker-total">0€</div>
+        </div>
+        <div style="background:var(--border);border-radius:99px;height:8px;overflow:hidden;margin-bottom:6px;">
+          <div id="tracker-bar" style="height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0%;transition:width 0.5s ease;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);">
+          <span>0€</span>
+          <span id="tracker-budget-label">Budget : —</span>
+        </div>
+      </div>
+      <!-- Barres par catégorie -->
+      <div id="tracker-categories" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+      <!-- Formulaire ajout dépense -->
+      <div id="expense-form" style="display:none;background:var(--card-2);border:1px solid var(--border-lg);border-radius:12px;padding:16px;margin-bottom:12px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <select id="exp-category" style="padding:10px;border-radius:8px;border:1px solid var(--border-lg);background:var(--card);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;">
+            <option value="hébergement">🏨 Hébergement</option>
+            <option value="restaurant">🍽️ Restaurant</option>
+            <option value="transport">🚗 Transport</option>
+            <option value="activité">🎯 Activité</option>
+            <option value="shopping">🛍️ Shopping</option>
+            <option value="autre">📦 Autre</option>
+          </select>
+          <input type="number" id="exp-amount" placeholder="Montant (€)" min="0" step="0.01" style="padding:10px;border-radius:8px;border:1px solid var(--border-lg);background:var(--card);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+          <input type="text" id="exp-label" placeholder="Description (optionnel)" style="padding:10px;border-radius:8px;border:1px solid var(--border-lg);background:var(--card);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
+          <input type="number" id="exp-day" placeholder="Jour n°" min="1" style="padding:10px;border-radius:8px;border:1px solid var(--border-lg);background:var(--card);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
+        </div>
+        <button onclick="addExpense()" style="width:100%;padding:11px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Ajouter</button>
+      </div>
+      <!-- Liste des dépenses -->
+      <div id="expenses-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+    </div>
+
+    <!-- Checklist bagages -->
+    <div class="section-title" id="essentials-title" style="display:none">🧳 Checklist bagages</div>
+    <div id="essentials-grid" style="margin-bottom:40px;"></div>
 
     <!-- Conseils pays -->
     <div class="section-title" id="country-tips-title" style="display:none" data-i18n="countryTips">À savoir sur la destination</div>
@@ -976,12 +1066,65 @@ function dayDate(dayNumber) {
 
 // ── 5. Rendu des essentials ──────────────────────────────────────────────────
 
+// ── Checklist state ──────────────────────────────────────────────────────────
+let _checklistItems   = [];
+let _checklistChecked = new Set();
+
 function renderEssentials(items) {
   const grid  = document.getElementById('essentials-grid');
   const title = document.getElementById('essentials-title');
   if (!items || !items.length || !grid) return;
+  _checklistItems = items;
   title.style.display = '';
-  grid.innerHTML = items.map(i => `<div class="essential-tag">🎒 ${esc(i)}</div>`).join('');
+  renderChecklistUI();
+}
+
+function renderChecklistUI() {
+  const grid = document.getElementById('essentials-grid');
+  if (!grid) return;
+  const checked = _checklistChecked.size;
+  const total   = _checklistItems.length;
+  grid.innerHTML = `
+    <div class="checklist-progress">${checked}/${total} items préparés</div>
+    ${_checklistItems.map((item, i) => {
+      const isChecked = _checklistChecked.has(i);
+      return `<div class="checklist-item ${isChecked ? 'checked' : ''}" onclick="toggleChecklistItem(${i})">
+        <div class="checklist-checkbox">${isChecked ? '✓' : ''}</div>
+        <div class="checklist-text">${esc(item)}</div>
+      </div>`;
+    }).join('')}
+    <button onclick="resetChecklist()" style="margin-top:8px;font-size:12px;background:none;border:none;color:var(--text-dim);cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:underline;">Tout décocher</button>
+  `;
+}
+
+function toggleChecklistItem(idx) {
+  if (_checklistChecked.has(idx)) _checklistChecked.delete(idx);
+  else _checklistChecked.add(idx);
+  renderChecklistUI();
+  // Sauvegarde asynchrone
+  saveChecklist();
+}
+
+function resetChecklist() {
+  _checklistChecked.clear();
+  renderChecklistUI();
+  saveChecklist();
+}
+
+async function saveChecklist() {
+  if (!window._editRbId || !window._editEmail) return;
+  try {
+    await fetch('/api/update-roadbook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        roadbook_id: window._editRbId,
+        email:       window._editEmail,
+        action:      'update_checklist',
+        payload:     { checked: Array.from(_checklistChecked) }
+      })
+    });
+  } catch(e) { /* silencieux */ }
 }
 
 // ── 5b. Conseils pays ────────────────────────────────────────────────────────
@@ -1051,7 +1194,15 @@ function renderStep(step) {
       <div class="step-desc">${esc(step.description)}</div>
       ${tipsHTML}
       ${gps}
+      <div id="album-wrap-${stepKey}"></div>
     </div>`;
+  // Injecter l'album photos après le rendu (DOM ready)
+  if (window._roadbookIsPaid) {
+    setTimeout(() => {
+      const wrap = document.getElementById(`album-wrap-${stepKey}`);
+      if (wrap) renderStepAlbum(stepKey, wrap);
+    }, 0);
+  }
 }
 
 // ── 7. Rendu Jour 1 ──────────────────────────────────────────────────────────
@@ -1106,6 +1257,7 @@ function renderDay1(day1) {
 // ── 8. Rendu jours suivants (PREMIUM) ────────────────────────────────────────
 
 function renderFullDays(daysArr) {
+  window._fullDays = daysArr; // stocker pour rafraîchir après modif hébergements
   const section = document.getElementById('days-section');
   document.getElementById('unlock-banner').style.display = 'flex';
 
@@ -1115,15 +1267,25 @@ function renderFullDays(daysArr) {
       .map(renderStep).join('');
 
     const on = day.overnight;
-    const overnightHtml = on ? `
-      <div class="overnight-card" style="margin-top:0;margin-bottom:32px;">
+    const userLodging = (window._userLodgings || []).find(l => Number(l.day) === Number(day.day));
+    const overnightName = userLodging?.name || on?.name || '';
+    const overnightAddr = userLodging?.address || '';
+    const overnightNotes = userLodging?.notes || '';
+    const overnightMapsLink = overnightAddr
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(overnightAddr)}`
+      : (on?.lat && on?.lng ? `https://www.google.com/maps/search/?api=1&query=${on.lat},${on.lng}` : null);
+    const overnightHtml = (on || userLodging) ? `
+      <div class="overnight-card" style="margin-top:0;margin-bottom:32px;" id="overnight-day-${day.day}">
         <h4>🌙 Nuit du Jour ${day.day}</h4>
-        <div class="overnight-name">${esc(on.name)}</div>
-        <div class="overnight-desc">${esc(on.description)}</div>
+        <div class="overnight-name">${overnightMapsLink ? `<a href="${overnightMapsLink}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">${esc(overnightName)}</a>` : esc(overnightName)}</div>
+        ${overnightAddr ? `<div style="font-size:13px;color:var(--text-muted);margin-bottom:6px;">📍 <a href="${overnightMapsLink}" target="_blank" rel="noopener" style="color:var(--accent);">${esc(overnightAddr)}</a></div>` : ''}
+        ${overnightNotes ? `<div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">📝 ${esc(overnightNotes)}</div>` : ''}
+        ${on?.description ? `<div class="overnight-desc">${esc(on.description)}</div>` : ''}
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;">
-          <div class="overnight-type">${overnightEmoji(on.type)} ${esc(on.type || 'bivouac')}</div>
-          ${gpsButtons(on.lat, on.lng, on.name)}
+          ${on?.type ? `<div class="overnight-type">${overnightEmoji(on.type)} ${esc(on.type)}</div>` : ''}
+          ${overnightMapsLink ? `<a href="${overnightMapsLink}" target="_blank" rel="noopener" class="gps-btn maps" style="font-size:12px;padding:6px 12px;">🗺️ Ouvrir dans Maps</a>` : (on ? gpsButtons(on.lat, on.lng, on.name) : '')}
         </div>
+        ${!userLodging ? `<div style="margin-top:12px;font-size:12px;color:var(--text-dim);">✏️ <button onclick="openEditPanel()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;padding:0;text-decoration:underline;">Ajouter ton hébergement réel</button></div>` : ''}
       </div>` : '';
 
     return `
@@ -1333,6 +1495,17 @@ async function init() {
 
     // Stocker les hébergements utilisateur pour les afficher dans le roadbook
     window._userLodgings = data.user_lodgings || [];
+
+    // Initialiser checklist checked
+    if (data.checklist_checked?.length) {
+      data.checklist_checked.forEach(i => _checklistChecked.add(i));
+    }
+
+    // Initialiser budget tracker
+    initBudgetTracker(data.expenses || [], logistics?.budget_estimated?.total_eur || 0, criteria.days || 1);
+
+    // Initialiser photos par étape
+    window._stepPhotos = data.step_photos || [];
 
     // Initialiser le panneau d'édition (toujours disponible)
     initEditPanel(
@@ -1911,9 +2084,13 @@ document.addEventListener('DOMContentLoaded', () => setLang(_lang));
 let _editEmail     = '';
 let _editRbId      = '';
 let _editLodgings  = [];
+let _expenses      = [];
+let _budgetTotal   = 0; // budget prévu total (en €)
 
 function initEditPanel(roadbookId, email, lodgings, photos, days) {
   _editRbId     = roadbookId;
+  window._editRbId   = roadbookId;
+  window._editEmail  = email || '';
   _editEmail    = email || '';
   _editLodgings = Array.isArray(lodgings) ? lodgings : [];
   _editPhotos   = Array.isArray(photos)   ? photos   : [];
@@ -2008,8 +2185,12 @@ async function saveLodgings() {
     if (data.ok) {
       if (status) { status.textContent = '✅ Hébergements sauvegardés !'; status.style.color = 'var(--green)'; }
       // Mettre à jour en temps réel dans le roadbook
-      window._userLodgings = _editLodgings;
+      window._userLodgings = JSON.parse(JSON.stringify(_editLodgings));
       renderOvernightCard(window._day1);
+      // Rafraîchir les jours payants s'ils sont affichés
+      if (window._fullDays && window._fullDays.length) {
+        renderFullDays(window._fullDays);
+      }
     } else {
       if (status) { status.textContent = '❌ ' + (data.error || 'Erreur'); status.style.color = 'var(--red)'; }
     }
@@ -2019,8 +2200,188 @@ async function saveLodgings() {
   setTimeout(() => { if (status) { status.textContent = ''; status.style.color = 'var(--text-muted)'; } }, 4000);
 }
 
-// ── Photos ───────────────────────────────────────────────────────────────────
+// ── Budget Tracker ────────────────────────────────────────────────────────────
 
+const CAT_COLORS = {
+  'hébergement': '#4f8eff', 'restaurant': '#f59e0b',
+  'transport': '#8b5cf6', 'activité': '#34d399',
+  'shopping': '#ec4899', 'autre': '#6b7280'
+};
+const CAT_ICONS = {
+  'hébergement':'🏨','restaurant':'🍽️','transport':'🚗',
+  'activité':'🎯','shopping':'🛍️','autre':'📦'
+};
+
+function initBudgetTracker(expenses, budgetPerPerson, days) {
+  _expenses    = Array.isArray(expenses) ? expenses : [];
+  _budgetTotal = budgetPerPerson * (days || 1);
+  if (_budgetTotal > 0 || _expenses.length > 0) {
+    document.getElementById('budget-tracker-wrap').style.display = 'block';
+    renderBudgetTracker();
+  }
+}
+
+function renderBudgetTracker() {
+  const total = _expenses.reduce((s, e) => s + Number(e.amount || 0), 0);
+  const pct   = _budgetTotal > 0 ? Math.min(100, (total / _budgetTotal) * 100) : 0;
+  const color = pct > 90 ? 'var(--red)' : pct > 70 ? 'var(--gold)' : 'linear-gradient(90deg,var(--accent),var(--accent-2))';
+
+  document.getElementById('tracker-total').textContent = total.toFixed(2) + '€';
+  const bar = document.getElementById('tracker-bar');
+  if (bar) { bar.style.width = pct + '%'; bar.style.background = color; }
+  const lbl = document.getElementById('tracker-budget-label');
+  if (lbl) lbl.textContent = _budgetTotal > 0 ? `Budget : ${_budgetTotal}€` : 'Budget non défini';
+
+  // Barres par catégorie
+  const byCat = {};
+  _expenses.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + Number(e.amount || 0); });
+  const catEl = document.getElementById('tracker-categories');
+  if (catEl) {
+    catEl.innerHTML = Object.entries(byCat).map(([cat, amt]) => {
+      const p = _budgetTotal > 0 ? Math.min(100, (amt / _budgetTotal) * 100) : 0;
+      const c = CAT_COLORS[cat] || '#6b7280';
+      return `<div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:20px;text-align:center;">${CAT_ICONS[cat]||'📦'}</div>
+        <div style="flex:1;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:3px;">
+            <span>${cat}</span><span>${amt.toFixed(2)}€</span>
+          </div>
+          <div style="background:var(--border);border-radius:99px;height:5px;">
+            <div style="height:100%;border-radius:99px;background:${c};width:${p}%;transition:width 0.4s;"></div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Liste des dépenses
+  const list = document.getElementById('expenses-list');
+  if (list) {
+    list.innerHTML = _expenses.length ? _expenses.slice().reverse().map((e, ri) => {
+      const i = _expenses.length - 1 - ri;
+      return `<div style="display:flex;align-items:center;justify-content:space-between;background:var(--card-2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span>${CAT_ICONS[e.category]||'📦'}</span>
+          <div>
+            <div style="font-size:13px;color:var(--text);">${esc(e.label || e.category)}</div>
+            ${e.day ? `<div style="font-size:11px;color:var(--text-dim);">Jour ${e.day}</div>` : ''}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:14px;font-weight:600;color:var(--text);">${Number(e.amount).toFixed(2)}€</span>
+          <button onclick="deleteExpense(${i})" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:14px;padding:0;">✕</button>
+        </div>
+      </div>`;
+    }).join('') : '<div style="text-align:center;color:var(--text-dim);font-size:13px;padding:12px 0;">Aucune dépense enregistrée</div>';
+  }
+}
+
+function toggleExpenseForm() {
+  const f = document.getElementById('expense-form');
+  if (f) f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+async function addExpense() {
+  const category = document.getElementById('exp-category')?.value;
+  const amount   = parseFloat(document.getElementById('exp-amount')?.value);
+  const label    = document.getElementById('exp-label')?.value?.trim() || '';
+  const day      = parseInt(document.getElementById('exp-day')?.value) || null;
+  if (!category || isNaN(amount) || amount <= 0) return;
+
+  _expenses.push({ category, amount, label, day, date: new Date().toISOString().slice(0,10) });
+  document.getElementById('exp-amount').value = '';
+  document.getElementById('exp-label').value  = '';
+  document.getElementById('exp-day').value    = '';
+  renderBudgetTracker();
+  await saveExpenses();
+}
+
+async function deleteExpense(idx) {
+  _expenses.splice(idx, 1);
+  renderBudgetTracker();
+  await saveExpenses();
+}
+
+async function saveExpenses() {
+  if (!window._editRbId || !window._editEmail) return;
+  try {
+    await fetch('/api/update-roadbook', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roadbook_id: window._editRbId, email: window._editEmail, action: 'save_expenses', payload: { expenses: _expenses } })
+    });
+  } catch(e) { /* silencieux */ }
+}
+
+// ── Album photos par étape ────────────────────────────────────────────────────
+
+function getStepPhotos(stepKey) {
+  return (window._stepPhotos || []).filter(p => p.step_key === stepKey);
+}
+
+function renderStepAlbum(stepKey, container) {
+  const photos = getStepPhotos(stepKey);
+  const isPaid = window._roadbookIsPaid || false;
+  if (!isPaid) return; // album uniquement en version payante
+
+  const existing = photos.map(p => `
+    <div class="step-album-item" title="${esc(p.caption||'')}">
+      ${p.media_type === 'video'
+        ? `<video src="${p.url}" style="width:100%;height:100%;object-fit:cover;" muted playsinline></video>`
+        : `<img src="${p.url}" alt="${esc(p.caption||'')}" />`}
+      <button onclick="deleteStepPhoto('${stepKey}','${p.url}')" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.6);border:none;border-radius:50%;width:20px;height:20px;color:#fff;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>`).join('');
+
+  const albumId = `album-${stepKey}`;
+  container.innerHTML += `
+    <div style="margin-top:10px;">
+      <button class="step-album-toggle" onclick="toggleAlbum('${albumId}')">
+        📸 ${photos.length ? `${photos.length} photo${photos.length>1?'s':''}` : 'Ajouter des photos'}
+      </button>
+      <div id="${albumId}" class="step-album" style="display:none;">
+        ${existing}
+        <label class="step-album-item step-album-add" title="Ajouter une photo">
+          ＋
+          <input type="file" accept="image/*,video/*" style="display:none;" onchange="uploadStepPhoto('${stepKey}', this)">
+        </label>
+      </div>
+    </div>`;
+}
+
+function toggleAlbum(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? 'grid' : 'none';
+}
+
+async function uploadStepPhoto(stepKey, inputEl) {
+  const file = inputEl.files?.[0];
+  if (!file || !window._editRbId || !window._editEmail) return;
+  const base64 = await new Promise((resolve, reject) => {
+    const r = new FileReader(); r.onload = e => resolve(e.target.result); r.onerror = reject; r.readAsDataURL(file);
+  });
+  const isVideo = file.type.startsWith('video/');
+  const res = await fetch('/api/update-roadbook', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ roadbook_id: window._editRbId, email: window._editEmail, action: 'upload_step_photo',
+      payload: { step_key: stepKey, day: parseInt(stepKey.split('_')[0].replace('day','')) || null, file_base64: base64, file_name: file.name, file_type: file.type, media_type: isVideo ? 'video' : 'photo' }
+    })
+  });
+  const data = await res.json();
+  if (data.ok && data.media) {
+    window._stepPhotos = [...(window._stepPhotos || []), data.media];
+    // Recharger la page pour afficher la nouvelle photo (simple)
+    window.location.reload();
+  }
+}
+
+async function deleteStepPhoto(stepKey, url) {
+  if (!confirm('Supprimer ce média ?')) return;
+  await fetch('/api/update-roadbook', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ roadbook_id: window._editRbId, email: window._editEmail, action: 'delete_step_photo', payload: { photo_url: url } })
+  });
+  window._stepPhotos = (window._stepPhotos || []).filter(p => p.url !== url);
+  window.location.reload();
+}
 </script>
 
 </body>
