@@ -751,8 +751,8 @@ html.light .dpc-theme { color: rgba(0,0,0,0.5); }
   <div id="copilot-panel">
     <div id="copilot-header">
       <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">Copilote LIBERTRIP</div>
-      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;">Ton guide IA en temps réel</div>
-      <button onclick="toggleCopilot()" style="position:absolute;top:14px;right:14px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:20px;cursor:pointer;line-height:1;">✕</button>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Ton guide IA en temps réel</div>
+      <button onclick="toggleCopilot()" style="position:absolute;top:14px;right:14px;background:none;border:none;color:var(--text-muted);font-size:20px;cursor:pointer;line-height:1;">✕</button>
     </div>
     <div id="copilot-messages">
       <div class="copilot-msg copilot-msg-ai">👋 Bonjour ! Je suis ton copilote pour ce voyage. Pose-moi n'importe quelle question sur ton itinéraire, les alternatives, ou si tu rencontres un imprévu.</div>
@@ -1374,9 +1374,9 @@ async function sendCopilotMessage() {
 function showToast(msg) {
   const t = document.createElement('div');
   t.style.cssText = `position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-    background:#0f0f0f;border:1px solid rgba(255,255,255,0.12);border-radius:12px;
-    padding:12px 20px;font-size:14px;color:#fff;z-index:9999;
-    box-shadow:0 8px 32px rgba(0,0,0,0.5);white-space:nowrap;`;
+    background:var(--card);border:1px solid var(--border-lg);border-radius:12px;
+    padding:12px 20px;font-size:14px;color:var(--text);z-index:9999;
+    box-shadow:0 8px 32px rgba(0,0,0,0.3);white-space:nowrap;`;
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => t.remove(), 3000);
@@ -1581,8 +1581,8 @@ function openPlaceModal(stepKey) {
   const accessSection = ap ? `
     <div style="background:rgba(79,142,255,0.06);border:1px solid rgba(79,142,255,0.15);border-radius:12px;padding:14px;margin-bottom:14px;">
       <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">${t('accessPoint')}</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:4px;">${esc(ap.label || '')}</div>
-      ${ap.note ? `<div style="font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:10px;line-height:1.5;">${esc(ap.note)}</div>` : ''}
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">${esc(ap.label || '')}</div>
+      ${ap.note ? `<div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;line-height:1.5;">${esc(ap.note)}</div>` : ''}
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         ${accessMapsUrl ? `<a href="${accessMapsUrl}" target="_blank" rel="noopener" class="gps-btn maps" style="font-size:12px;padding:6px 12px;">🗺️ Y aller (Maps)</a>` : ''}
         ${accessWazeUrl ? `<a href="${accessWazeUrl}" target="_blank" rel="noopener" class="gps-btn waze" style="font-size:12px;padding:6px 12px;">🚙 Y aller (Waze)</a>` : ''}
@@ -1590,12 +1590,12 @@ function openPlaceModal(stepKey) {
     </div>` : '';
 
   const bookingBtn = step.booking_url
-    ? `<a href="${step.booking_url}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.25);border-radius:8px;padding:8px 14px;font-size:13px;color:#F5C842;text-decoration:none;">🎟️ Réserver cette activité</a>`
+    ? `<a href="${step.booking_url}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.25);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--gold);text-decoration:none;">🎟️ Réserver cette activité</a>`
     : '';
 
   // place_info : infos factuelles uniquement si disponibles
   const placeInfoBlock = (step.place_info && step.place_info !== 'null' && step.place_info.trim())
-    ? `<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 14px;font-size:13px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:14px;">
+    ? `<div style="background:var(--card-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:14px;">
         <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;">${t('placeInfo')}</div>
         ${esc(step.place_info)}
        </div>`
