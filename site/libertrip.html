@@ -1420,28 +1420,69 @@
 </section>
 
 <!-- ─── COMMENT ÇA MARCHE ─── -->
-<!-- ── SECTION DÉMO SCROLL ── -->
-<section id="demo" style="padding:0;background:#000;max-width:none;display:block;">
-  <div id="demo-sticky" style="position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;gap:80px;overflow:hidden;padding:0 48px;background:radial-gradient(ellipse 70% 60% at 35% 50%,rgba(79,142,255,0.07) 0%,transparent 70%),#000;">
+<!-- ── SECTION DÉMO SCROLL — style Apple ── -->
+<section id="demo" style="padding:0;background:#000;max-width:none;display:block;position:relative;">
+  <!-- Layout : 2 colonnes strictes — jamais superposées -->
+  <div id="demo-sticky" style="position:sticky;top:0;height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;overflow:hidden;background:#000;">
 
-    <!-- Wrapper 3D téléphone -->
-    <div style="perspective:1000px;flex-shrink:0;z-index:2;">
-      <div id="demo-phone" style="width:290px;height:590px;border-radius:44px;position:relative;transform:rotateY(-12deg) rotateX(3deg);transform-style:preserve-3d;transition:transform 0.9s cubic-bezier(0.22,1,0.36,1);">
+    <!-- Colonne gauche : texte explicatif -->
+    <div style="padding:0 48px 0 80px;display:flex;flex-direction:column;justify-content:center;">
+      <div id="demo-captions" style="position:relative;min-height:260px;">
+        <div id="dc1" style="opacity:1;transform:translateY(0);transition:opacity 0.5s,transform 0.5s;">
+          <div style="font-size:11px;color:#4f8eff;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;">Vue d'ensemble</div>
+          <div style="font-size:clamp(28px,3.5vw,42px);font-weight:800;color:#fff;line-height:1.1;margin-bottom:16px;">Tout ton voyage<br>en un coup d'œil</div>
+          <div style="font-size:16px;color:rgba(255,255,255,0.5);line-height:1.7;">Budget, durée, jours — organisé automatiquement selon tes préférences.</div>
+        </div>
+        <div id="dc2" style="opacity:0;transform:translateY(20px);transition:opacity 0.5s,transform 0.5s;position:absolute;top:0;left:0;right:0;">
+          <div style="font-size:11px;color:#4f8eff;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;">Chaque étape</div>
+          <div style="font-size:clamp(28px,3.5vw,42px);font-weight:800;color:#fff;line-height:1.1;margin-bottom:16px;">Des lieux réels,<br>des liens GPS directs</div>
+          <div style="font-size:16px;color:rgba(255,255,255,0.5);line-height:1.7;">Clique sur le <span style="background:rgba(79,142,255,0.2);border:1px solid rgba(79,142,255,0.4);border-radius:50%;padding:2px 6px;font-size:12px;color:#4f8eff;">ℹ</span> pour les infos, ouvre Maps ou Waze en un tap.</div>
+        </div>
+        <div id="dc3" style="opacity:0;transform:translateY(20px);transition:opacity 0.5s,transform 0.5s;position:absolute;top:0;left:0;right:0;">
+          <div style="font-size:11px;color:#4f8eff;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;">Checklist intelligente</div>
+          <div style="font-size:clamp(28px,3.5vw,42px);font-weight:800;color:#fff;line-height:1.1;margin-bottom:16px;">Emporte exactement<br>ce qu'il faut</div>
+          <div style="font-size:16px;color:rgba(255,255,255,0.5);line-height:1.7;">L'algorithme génère ta liste selon la destination, la saison, ton véhicule et ton profil.</div>
+        </div>
+        <div id="dc4" style="opacity:0;transform:translateY(20px);transition:opacity 0.5s,transform 0.5s;position:absolute;top:0;left:0;right:0;">
+          <div style="font-size:11px;color:#4f8eff;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;">Budget en temps réel</div>
+          <div style="font-size:clamp(28px,3.5vw,42px);font-weight:800;color:#fff;line-height:1.1;margin-bottom:16px;">Suis chaque euro<br>pendant le voyage</div>
+          <div style="font-size:16px;color:rgba(255,255,255,0.5);line-height:1.7;">Ajoute tes dépenses, vois où tu en es par rapport au budget prévu — par catégorie.</div>
+        </div>
+      </div>
+      <!-- Dots de navigation -->
+      <div style="display:flex;gap:8px;margin-top:40px;" id="demo-dots">
+        <div class="demo-dot active" onclick="jumpFrame(1)" style="width:24px;height:3px;border-radius:99px;background:#4f8eff;cursor:pointer;transition:all 0.3s;"></div>
+        <div class="demo-dot" onclick="jumpFrame(2)" style="width:8px;height:3px;border-radius:99px;background:rgba(255,255,255,0.2);cursor:pointer;transition:all 0.3s;"></div>
+        <div class="demo-dot" onclick="jumpFrame(3)" style="width:8px;height:3px;border-radius:99px;background:rgba(255,255,255,0.2);cursor:pointer;transition:all 0.3s;"></div>
+        <div class="demo-dot" onclick="jumpFrame(4)" style="width:8px;height:3px;border-radius:99px;background:rgba(255,255,255,0.2);cursor:pointer;transition:all 0.3s;"></div>
+      </div>
+    </div>
 
-        <!-- Tranche droite (épaisseur) -->
-        <div style="position:absolute;top:20px;bottom:20px;right:-14px;width:14px;background:linear-gradient(to right,#1c1c20,#111114);border-radius:0 8px 8px 0;transform:rotateY(90deg) translateZ(0);transform-origin:left center;"></div>
-        <!-- Tranche gauche -->
-        <div style="position:absolute;top:20px;bottom:20px;left:-14px;width:14px;background:linear-gradient(to left,#131316,#0c0c0f);border-radius:8px 0 0 8px;transform:rotateY(-90deg) translateZ(0);transform-origin:right center;"></div>
-        <!-- Tranche bas -->
-        <div style="position:absolute;bottom:-12px;left:20px;right:20px;height:12px;background:linear-gradient(to bottom,#17171b,#0e0e12);border-radius:0 0 8px 8px;transform:rotateX(-90deg) translateZ(0);transform-origin:top center;"></div>
-        <!-- Boutons latéraux droite -->
-        <div style="position:absolute;top:130px;right:-18px;width:4px;height:60px;background:linear-gradient(to right,#2a2a30,#1a1a1e);border-radius:0 3px 3px 0;box-shadow:1px 0 2px rgba(0,0,0,0.5);"></div>
-        <div style="position:absolute;top:210px;right:-18px;width:4px;height:80px;background:linear-gradient(to right,#2a2a30,#1a1a1e);border-radius:0 3px 3px 0;box-shadow:1px 0 2px rgba(0,0,0,0.5);"></div>
+    <!-- Colonne droite : téléphone 3D -->
+    <div style="display:flex;align-items:center;justify-content:center;perspective:1200px;">
+      <div id="demo-phone" style="width:300px;height:610px;border-radius:46px;position:relative;transform:rotateY(-10deg) rotateX(2deg);transform-style:preserve-3d;transition:transform 0.9s cubic-bezier(0.22,1,0.36,1);flex-shrink:0;">
+
+        <!-- Épaisseur — tranche droite -->
+        <div style="position:absolute;top:30px;bottom:30px;right:-12px;width:12px;background:linear-gradient(90deg,#252528,#18181b);border-radius:0 6px 6px 0;"></div>
+        <!-- Épaisseur — tranche gauche -->
+        <div style="position:absolute;top:30px;bottom:30px;left:-12px;width:12px;background:linear-gradient(90deg,#18181b,#252528);border-radius:6px 0 0 6px;"></div>
+        <!-- Boutons droite -->
+        <div style="position:absolute;top:140px;right:-16px;width:4px;height:56px;background:#222;border-radius:0 3px 3px 0;"></div>
+        <div style="position:absolute;top:214px;right:-16px;width:4px;height:72px;background:#222;border-radius:0 3px 3px 0;"></div>
         <!-- Bouton gauche -->
-        <div style="position:absolute;top:160px;left:-18px;width:4px;height:50px;background:linear-gradient(to left,#2a2a30,#1a1a1e);border-radius:3px 0 0 3px;box-shadow:-1px 0 2px rgba(0,0,0,0.5);"></div>
+        <div style="position:absolute;top:170px;left:-16px;width:4px;height:44px;background:#222;border-radius:3px 0 0 3px;"></div>
 
-        <!-- Corps avant -->
-        <div style="position:absolute;inset:0;border-radius:44px;background:linear-gradient(160deg,#1e1e24 0%,#0c0c10 100%);border:1.5px solid rgba(255,255,255,0.16);box-shadow:0 0 0 1px rgba(255,255,255,0.05),0 50px 120px rgba(0,0,0,0.95),0 10px 30px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.1);overflow:hidden;">
+        <!-- Face avant -->
+        <div style="position:absolute;inset:0;border-radius:46px;background:linear-gradient(170deg,#1c1c22,#0a0a0e);border:1.5px solid rgba(255,255,255,0.15);box-shadow:0 0 0 1px rgba(255,255,255,0.04),0 60px 140px rgba(0,0,0,0.9),inset 0 1px 0 rgba(255,255,255,0.09);overflow:hidden;">
+          <!-- Reflet vitré -->
+          <div style="position:absolute;inset:0;background:linear-gradient(155deg,rgba(255,255,255,0.055) 0%,transparent 45%);border-radius:46px;pointer-events:none;z-index:20;"></div>
+          <!-- Dynamic Island -->
+          <div style="position:absolute;top:15px;left:50%;transform:translateX(-50%);width:96px;height:28px;background:#000;border-radius:99px;z-index:15;"></div>
+          <!-- Status bar -->
+          <div style="position:absolute;top:16px;left:22px;right:22px;display:flex;justify-content:space-between;z-index:14;font-size:9px;color:rgba(255,255,255,0.55);font-family:system-ui,sans-serif;">
+            <span style="font-weight:600;">9:41</span>
+            <span>●●●● WiFi 🔋</span>
+          </div>
           <!-- Reflet haut gauche -->
           <div style="position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(160deg,rgba(255,255,255,0.06) 0%,transparent 60%);border-radius:44px 44px 0 0;pointer-events:none;z-index:20;"></div>
           <!-- Dynamic Island -->
@@ -1646,44 +1687,23 @@
           </div>
         </div>
       </div>
-    </div>
-    </div><!-- fin wrapper 3D -->
+        </div><!-- fin face avant -->
+      </div><!-- fin demo-phone -->
+    </div><!-- fin colonne droite -->
+  </div><!-- fin demo-sticky -->
 
-    <!-- Texte à droite — hors du contexte 3D -->
-    <div id="demo-captions" style="max-width:340px;position:relative;min-height:220px;z-index:10;flex-shrink:0;">
-      <div id="dc1" style="transition:opacity 0.5s,transform 0.5s;opacity:1;transform:translateY(0);">
-        <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Vue d'ensemble</div>
-        <div style="font-size:26px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:12px;">Tout ton voyage en un coup d'œil</div>
-        <div style="font-size:15px;color:var(--text-muted);line-height:1.6;">Budget, durée, jours — organisé automatiquement selon tes préférences.</div>
-      </div>
-      <div id="dc2" style="transition:opacity 0.5s,transform 0.5s;opacity:0;transform:translateY(16px);position:absolute;top:0;left:0;right:0;">
-        <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Chaque étape</div>
-        <div style="font-size:26px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:12px;">Des lieux réels, des liens GPS directs</div>
-        <div style="font-size:15px;color:var(--text-muted);line-height:1.6;">Clique sur le <span style="background:rgba(79,142,255,0.15);border:1px solid rgba(79,142,255,0.3);border-radius:50%;padding:1px 6px;font-size:11px;color:var(--accent);">ℹ</span> pour plus d'infos, et ouvre directement dans Maps ou Waze.</div>
-      </div>
-      <div id="dc3" style="transition:opacity 0.5s,transform 0.5s;opacity:0;transform:translateY(16px);position:absolute;top:0;left:0;right:0;">
-        <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Checklist intelligente</div>
-        <div style="font-size:26px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:12px;">Emporte exactement ce qu'il faut</div>
-        <div style="font-size:15px;color:var(--text-muted);line-height:1.6;">L'algorithme génère ta liste selon la destination, la saison et ton profil de voyageur.</div>
-      </div>
-      <div id="dc4" style="transition:opacity 0.5s,transform 0.5s;opacity:0;transform:translateY(16px);position:absolute;top:0;left:0;right:0;">
-        <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Budget en temps réel</div>
-        <div style="font-size:26px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:12px;">Suis tes dépenses pendant le voyage</div>
-        <div style="font-size:15px;color:var(--text-muted);line-height:1.6;">Ajoute chaque dépense, vois où tu en es par rapport à ton budget prévu — par catégorie.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Espace de scroll (4 × 100vh) -->
-  <div style="height:400vh;"></div>
+  <!-- Espace de scroll : 4 écrans pour 4 frames + 1 de marge -->
+  <div style="height:500vh;"></div>
 </section>
 
 <style>
+/* Section démo — toujours fond noir, même en mode clair */
+#demo, #demo-sticky { background: #000 !important; color: #fff; }
+#demo-captions * { color: inherit; }
 @media (max-width: 900px) {
-  #demo-sticky { flex-direction: column; gap: 32px; padding: 40px 20px; justify-content: center; }
-  #demo-phone  { width: 220px !important; height: 440px !important; }
-  #demo-captions { max-width: 100% !important; text-align: center; min-height: 160px; }
-  #demo-captions [style*="position:absolute"] { position: relative !important; top: auto !important; }
+  #demo-sticky { grid-template-columns: 1fr !important; grid-template-rows: auto auto; align-items: start; padding: 60px 24px 24px; }
+  #demo-phone  { width: 200px !important; height: 410px !important; }
+  #demo-captions { min-height: 200px; }
 }
 </style>
 
@@ -1702,28 +1722,40 @@
     return Math.max(0, Math.min(1, scrolled / total));
   }
 
+  function updateDots(n) {
+    document.querySelectorAll('.demo-dot').forEach((d, i) => {
+      const active = i + 1 === n;
+      d.style.width    = active ? '24px' : '8px';
+      d.style.background = active ? '#4f8eff' : 'rgba(255,255,255,0.2)';
+    });
+  }
+
   function showFrame(n) {
     if (n === currentFrame) return;
     const old = document.getElementById('df' + currentFrame);
     const odc = document.getElementById('dc' + currentFrame);
     if (old) { old.style.opacity = '0'; old.style.transform = 'translateY(16px)'; }
-    if (odc) { odc.style.opacity = '0'; odc.style.transform = 'translateY(10px)'; }
+    if (odc) { odc.style.opacity = '0'; odc.style.transform = 'translateY(20px)'; }
     const nw  = document.getElementById('df' + n);
     const ndc = document.getElementById('dc' + n);
     if (nw) { nw.style.opacity = '1'; nw.style.transform = 'translateY(0)'; }
     if (ndc) { ndc.style.opacity = '1'; ndc.style.transform = 'translateY(0)'; }
     currentFrame = n;
+    updateDots(n);
   }
+
+  // Permet de cliquer sur les dots
+  window.jumpFrame = function(n) { showFrame(n); };
 
   window.addEventListener('scroll', () => {
     const p = getProgress();
     const frameIdx = Math.min(4, Math.floor(p * 4) + 1);
     showFrame(frameIdx);
-    // Rotation 3D du téléphone selon le scroll
+    // Rotation 3D animée
     const phone = document.getElementById('demo-phone');
     if (phone) {
-      const tiltY = -8 + p * 16;  // de -8° à +8°
-      const tiltX = 2 - p * 4;   // de +2° à -2°
+      const tiltY = -10 + p * 20;
+      const tiltX = 3 - p * 6;
       phone.style.transform = `rotateY(${tiltY}deg) rotateX(${tiltX}deg)`;
     }
   }, { passive: true });
