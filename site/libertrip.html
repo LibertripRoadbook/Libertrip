@@ -1422,13 +1422,26 @@
 <!-- ─── COMMENT ÇA MARCHE ─── -->
 <!-- ── SECTION DÉMO SCROLL ── -->
 <section id="demo" style="padding:0;background:#000;max-width:none;display:block;">
-  <div id="demo-sticky" style="position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;gap:72px;overflow:hidden;padding:0 48px;background:radial-gradient(ellipse 80% 60% at 30% 50%,rgba(79,142,255,0.06) 0%,transparent 70%),#000;">
-    <!-- Wrapper 3D -->
-    <div style="perspective:1200px;flex-shrink:0;">
-      <!-- Mockup téléphone 3D -->
-      <div id="demo-phone" style="width:300px;height:600px;border-radius:44px;position:relative;transform:rotateY(-8deg) rotateX(2deg);transform-style:preserve-3d;transition:transform 0.8s cubic-bezier(0.22,1,0.36,1);">
-        <!-- Corps du téléphone — face avant -->
-        <div style="position:absolute;inset:0;border-radius:44px;background:linear-gradient(160deg,#1a1a1e 0%,#0a0a0c 100%);border:1px solid rgba(255,255,255,0.18);box-shadow:0 0 0 1px rgba(255,255,255,0.06),0 40px 100px rgba(0,0,0,0.9),0 8px 20px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.12);overflow:hidden;">
+  <div id="demo-sticky" style="position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;gap:80px;overflow:hidden;padding:0 48px;background:radial-gradient(ellipse 70% 60% at 35% 50%,rgba(79,142,255,0.07) 0%,transparent 70%),#000;">
+
+    <!-- Wrapper 3D téléphone -->
+    <div style="perspective:1000px;flex-shrink:0;z-index:2;">
+      <div id="demo-phone" style="width:290px;height:590px;border-radius:44px;position:relative;transform:rotateY(-12deg) rotateX(3deg);transform-style:preserve-3d;transition:transform 0.9s cubic-bezier(0.22,1,0.36,1);">
+
+        <!-- Tranche droite (épaisseur) -->
+        <div style="position:absolute;top:20px;bottom:20px;right:-14px;width:14px;background:linear-gradient(to right,#1c1c20,#111114);border-radius:0 8px 8px 0;transform:rotateY(90deg) translateZ(0);transform-origin:left center;"></div>
+        <!-- Tranche gauche -->
+        <div style="position:absolute;top:20px;bottom:20px;left:-14px;width:14px;background:linear-gradient(to left,#131316,#0c0c0f);border-radius:8px 0 0 8px;transform:rotateY(-90deg) translateZ(0);transform-origin:right center;"></div>
+        <!-- Tranche bas -->
+        <div style="position:absolute;bottom:-12px;left:20px;right:20px;height:12px;background:linear-gradient(to bottom,#17171b,#0e0e12);border-radius:0 0 8px 8px;transform:rotateX(-90deg) translateZ(0);transform-origin:top center;"></div>
+        <!-- Boutons latéraux droite -->
+        <div style="position:absolute;top:130px;right:-18px;width:4px;height:60px;background:linear-gradient(to right,#2a2a30,#1a1a1e);border-radius:0 3px 3px 0;box-shadow:1px 0 2px rgba(0,0,0,0.5);"></div>
+        <div style="position:absolute;top:210px;right:-18px;width:4px;height:80px;background:linear-gradient(to right,#2a2a30,#1a1a1e);border-radius:0 3px 3px 0;box-shadow:1px 0 2px rgba(0,0,0,0.5);"></div>
+        <!-- Bouton gauche -->
+        <div style="position:absolute;top:160px;left:-18px;width:4px;height:50px;background:linear-gradient(to left,#2a2a30,#1a1a1e);border-radius:3px 0 0 3px;box-shadow:-1px 0 2px rgba(0,0,0,0.5);"></div>
+
+        <!-- Corps avant -->
+        <div style="position:absolute;inset:0;border-radius:44px;background:linear-gradient(160deg,#1e1e24 0%,#0c0c10 100%);border:1.5px solid rgba(255,255,255,0.16);box-shadow:0 0 0 1px rgba(255,255,255,0.05),0 50px 120px rgba(0,0,0,0.95),0 10px 30px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.1);overflow:hidden;">
           <!-- Reflet haut gauche -->
           <div style="position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(160deg,rgba(255,255,255,0.06) 0%,transparent 60%);border-radius:44px 44px 0 0;pointer-events:none;z-index:20;"></div>
           <!-- Dynamic Island -->
@@ -1636,8 +1649,8 @@
     </div>
     </div><!-- fin wrapper 3D -->
 
-    <!-- Texte à droite -->
-    <div id="demo-captions" style="max-width:320px;position:relative;min-height:200px;">
+    <!-- Texte à droite — hors du contexte 3D -->
+    <div id="demo-captions" style="max-width:340px;position:relative;min-height:220px;z-index:10;flex-shrink:0;">
       <div id="dc1" style="transition:opacity 0.5s,transform 0.5s;opacity:1;transform:translateY(0);">
         <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Vue d'ensemble</div>
         <div style="font-size:26px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:12px;">Tout ton voyage en un coup d'œil</div>
@@ -1666,10 +1679,11 @@
 </section>
 
 <style>
-@media (max-width: 768px) {
-  #demo-sticky { flex-direction: column; gap: 24px; padding: 24px 20px; }
-  #demo-phone  { width: 200px; height: 400px; }
-  #demo-captions { max-width: 100%; text-align: center; min-height: 160px; }
+@media (max-width: 900px) {
+  #demo-sticky { flex-direction: column; gap: 32px; padding: 40px 20px; justify-content: center; }
+  #demo-phone  { width: 220px !important; height: 440px !important; }
+  #demo-captions { max-width: 100% !important; text-align: center; min-height: 160px; }
+  #demo-captions [style*="position:absolute"] { position: relative !important; top: auto !important; }
 }
 </style>
 
