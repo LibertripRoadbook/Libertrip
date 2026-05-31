@@ -119,13 +119,57 @@ export default async function handler(req, res) {
     const { photo_url } = payload || {};
     const existingPhotos = Array.isArray(rb.photos) ? rb.photos : [];
     const updatedPhotos  = existingPhotos.filter(p => p.url !== photo_url);
-
-    const { error } = await supabase
-      .from('roadbooks')
-      .update({ photos: updatedPhotos })
-      .eq('id', roadbook_id);
-
+    const { error } = await supabase.from('roadbooks').update({ photos: updatedPhotos }).eq('id', roadbook_id);
     if (error) return res.status(500).json({ error: 'Erreur suppression photo.' });
+    return res.status(200).json({ ok: true });
+  }
+
+  // ── Action : uploader une photo par étape ────────────────────────────────
+  if (action === 'upload_step_photo') {
+    const { step_key, day, caption, media_type, file_base64, file_name, file_type } = payload || {};
+    if (!file_base64 || !file_name) return res.status(400).json({ error: 'Fichier manquant.' });
+
+    const base64Data = file_base64.replace(/^data:[^;]+;base64,/, '');
+    const buffer     = Buffer.from(base64Data, 'base64');
+    const timestamp  = Date.now();
+    const ext        = file_name.split('.').pop() || 'jpg';
+    const path       = `${roadbook_id}/step_${step_key || 'unknown'}_${timestamp}.${ext}`;
+
+    const { error: uploadErr } = await supabase.storage.from('roadbook-photos').upload(path, buffer, {
+      contentType: file_type || 'image/jpeg', cacheControl: '3600', upsert: false,
+    });
+    if (uploadErr) return res.status(500).json({ error: 'Erreur upload.' });
+
+    const { data: urlData } = supabase.storage.from('roadbook-photos').getPublicUrl(path);
+    const newMedia = { step_key: step_key || null, day: day || null, url: urlData?.publicUrl, caption: caption || '', media_type: media_type || 'photo', uploaded_at: new Date().toISOString() };
+    const existing = Array.isArray(rb.step_photos) ? rb.step_photos : [];
+    const { error: saveErr } = await supabase.from('roadbooks').update({ step_photos: [...existing, newMedia] }).eq('id', roadbook_id);
+    if (saveErr) return res.status(500).json({ error: 'Upload OK mais sauvegarde échouée.' });
+    return res.status(200).json({ ok: true, media: newMedia });
+  }
+
+  // ── Action : supprimer une photo d'étape ─────────────────────────────────
+  if (action === 'delete_step_photo') {
+    const { photo_url } = payload || {};
+    const existing = Array.isArray(rb.step_photos) ? rb.step_photos : [];
+    const { error } = await supabase.from('roadbooks').update({ step_photos: existing.filter(p => p.url !== photo_url) }).eq('id', roadbook_id);
+    if (error) return res.status(500).json({ error: 'Erreur suppression.' });
+    return res.status(200).json({ ok: true });
+  }
+
+  // ── Action : sauvegarder la checklist (items cochés) ─────────────────────
+  if (action === 'update_checklist') {
+    const checked = Array.isArray(payload?.checked) ? payload.checked : [];
+    const { error } = await supabase.from('roadbooks').update({ checklist_checked: checked }).eq('id', roadbook_id);
+    if (error) return res.status(500).json({ error: 'Erreur sauvegarde checklist.' });
+    return res.status(200).json({ ok: true });
+  }
+
+  // ── Action : ajouter/modifier une dépense ────────────────────────────────
+  if (action === 'save_expenses') {
+    const expenses = Array.isArray(payload?.expenses) ? payload.expenses : [];
+    const { error } = await supabase.from('roadbooks').update({ expenses }).eq('id', roadbook_id);
+    if (error) return res.status(500).json({ error: 'Erreur sauvegarde dépenses.' });
     return res.status(200).json({ ok: true });
   }
 
