@@ -428,7 +428,6 @@ nav::before {
   position: relative;
   margin-top: 8px;
   border-radius: 24px;
-  overflow: hidden;
 }
 
 .days-preview-blur {
@@ -436,19 +435,23 @@ nav::before {
   pointer-events: none;
   user-select: none;
   opacity: 0.4;
+  border-radius: 24px;
+  overflow: hidden;
 }
 
 .lock-overlay {
-  position: absolute; inset: 0;
+  position: relative;
   background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 15%, rgba(0,0,0,0.96) 40%);
+  margin-top: -120px;
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 40px;
+  align-items: center; justify-content: flex-start;
+  padding: 80px 40px 48px;
   text-align: center;
   gap: 20px;
+  border-radius: 0 0 24px 24px;
 }
 html.light .lock-overlay {
-  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(240,240,235,0.7) 15%, rgba(240,240,235,0.98) 40%);
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(240,240,235,0.85) 20%, rgba(240,240,235,1) 40%);
 }
 html.light .lock-title { color: #111; }
 html.light .lock-sub { color: rgba(0,0,0,0.55); }
@@ -768,6 +771,76 @@ html.light .dpc-theme { color: rgba(0,0,0,0.5); }
 <footer class="page-footer">
   <p>Généré par <a href="/">LIBERTRIP</a> • IA powered roadbook</p>
 </footer>
+
+<!-- ── Bouton flottant Modifier ── -->
+<button id="edit-btn" onclick="openEditPanel()" title="Modifier mon voyage" style="display:none;position:fixed;bottom:100px;right:28px;z-index:490;width:48px;height:48px;border-radius:50%;background:var(--card);border:1px solid var(--border-lg);cursor:pointer;font-size:20px;box-shadow:0 4px 16px rgba(0,0,0,0.3);transition:transform 0.2s;display:none;align-items:center;justify-content:center;" onmouseenter="this.style.transform='scale(1.1)'" onmouseleave="this.style.transform='scale(1)'">✏️</button>
+
+<!-- ── Panneau d'édition ── -->
+<div id="edit-overlay" style="display:none;position:fixed;inset:0;z-index:1500;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);" onclick="if(event.target===this)closeEditPanel()">
+  <div id="edit-panel" style="position:absolute;right:0;top:0;bottom:0;width:min(480px,100vw);background:var(--card);display:flex;flex-direction:column;box-shadow:-8px 0 32px rgba(0,0,0,0.4);overflow:hidden;">
+    <!-- Header -->
+    <div style="padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:17px;">Modifier mon voyage</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Hébergements • Photos souvenirs</div>
+      </div>
+      <button onclick="closeEditPanel()" style="background:var(--card-2);border:1px solid var(--border);border-radius:50%;width:32px;height:32px;cursor:pointer;color:var(--text-muted);font-size:16px;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+
+    <!-- Tabs -->
+    <div style="display:flex;border-bottom:1px solid var(--border);flex-shrink:0;">
+      <button id="tab-lodgings" onclick="switchEditTab('lodgings')" style="flex:1;padding:12px;font-size:13px;font-family:'DM Sans',sans-serif;border:none;cursor:pointer;border-bottom:2px solid var(--accent);background:transparent;color:var(--accent);font-weight:600;transition:all 0.2s;">🏠 Hébergements</button>
+      <button id="tab-photos" onclick="switchEditTab('photos')" style="flex:1;padding:12px;font-size:13px;font-family:'DM Sans',sans-serif;border:none;cursor:pointer;border-bottom:2px solid transparent;background:transparent;color:var(--text-muted);transition:all 0.2s;">📸 Photos</button>
+    </div>
+
+    <!-- Contenu scrollable -->
+    <div id="edit-content" style="flex:1;overflow-y:auto;padding:20px 24px;">
+
+      <!-- Tab hébergements -->
+      <div id="edit-lodgings">
+        <p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;line-height:1.6;">Ajoute les adresses de tes hébergements nuit par nuit. L'IA les prendra en compte si tu génères à nouveau.</p>
+        <div id="lodgings-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+        <button onclick="addEditLodging()" style="margin-top:12px;width:100%;padding:12px;background:var(--card-2);border:1px dashed var(--border-lg);border-radius:10px;color:var(--text-muted);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;">+ Ajouter une nuit</button>
+        <button onclick="saveLodgings()" style="margin-top:16px;width:100%;padding:14px;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:14px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;transition:opacity 0.2s;" onmouseenter="this.style.opacity='0.85'" onmouseleave="this.style.opacity='1'">Sauvegarder les hébergements</button>
+        <div id="lodgings-status" style="font-size:12px;text-align:center;margin-top:8px;color:var(--text-muted);min-height:18px;"></div>
+      </div>
+
+      <!-- Tab photos -->
+      <div id="edit-photos" style="display:none;">
+        <p style="font-size:13px;color:var(--text-muted);margin:0 0 16px;line-height:1.6;">Ajoute tes photos au fil du voyage pour créer ton carnet de route. Elles sont sauvegardées et visibles dans ton roadbook.</p>
+        <!-- Upload -->
+        <label style="display:block;border:2px dashed var(--border-lg);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:border-color 0.2s;margin-bottom:16px;" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border-lg)'">
+          <div style="font-size:32px;margin-bottom:8px;">📷</div>
+          <div style="font-size:13px;color:var(--text-muted);">Clique pour choisir une photo</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:4px;">JPG, PNG, HEIC — max 8 Mo</div>
+          <input type="file" accept="image/*" id="photo-input" style="display:none;" onchange="previewPhoto(event)">
+        </label>
+        <!-- Preview avant upload -->
+        <div id="photo-preview-wrap" style="display:none;margin-bottom:16px;">
+          <img id="photo-preview-img" style="width:100%;border-radius:10px;max-height:200px;object-fit:cover;" />
+          <div style="margin-top:10px;display:flex;gap:8px;flex-direction:column;">
+            <select id="photo-day-select" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border-lg);background:var(--card-2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;"></select>
+            <input type="text" id="photo-caption" placeholder="Légende (optionnel)" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border-lg);background:var(--card-2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
+            <button onclick="uploadPhoto()" style="padding:12px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;">Ajouter cette photo</button>
+          </div>
+        </div>
+        <div id="photo-upload-status" style="font-size:12px;text-align:center;margin-bottom:12px;color:var(--text-muted);min-height:18px;"></div>
+        <!-- Galerie des photos existantes -->
+        <div id="photos-gallery" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"></div>
+      </div>
+
+    </div>
+
+    <!-- Email requis si non connecté -->
+    <div id="edit-email-wrap" style="display:none;padding:20px 24px;border-top:1px solid var(--border);flex-shrink:0;">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">Confirme ton email pour modifier ce roadbook :</div>
+      <div style="display:flex;gap:8px;">
+        <input type="email" id="edit-email-input" placeholder="ton@email.com" style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--border-lg);background:var(--card-2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;">
+        <button onclick="confirmEditEmail()" style="padding:10px 16px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;white-space:nowrap;">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 // ────────────────────────────────────────────────────────────────────────────
@@ -1275,6 +1348,15 @@ async function init() {
       if (widget) widget.style.display = 'block';
       window._copilotRoadbookId = roadbookId;
     }
+
+    // Initialiser le panneau d'édition (toujours disponible)
+    initEditPanel(
+      roadbookId,
+      data.email || '',
+      data.user_lodgings || [],
+      data.photos        || [],
+      Number(criteria.days || logistics.total_days || 1)
+    );
 
   } catch (err) {
     console.error('[roadbook]', err);
@@ -1817,6 +1899,233 @@ function t(key) {
 
 // Appliquer la langue sauvegardée au chargement
 document.addEventListener('DOMContentLoaded', () => setLang(_lang));
+</script>
+
+<script>
+// ── Panneau d'édition — Hébergements + Photos ────────────────────────────────
+
+let _editEmail     = '';
+let _editRbId      = '';
+let _editLodgings  = [];
+let _editPhotos    = [];
+let _editDays      = 0;
+let _photoFile     = null;
+
+function initEditPanel(roadbookId, email, lodgings, photos, days) {
+  _editRbId     = roadbookId;
+  _editEmail    = email || '';
+  _editLodgings = Array.isArray(lodgings) ? lodgings : [];
+  _editPhotos   = Array.isArray(photos)   ? photos   : [];
+  _editDays     = days || 1;
+
+  // Afficher le bouton édition
+  const btn = document.getElementById('edit-btn');
+  if (btn) { btn.style.display = 'flex'; }
+}
+
+function openEditPanel() {
+  const overlay = document.getElementById('edit-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+  renderLodgingsList();
+  renderPhotosGallery();
+  populateDaySelect();
+
+  // Demander l'email si pas connu
+  const emailWrap = document.getElementById('edit-email-wrap');
+  if (!_editEmail && emailWrap) emailWrap.style.display = 'block';
+  else if (emailWrap) emailWrap.style.display = 'none';
+}
+
+function closeEditPanel() {
+  const overlay = document.getElementById('edit-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
+function confirmEditEmail() {
+  const input = document.getElementById('edit-email-input');
+  const val   = (input?.value || '').trim().toLowerCase();
+  if (!val || !val.includes('@')) { input?.focus(); return; }
+  _editEmail = val;
+  const emailWrap = document.getElementById('edit-email-wrap');
+  if (emailWrap) emailWrap.style.display = 'none';
+}
+
+function switchEditTab(tab) {
+  document.getElementById('edit-lodgings').style.display = tab === 'lodgings' ? 'block' : 'none';
+  document.getElementById('edit-photos').style.display   = tab === 'photos'   ? 'block' : 'none';
+  const tL = document.getElementById('tab-lodgings');
+  const tP = document.getElementById('tab-photos');
+  if (tL) { tL.style.borderBottomColor = tab==='lodgings' ? 'var(--accent)' : 'transparent'; tL.style.color = tab==='lodgings' ? 'var(--accent)' : 'var(--text-muted)'; tL.style.fontWeight = tab==='lodgings' ? '600' : '400'; }
+  if (tP) { tP.style.borderBottomColor = tab==='photos'   ? 'var(--accent)' : 'transparent'; tP.style.color = tab==='photos'   ? 'var(--accent)' : 'var(--text-muted)'; tP.style.fontWeight = tab==='photos'   ? '600' : '400'; }
+}
+
+// ── Hébergements ─────────────────────────────────────────────────────────────
+
+function renderLodgingsList() {
+  const list = document.getElementById('lodgings-list');
+  if (!list) return;
+  list.innerHTML = '';
+  _editLodgings.forEach((l, i) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'background:var(--card-2);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px;';
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:12px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:1px;">Nuit ${l.day || i+1}</div>
+        <button onclick="removeLodging(${i})" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:0;">✕</button>
+      </div>
+      <input type="text" value="${escAttr(l.name||'')}" placeholder="Nom (ex: Airbnb Trastevere)" data-idx="${i}" data-field="name"
+        style="padding:8px 10px;border-radius:7px;border:1px solid var(--border-lg);background:var(--card);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;"
+        oninput="_editLodgings[${i}].name=this.value">
+      <input type="text" value="${escAttr(l.address||'')}" placeholder="Adresse complète" data-idx="${i}" data-field="address"
+        style="padding:8px 10px;border-radius:7px;border:1px solid var(--border-lg);background:var(--card);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;"
+        oninput="_editLodgings[${i}].address=this.value">
+      <input type="text" value="${escAttr(l.notes||'')}" placeholder="Notes (code wifi, horaire check-in…)" data-idx="${i}" data-field="notes"
+        style="padding:8px 10px;border-radius:7px;border:1px solid var(--border-lg);background:var(--card);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;"
+        oninput="_editLodgings[${i}].notes=this.value">
+    `;
+    list.appendChild(div);
+  });
+}
+
+function escAttr(s) {
+  return String(s).replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+function addEditLodging() {
+  const nextDay = _editLodgings.length + 1;
+  _editLodgings.push({ day: nextDay, name: '', address: '', notes: '' });
+  renderLodgingsList();
+}
+
+function removeLodging(i) {
+  _editLodgings.splice(i, 1);
+  renderLodgingsList();
+}
+
+async function saveLodgings() {
+  if (!_editEmail) { document.getElementById('edit-email-wrap').style.display = 'block'; return; }
+  const status = document.getElementById('lodgings-status');
+  if (status) status.textContent = 'Sauvegarde…';
+  try {
+    const res = await fetch('/api/update-roadbook', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ roadbook_id: _editRbId, email: _editEmail, action: 'update_lodgings', payload: { lodgings: _editLodgings } }),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      if (status) { status.textContent = '✅ Hébergements sauvegardés !'; status.style.color = 'var(--green)'; }
+    } else {
+      if (status) { status.textContent = '❌ ' + (data.error || 'Erreur'); status.style.color = 'var(--red)'; }
+    }
+  } catch(e) {
+    if (status) { status.textContent = '❌ Erreur réseau'; status.style.color = 'var(--red)'; }
+  }
+  setTimeout(() => { if (status) { status.textContent = ''; status.style.color = 'var(--text-muted)'; } }, 4000);
+}
+
+// ── Photos ───────────────────────────────────────────────────────────────────
+
+function populateDaySelect() {
+  const sel = document.getElementById('photo-day-select');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Quel jour ? (optionnel)</option>';
+  for (let d = 1; d <= _editDays; d++) {
+    sel.innerHTML += `<option value="${d}">Jour ${d}</option>`;
+  }
+}
+
+function previewPhoto(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  _photoFile = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img  = document.getElementById('photo-preview-img');
+    const wrap = document.getElementById('photo-preview-wrap');
+    if (img)  img.src = e.target.result;
+    if (wrap) wrap.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function uploadPhoto() {
+  if (!_photoFile) return;
+  if (!_editEmail) { document.getElementById('edit-email-wrap').style.display = 'block'; return; }
+  const status  = document.getElementById('photo-upload-status');
+  const caption = document.getElementById('photo-caption')?.value || '';
+  const day     = parseInt(document.getElementById('photo-day-select')?.value) || null;
+
+  if (status) { status.textContent = 'Upload en cours…'; status.style.color = 'var(--text-muted)'; }
+
+  // Lire le fichier en base64
+  const base64 = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = (e) => resolve(e.target.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(_photoFile);
+  });
+
+  try {
+    const res = await fetch('/api/update-roadbook', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        roadbook_id: _editRbId,
+        email:       _editEmail,
+        action:      'upload_photo',
+        payload:     { day, caption, file_base64: base64, file_name: _photoFile.name, file_type: _photoFile.type }
+      }),
+    });
+    const data = await res.json();
+    if (data.ok && data.photo) {
+      _editPhotos.push(data.photo);
+      renderPhotosGallery();
+      // Réinitialiser
+      _photoFile = null;
+      document.getElementById('photo-input').value = '';
+      document.getElementById('photo-preview-wrap').style.display = 'none';
+      document.getElementById('photo-caption').value = '';
+      if (status) { status.textContent = '✅ Photo ajoutée !'; status.style.color = 'var(--green)'; }
+    } else {
+      if (status) { status.textContent = '❌ ' + (data.error || 'Erreur upload'); status.style.color = 'var(--red)'; }
+    }
+  } catch(e) {
+    if (status) { status.textContent = '❌ Erreur réseau'; status.style.color = 'var(--red)'; }
+  }
+  setTimeout(() => { if (status) { status.textContent = ''; } }, 4000);
+}
+
+async function deletePhoto(url) {
+  if (!confirm('Supprimer cette photo ?')) return;
+  try {
+    await fetch('/api/update-roadbook', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ roadbook_id: _editRbId, email: _editEmail, action: 'delete_photo', payload: { photo_url: url } }),
+    });
+    _editPhotos = _editPhotos.filter(p => p.url !== url);
+    renderPhotosGallery();
+  } catch(e) { console.error(e); }
+}
+
+function renderPhotosGallery() {
+  const gallery = document.getElementById('photos-gallery');
+  if (!gallery) return;
+  if (!_editPhotos.length) {
+    gallery.innerHTML = '<div style="grid-column:span 2;text-align:center;color:var(--text-dim);font-size:13px;padding:20px 0;">Aucune photo pour l\'instant</div>';
+    return;
+  }
+  gallery.innerHTML = _editPhotos.map(p => `
+    <div style="position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1;">
+      <img src="${p.url}" style="width:100%;height:100%;object-fit:cover;" />
+      <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.7));padding:8px;font-size:11px;color:#fff;">
+        ${p.day ? `Jour ${p.day}` : ''}${p.caption ? (p.day ? ' · ' : '') + p.caption : ''}
+      </div>
+      <button onclick="deletePhoto('${p.url}')" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.6);border:none;border-radius:50%;width:24px;height:24px;color:#fff;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>`).join('');
+}
 </script>
 
 </body>
