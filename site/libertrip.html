@@ -1420,9 +1420,9 @@
 </section>
 
 <!-- ─── COMMENT ÇA MARCHE ─── -->
-<!-- ── SECTION DÉMO SCROLL APPLE-STYLE ── -->
-<section id="demo" style="padding:0;overflow:hidden;background:var(--black);max-width:none;">
-  <div id="demo-sticky" style="position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+<!-- ── SECTION DÉMO SCROLL ── -->
+<section id="demo" style="padding:0;background:var(--black);max-width:none;display:block;">
+  <div id="demo-sticky" style="position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;gap:64px;overflow:hidden;padding:0 40px;">
     <!-- Mockup téléphone -->
     <div id="demo-phone" style="width:260px;height:520px;background:#0a0a0a;border-radius:40px;border:2px solid rgba(255,255,255,0.12);box-shadow:0 32px 80px rgba(0,0,0,0.8),0 0 0 1px rgba(255,255,255,0.05);position:relative;overflow:hidden;transition:transform 0.6s cubic-bezier(0.22,1,0.36,1);">
       <!-- Notch -->
@@ -1476,19 +1476,32 @@
         <!-- Frame 3 : checklist bagages -->
         <div class="demo-frame" id="df3" style="opacity:0;position:absolute;inset:28px 16px 16px;transition:opacity 0.5s,transform 0.5s;transform:translateY(20px);">
           <div style="font-size:9px;color:#4f8eff;letter-spacing:2px;margin-bottom:10px;">🧳 CHECKLIST BAGAGES</div>
-          ${['Passeport + photocopie','Adaptateur prise (Type L en Italie)','Crème solaire SPF50 (été)','Chaussures de marche','Carte bancaire sans frais'].map((item, i) => `
           <div style="display:flex;align-items:center;gap:8px;background:#111;border:1px solid #222;border-radius:8px;padding:8px 10px;margin-bottom:6px;">
-            <div style="width:14px;height:14px;border-radius:50%;${i < 2 ? 'background:#34d399;border:none;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;' : 'border:1.5px solid #333;'}">
-              ${i < 2 ? '✓' : ''}
-            </div>
-            <div style="font-size:10px;color:${i < 2 ? 'rgba(255,255,255,0.4)' : '#fff'};${i < 2 ? 'text-decoration:line-through;' : ''}">${item}</div>
-          </div>`).join('')}
+            <div style="width:14px;height:14px;border-radius:50%;background:#34d399;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;flex-shrink:0;">✓</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);text-decoration:line-through;">Passeport + photocopie</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;background:#111;border:1px solid #222;border-radius:8px;padding:8px 10px;margin-bottom:6px;">
+            <div style="width:14px;height:14px;border-radius:50%;background:#34d399;display:flex;align-items:center;justify-content:center;font-size:8px;color:#fff;flex-shrink:0;">✓</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);text-decoration:line-through;">Adaptateur prise (Type L — Italie)</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;background:#111;border:1px solid #222;border-radius:8px;padding:8px 10px;margin-bottom:6px;">
+            <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid #333;flex-shrink:0;"></div>
+            <div style="font-size:10px;color:#fff;">Crème solaire SPF50 (été à Rome)</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;background:#111;border:1px solid #222;border-radius:8px;padding:8px 10px;margin-bottom:6px;">
+            <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid #333;flex-shrink:0;"></div>
+            <div style="font-size:10px;color:#fff;">Chaussures de marche</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;background:#111;border:1px solid #222;border-radius:8px;padding:8px 10px;">
+            <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid #333;flex-shrink:0;"></div>
+            <div style="font-size:10px;color:#fff;">Carte bancaire sans frais</div>
+          </div>
         </div>
 
         <!-- Frame 4 : budget tracker -->
         <div class="demo-frame" id="df4" style="opacity:0;position:absolute;inset:28px 16px 16px;transition:opacity 0.5s,transform 0.5s;transform:translateY(20px);">
           <div style="font-size:9px;color:#4f8eff;letter-spacing:2px;margin-bottom:10px;">💸 SUIVI DÉPENSES</div>
-          <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:8px;">
+          <div style="background:#111;border:1px solid #222;border-radius:10px;padding:12px;margin-bottom:10px;">
             <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
               <div style="font-size:10px;color:rgba(255,255,255,0.5);">Total dépensé</div>
               <div style="font-size:14px;font-weight:700;color:#fff;">187€</div>
@@ -1500,39 +1513,52 @@
               <span>0€</span><span>Budget : 320€</span>
             </div>
           </div>
-          ${[['🏨','Hébergement','90€','#4f8eff',28],['🍽️','Restaurant','55€','#f59e0b',17],['🎯','Activités','42€','#34d399',13]].map(([icon,cat,amt,color,pct]) => `
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <span style="font-size:12px;">${icon}</span>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span>🏨</span>
             <div style="flex:1;">
-              <div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,0.5);margin-bottom:2px;"><span>${cat}</span><span>${amt}</span></div>
-              <div style="background:#222;border-radius:99px;height:4px;"><div style="height:100%;border-radius:99px;background:${color};width:${pct}%;"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,0.5);margin-bottom:2px;"><span>Hébergement</span><span>90€</span></div>
+              <div style="background:#222;border-radius:99px;height:4px;"><div style="height:100%;border-radius:99px;background:#4f8eff;width:28%;"></div></div>
             </div>
-          </div>`).join('')}
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span>🍽️</span>
+            <div style="flex:1;">
+              <div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,0.5);margin-bottom:2px;"><span>Restaurant</span><span>55€</span></div>
+              <div style="background:#222;border-radius:99px;height:4px;"><div style="height:100%;border-radius:99px;background:#f59e0b;width:17%;"></div></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span>🎯</span>
+            <div style="flex:1;">
+              <div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,0.5);margin-bottom:2px;"><span>Activités</span><span>42€</span></div>
+              <div style="background:#222;border-radius:99px;height:4px;"><div style="height:100%;border-radius:99px;background:#34d399;width:13%;"></div></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Texte flottant à côté -->
-    <div id="demo-captions" style="position:absolute;left:calc(50% + 160px);top:50%;transform:translateY(-50%);max-width:280px;">
-      <div class="demo-caption active" id="dc1">
-        <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Vue d'ensemble</div>
-        <div style="font-size:22px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:8px;">Tout ton voyage en un coup d'œil</div>
-        <div style="font-size:14px;color:var(--text-muted);line-height:1.6;">Budget, durée, jours — organisé automatiquement selon tes préférences.</div>
+    <!-- Texte à droite du téléphone -->
+    <div id="demo-captions" style="max-width:320px;position:relative;min-height:200px;">
+      <div id="dc1" style="transition:opacity 0.5s,transform 0.5s;opacity:1;transform:translateY(0);">
+        <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Vue d'ensemble</div>
+        <div style="font-size:26px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:12px;">Tout ton voyage en un coup d'œil</div>
+        <div style="font-size:15px;color:var(--text-muted);line-height:1.6;">Budget, durée, jours — organisé automatiquement selon tes préférences.</div>
       </div>
-      <div class="demo-caption" id="dc2" style="opacity:0;position:absolute;top:0;">
-        <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Chaque étape</div>
-        <div style="font-size:22px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:8px;">Des lieux réels, des liens GPS directs</div>
-        <div style="font-size:14px;color:var(--text-muted);line-height:1.6;">Clique sur le <span style="background:rgba(79,142,255,0.15);border:1px solid rgba(79,142,255,0.3);border-radius:50%;padding:1px 5px;font-size:11px;color:var(--accent);">ℹ</span> pour plus d'infos, et ouvre directement dans Maps ou Waze.</div>
+      <div id="dc2" style="transition:opacity 0.5s,transform 0.5s;opacity:0;transform:translateY(16px);position:absolute;top:0;left:0;right:0;">
+        <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Chaque étape</div>
+        <div style="font-size:26px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:12px;">Des lieux réels, des liens GPS directs</div>
+        <div style="font-size:15px;color:var(--text-muted);line-height:1.6;">Clique sur le <span style="background:rgba(79,142,255,0.15);border:1px solid rgba(79,142,255,0.3);border-radius:50%;padding:1px 6px;font-size:11px;color:var(--accent);">ℹ</span> pour plus d'infos, et ouvre directement dans Maps ou Waze.</div>
       </div>
-      <div class="demo-caption" id="dc3" style="opacity:0;position:absolute;top:0;">
-        <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Checklist intelligente</div>
-        <div style="font-size:22px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:8px;">Emporte exactement ce qu'il faut</div>
-        <div style="font-size:14px;color:var(--text-muted);line-height:1.6;">L'algorithme génère ta liste selon la destination, la saison et ton profil de voyageur.</div>
+      <div id="dc3" style="transition:opacity 0.5s,transform 0.5s;opacity:0;transform:translateY(16px);position:absolute;top:0;left:0;right:0;">
+        <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Checklist intelligente</div>
+        <div style="font-size:26px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:12px;">Emporte exactement ce qu'il faut</div>
+        <div style="font-size:15px;color:var(--text-muted);line-height:1.6;">L'algorithme génère ta liste selon la destination, la saison et ton profil de voyageur.</div>
       </div>
-      <div class="demo-caption" id="dc4" style="opacity:0;position:absolute;top:0;">
-        <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Budget en temps réel</div>
-        <div style="font-size:22px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:8px;">Suis tes dépenses pendant le voyage</div>
-        <div style="font-size:14px;color:var(--text-muted);line-height:1.6;">Ajoute chaque dépense, vois où tu en es par rapport à ton budget prévu — par catégorie.</div>
+      <div id="dc4" style="transition:opacity 0.5s,transform 0.5s;opacity:0;transform:translateY(16px);position:absolute;top:0;left:0;right:0;">
+        <div style="font-size:11px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">Budget en temps réel</div>
+        <div style="font-size:26px;font-weight:800;color:var(--text);line-height:1.2;margin-bottom:12px;">Suis tes dépenses pendant le voyage</div>
+        <div style="font-size:15px;color:var(--text-muted);line-height:1.6;">Ajoute chaque dépense, vois où tu en es par rapport à ton budget prévu — par catégorie.</div>
       </div>
     </div>
   </div>
@@ -1542,11 +1568,10 @@
 </section>
 
 <style>
-.demo-caption { transition: opacity 0.5s, transform 0.5s; }
 @media (max-width: 768px) {
-  #demo-captions { left: 50%; transform: translateX(-50%); top: auto; bottom: 32px; max-width: calc(100vw - 48px); text-align: center; }
-  #demo-phone { width: 200px; height: 400px; margin-bottom: 180px; }
-  #demo { display: none; } /* masquer sur mobile pour l'instant */
+  #demo-sticky { flex-direction: column; gap: 24px; padding: 24px 20px; }
+  #demo-phone  { width: 200px; height: 400px; }
+  #demo-captions { max-width: 100%; text-align: center; min-height: 160px; }
 }
 </style>
 
