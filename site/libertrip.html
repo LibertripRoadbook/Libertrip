@@ -1277,14 +1277,6 @@
   </ul>
   <!-- Desktop right -->
   <div class="nav-right-desktop">
-    <!-- Dropdown langue -->
-    <div class="lang-dropdown" id="lang-dropdown">
-      <button class="lang-dropdown-trigger" onclick="toggleLangDropdown()" id="lang-trigger">
-        <span id="lang-flag-current">🇫🇷</span>
-        <span id="lang-name-current">Français</span>
-        <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </button>
-    </div>
     <!-- Thème toggle SVG -->
     <button class="theme-icon-btn" id="site-theme-btn" onclick="toggleSiteTheme()" aria-label="Toggle theme">
       <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -1295,10 +1287,6 @@
   </div>
   <!-- Mobile right -->
   <div class="nav-right-mobile">
-    <button class="lang-dropdown-trigger lang-trigger-mobile" onclick="toggleLangDropdown()" id="lang-trigger-mobile">
-      <span id="lang-flag-mobile">🇫🇷</span>
-      <svg width="8" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-    </button>
     <button class="theme-icon-btn" onclick="toggleSiteTheme()">
       <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
       <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
@@ -1309,12 +1297,6 @@
     </button>
   </div>
 </nav>
-<!-- Dropdown langue (partagé desktop+mobile, positionné par JS) -->
-<div class="lang-dropdown-menu-global" id="lang-menu-global" style="display:none;">
-  <button onclick="setSiteLang('fr');closeLangDropdown()" data-lang="fr"><span>🇫🇷</span> Français</button>
-  <button onclick="setSiteLang('en');closeLangDropdown()" data-lang="en"><span>🇬🇧</span> English</button>
-  <button onclick="setSiteLang('es');closeLangDropdown()" data-lang="es"><span>🇪🇸</span> Español</button>
-</div>
 <!-- Menu mobile déroulant -->
 <div id="mobile-menu" class="mobile-menu">
   <a href="#concept" onclick="toggleMobileMenu()">Concept</a>
@@ -1668,11 +1650,24 @@
         </div>
         <div style="font-size:13px;color:var(--gray);margin-top:6px;" data-i18n="labelDaysUnit">jours</div>
       </div>
-      <div style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;text-align:center;margin-bottom:14px;" data-i18n="labelRhythm">Rythme de voyage</div>
-      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-        <button class="quiz-card-rythme" onclick="selectRythme(this,'slow')"><span class="opt-icon">🧘</span><div style="margin-top:6px;font-size:13px;font-weight:500;" data-i18n="rhythmSlow">Slow Travel</div><div style="font-size:11px;color:var(--gray);margin-top:2px;" data-i18n="rhythmSlowSub">Moins de 100km/j</div></button>
-        <button class="quiz-card-rythme" onclick="selectRythme(this,'equilibre')"><span class="opt-icon">⛰️</span><div style="margin-top:6px;font-size:13px;font-weight:500;" data-i18n="rhythmBal">Équilibré</div><div style="font-size:11px;color:var(--gray);margin-top:2px;" data-i18n="rhythmBalSub">100–200km/j</div></button>
-        <button class="quiz-card-rythme" onclick="selectRythme(this,'rouleur')"><span class="opt-icon">🏁</span><div style="margin-top:6px;font-size:13px;font-weight:500;" data-i18n="rhythmFast">Grand Rouleur</div><div style="font-size:11px;color:var(--gray);margin-top:2px;" data-i18n="rhythmFastSub">+200km/j</div></button>
+      <!-- Option mode ville -->
+      <div style="margin-bottom:18px;">
+        <button class="quiz-card-rythme" id="btn-city-mode" onclick="selectRythme(this,'city')" style="width:100%;max-width:340px;margin:0 auto;display:flex;flex-direction:column;align-items:center;border:2px solid var(--border-light);border-radius:14px;padding:14px 20px;">
+          <span class="opt-icon">🏙️</span>
+          <div style="margin-top:6px;font-size:13px;font-weight:500;">Rester dans une ville</div>
+          <div style="font-size:11px;color:var(--gray);margin-top:2px;">Explorer une destination précise en profondeur</div>
+        </button>
+      </div>
+      <!-- Séparateur -->
+      <div id="rhythm-separator" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <div style="flex:1;height:1px;background:var(--border-light);"></div>
+        <div style="font-size:11px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.08em;">ou choisir le rythme de route</div>
+        <div style="flex:1;height:1px;background:var(--border-light);"></div>
+      </div>
+      <div id="rhythm-cards" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="quiz-card-rythme" onclick="selectRythme(this,'slow')"><span class="opt-icon">🧘</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Slow Travel</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">Moins de 100km/j</div></button>
+        <button class="quiz-card-rythme" onclick="selectRythme(this,'equilibre')"><span class="opt-icon">⛰️</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Équilibré</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">100–200km/j</div></button>
+        <button class="quiz-card-rythme" onclick="selectRythme(this,'rouleur')"><span class="opt-icon">🏁</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Grand Rouleur</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">+200km/j</div></button>
       </div>
       <div style="text-align:center;margin-top:32px;">
         <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(6,7)" data-i18n="continueBtn">Continuer ➔</button>
@@ -2061,6 +2056,21 @@ function selectRythme(el, val) {
   document.querySelectorAll('.quiz-card-rythme').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
   formData['rythme'] = val;
+  // Mode ville : masquer/afficher les cartes de rythme de route
+  const rhythmCards = document.getElementById('rhythm-cards');
+  const rhythmSep = document.getElementById('rhythm-separator');
+  if (val === 'city') {
+    formData['city_mode'] = true;
+    if (rhythmCards) rhythmCards.style.opacity = '0.35';
+    if (rhythmSep) rhythmSep.style.opacity = '0.35';
+  } else {
+    formData['city_mode'] = false;
+    if (rhythmCards) rhythmCards.style.opacity = '1';
+    if (rhythmSep) rhythmSep.style.opacity = '1';
+    // Désélectionner le bouton ville
+    const cityBtn = document.getElementById('btn-city-mode');
+    if (cityBtn) cityBtn.classList.remove('selected');
+  }
 }
 
 function selectVehicleElectric(el) {
