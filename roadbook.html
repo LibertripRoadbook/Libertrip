@@ -1074,16 +1074,27 @@ function renderDay1(day1) {
   // Overnight
   const on = day1.overnight;
   const overnightCard = document.getElementById('overnight-card');
-  if (on) {
+  // Chercher si l'utilisateur a renseigné un hébergement pour la nuit 1
+  const userLodging1 = (window._userLodgings || []).find(l => l.day === 1);
+  if (on || userLodging1) {
+    const name = userLodging1?.name || on?.name || '';
+    const addr = userLodging1?.address || '';
+    const notes = userLodging1?.notes || '';
+    const mapsLink = addr
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`
+      : (on?.lat && on?.lng ? `https://www.google.com/maps/search/?api=1&query=${on.lat},${on.lng}` : null);
     overnightCard.innerHTML = `
       <h4>🌙 Nuit du Jour 1</h4>
-      <div class="overnight-name">${esc(on.name)}</div>
-      <div class="overnight-desc">${esc(on.description)}</div>
+      <div class="overnight-name">${mapsLink ? `<a href="${mapsLink}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">${esc(name)}</a>` : esc(name)}</div>
+      ${addr ? `<div style="font-size:13px;color:var(--text-muted);margin-bottom:6px;">📍 <a href="${mapsLink}" target="_blank" rel="noopener" style="color:var(--accent);">${esc(addr)}</a></div>` : ''}
+      ${notes ? `<div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">📝 ${esc(notes)}</div>` : ''}
+      ${on?.description ? `<div class="overnight-desc">${esc(on.description)}</div>` : ''}
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;">
-        <div class="overnight-type">${overnightEmoji(on.type)} ${esc(on.type || 'bivouac')}</div>
-        ${gpsButtons(on.lat, on.lng, on.name)}
+        ${on?.type ? `<div class="overnight-type">${overnightEmoji(on.type)} ${esc(on.type)}</div>` : ''}
+        ${mapsLink ? `<a href="${mapsLink}" target="_blank" rel="noopener" class="gps-btn maps" style="font-size:12px;padding:6px 12px;">🗺️ Ouvrir dans Maps</a>` : (on ? gpsButtons(on.lat, on.lng, on.name) : '')}
       </div>
-      ${on.tips ? `<div class="step-tip" style="margin-top:12px;">💡 ${esc(on.tips)}</div>` : ''}`;
+      ${on?.tips ? `<div class="step-tip" style="margin-top:12px;">💡 ${esc(on.tips)}</div>` : ''}
+      ${!userLodging1 ? `<div style="margin-top:12px;font-size:12px;color:var(--text-dim);">✏️ <button onclick="openEditPanel()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;padding:0;text-decoration:underline;">Ajouter ton hébergement réel</button></div>` : ''}`;
   }
 }
 
@@ -1308,19 +1319,21 @@ async function init() {
     document.getElementById('loading-screen').style.display = 'none';
     document.getElementById('main-content').style.display  = '';
 
-    // Afficher le copilote si premium
-    if (isPaid) {
-      const widget = document.getElementById('copilot-widget');
-      if (widget) widget.style.display = 'block';
-      window._copilotRoadbookId = roadbookId;
-    }
+    // Copilote — disponible pour tous (1 msg gratuit, illimité si payé)
+    window._roadbookIsPaid = isPaid;
+    const widget = document.getElementById('copilot-widget');
+    if (widget) widget.style.display = 'block';
+    window._copilotRoadbookId = roadbookId;
+
+    // Stocker les hébergements utilisateur pour les afficher dans le roadbook
+    window._userLodgings = data.user_lodgings || [];
 
     // Initialiser le panneau d'édition (toujours disponible)
     initEditPanel(
       roadbookId,
       data.email || '',
       data.user_lodgings || [],
-      data.photos        || [],
+      [],
       Number(criteria.days || logistics.total_days || 1)
     );
 
@@ -1356,6 +1369,7 @@ function copyToClipboard(text) {
 // ── Copilote IA ──────────────────────────────────────────────────────────────
 
 let _copilotHistory = [];
+let _copilotFreeUsed = 0; // nb de messages envoyés en mode gratuit
 
 function toggleCopilot() {
   const panel = document.getElementById('copilot-panel');
@@ -1375,7 +1389,23 @@ async function sendCopilotMessage() {
 
   const text = input.value.trim();
   if (!text) return;
+
+  // Limite gratuit : 1 message max
+  const isPaidRoadbook = window._roadbookIsPaid || false;
+  if (!isPaidRoadbook && _copilotFreeUsed >= 1) {
+    const lockDiv = document.createElement('div');
+    lockDiv.className = 'copilot-msg copilot-msg-ai';
+    lockDiv.innerHTML = '🔒 Tu as utilisé ta question gratuite. <strong>Débloque le voyage complet</strong> pour un accès illimité au copilote !';
+    msgs.appendChild(lockDiv);
+    msgs.scrollTop = msgs.scrollHeight;
+    input.value = '';
+    input.disabled = true;
+    input.placeholder = 'Débloquer pour continuer…';
+    return;
+  }
+
   input.value = '';
+  if (!isPaidRoadbook) _copilotFreeUsed++;
 
   // Afficher le message utilisateur
   const userDiv = document.createElement('div');
