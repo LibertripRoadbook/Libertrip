@@ -65,7 +65,7 @@ export default async function handler(req, res) {
 
   const { data: roadbook, error } = await supabase
     .from('roadbooks')
-    .select('id, email, criteria, logistics, day_1, days_full, days_preview, payment_status, created_at, user_lodgings, photos')
+    .select('id, email, criteria, logistics, day_1, days_full, days_preview, payment_status, created_at, user_lodgings, photos, step_photos, checklist_checked, expenses')
     .eq('id', id)
     .single();
 
@@ -100,9 +100,11 @@ export default async function handler(req, res) {
     day_1:          roadbook.day_1,
     days_preview:   roadbook.days_preview  || [],
     days_full:      isPaid ? (roadbook.days_full || []) : null,
-    user_lodgings:  roadbook.user_lodgings || [],
-    photos:         roadbook.photos        || [],
-    created_at:     roadbook.created_at,
+    user_lodgings:      roadbook.user_lodgings      || [],
+    step_photos:        roadbook.step_photos        || [],
+    checklist_checked:  roadbook.checklist_checked  || [],
+    expenses:           roadbook.expenses           || [],
+    created_at:         roadbook.created_at,
   };
 
   return jsonResponse(res, 200, response);
