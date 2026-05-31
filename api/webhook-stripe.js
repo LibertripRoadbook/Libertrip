@@ -5,6 +5,7 @@
 
 import Stripe from 'stripe';
 import { supabase } from '../lib/supabase.js';
+import { sendRoadbookUnlockedEmail } from '../lib/email.js';
 
 export const config = { api: { bodyParser: false } };
 
@@ -58,6 +59,25 @@ export default async function handler(req, res) {
         console.error('[webhook] Erreur Supabase:', error.message);
       } else {
         console.log(`[webhook] Roadbook ${roadbookId} marqué payé.`);
+        // Envoyer l'email de confirmation avec lien roadbook complet
+        try {
+          const { data: rb } = await supabase
+            .from('roadbooks')
+            .select('email, criteria')
+            .eq('id', roadbookId)
+            .single();
+          if (rb?.email) {
+            await sendRoadbookUnlockedEmail({
+              to:          rb.email,
+              destination: rb.criteria?.destination || '',
+              roadbookId,
+              days:        rb.criteria?.days || null,
+            });
+            console.log(`[webhook] Email de confirmation envoyé à ${rb.email}`);
+          }
+        } catch (emailErr) {
+          console.error('[webhook] Erreur envoi email confirmation:', emailErr.message);
+        }
       }
       break;
     }
