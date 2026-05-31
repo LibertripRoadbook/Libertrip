@@ -97,7 +97,7 @@
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
-    z-index: 100;
+    z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -142,7 +142,7 @@
     background: rgba(8,8,8,0.97);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
-    z-index: 99;
+    z-index: 9999;
     flex-direction: column;
     padding: 8px 0;
   }
@@ -785,6 +785,8 @@
     padding: 120px 24px;
     max-width: 700px;
     margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
   }
   .form-wrapper {
     background: var(--card);
@@ -793,6 +795,8 @@
     padding: 56px 48px;
     position: relative;
     overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
   }
   .form-wrapper::before {
     content: '';
@@ -864,7 +868,7 @@
   .form-row { display: flex; gap: 12px; }
   .form-field {
     flex: 1;
-    background: transparent;
+    background: rgba(255,255,255,0.04);
     border: 1px solid var(--border-light);
     border-radius: 14px;
     padding: 16px 20px;
@@ -873,9 +877,11 @@
     font-family: 'DM Sans', sans-serif;
     outline: none;
     transition: border-color 0.2s;
+    color-scheme: dark;
   }
   .form-field:focus { border-color: var(--accent); }
   .form-field::placeholder { color: var(--gray); }
+  html.light .form-field { color-scheme: light; background: rgba(0,0,0,0.03); }
 
   .form-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; }
   .btn-back { background: transparent; border: 1px solid var(--border-light); color: var(--gray); border-radius: 100px; padding: 12px 24px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; transition: all 0.2s; }
@@ -1537,7 +1543,7 @@
 </section>
 
 <!-- ─── GÉNÉRATEUR / FORMULAIRE ─── -->
-<section id="generator" style="padding:120px 24px;">
+<section id="generator" style="padding:120px 24px;width:100%;box-sizing:border-box;">
   <div style="text-align:center;margin-bottom:56px;" class="reveal">
     <div class="tag" style="margin-bottom:20px;display:inline-flex;"><span class="dot"></span><span data-i18n="tryNow">Essaie maintenant</span></div>
     <h2 style="font-size:clamp(36px,5vw,60px);letter-spacing:-0.03em;" data-i18n="genTitle">Génère ton roadbook.<br>Gratuit. En 60 secondes.</h2>
@@ -1652,7 +1658,7 @@
         <div style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:-6px;">Retour <span style="color:var(--gray);font-size:11px;text-transform:none;letter-spacing:0;">(optionnel — si tu as un avion, train ou contrainte de retour)</span></div>
         <input class="form-field" type="text" id="return-place" placeholder="Lieu de retour (ex: Aéroport de Paris CDG, optionnel)">
         <div class="form-row">
-          <input class="form-field" type="date" id="return-date">
+          <input class="form-field" type="date" id="return-date" onchange="const d=document.getElementById('departure-date')?.value;if(d&&this.value&&this.value<d){this.value=d;showToastForm('⚠️ Date de retour corrigée — doit être après le départ.');}">
           <input class="form-field" type="time" id="return-time" placeholder="18:00">
         </div>
         <!-- Moyen de retour -->
@@ -1665,7 +1671,7 @@
         </div>
       </div>
       <div style="text-align:center;margin-top:32px;">
-        <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(5,6)">Continuer ➔</button>
+        <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="validateAndGoSlide5()">Continuer ➔</button>
       </div>
     </div>
 
@@ -2222,6 +2228,26 @@ function setBudgetScope(scope) {
   }
 }
 
+
+function validateAndGoSlide5() {
+  const dep = document.getElementById('departure-date')?.value;
+  const ret = document.getElementById('return-date')?.value;
+  if (dep && ret && ret < dep) {
+    // Corriger automatiquement
+    document.getElementById('return-date').value = dep;
+    showToastForm('⚠️ Date de retour ajustée — elle ne peut pas être avant le départ.');
+    return;
+  }
+  goToSlide(5, 6);
+}
+
+function showToastForm(msg) {
+  const t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border-light);border-radius:12px;padding:12px 20px;font-size:13px;color:var(--white);z-index:99999;box-shadow:0 8px 24px rgba(0,0,0,0.3);white-space:nowrap;font-family:"DM Sans",sans-serif;max-width:90vw;text-align:center;';
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
 
 function changeDays(delta) {
   selectedDays = Math.max(1, Math.min(30, selectedDays + delta));
