@@ -1422,343 +1422,143 @@
 <!-- ─── COMMENT ÇA MARCHE ─── -->
 <!-- ── SECTION DÉMO SCROLL — style Apple ── -->
 <section id="demo" style="padding:0;background:#000;max-width:none;display:block;position:relative;">
-  <!-- Layout : 2 colonnes strictes — jamais superposées -->
-  <div id="demo-sticky" style="position:sticky;top:0;height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;overflow:hidden;background:#000;">
-
-    <!-- Colonne gauche : texte explicatif -->
-    <div style="padding:0 48px 0 80px;display:flex;flex-direction:column;justify-content:center;">
+  <div id="demo-sticky" style="position:sticky;top:0;height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;background:#000;overflow:hidden;">
+    <!-- Gauche : texte -->
+    <div style="padding:0 40px 0 80px;">
       <div id="demo-captions" style="position:relative;min-height:260px;">
-        <div id="dc1" style="opacity:1;transform:translateY(0);transition:opacity 0.5s,transform 0.5s;">
-          <div style="font-size:11px;color:#4f8eff;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;">Vue d'ensemble</div>
-          <div style="font-size:clamp(28px,3.5vw,42px);font-weight:800;color:#fff;line-height:1.1;margin-bottom:16px;">Tout ton voyage<br>en un coup d'œil</div>
-          <div style="font-size:16px;color:rgba(255,255,255,0.5);line-height:1.7;">Budget, durée, jours — organisé automatiquement selon tes préférences.</div>
+        <div id="dc1" style="opacity:1;transform:translateY(0);transition:opacity .5s,transform .5s;">
+          <div style="font-size:11px;color:#4f8eff;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;">Vue d&#x27;ensemble</div>
+          <div style="font-size:clamp(26px,3vw,40px);font-weight:800;color:#fff;line-height:1.1;margin-bottom:16px;">Tout ton voyage<br>en un coup d&#x27;oeil</div>
+          <div style="font-size:15px;color:rgba(255,255,255,0.5);line-height:1.7;">Budget, duree, jours — organise automatiquement selon tes preferences.</div>
         </div>
-        <div id="dc2" style="opacity:0;transform:translateY(20px);transition:opacity 0.5s,transform 0.5s;position:absolute;top:0;left:0;right:0;">
-          <div style="font-size:11px;color:#4f8eff;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;">Chaque étape</div>
-          <div style="font-size:clamp(28px,3.5vw,42px);font-weight:800;color:#fff;line-height:1.1;margin-bottom:16px;">Des lieux réels,<br>des liens GPS directs</div>
-          <div style="font-size:16px;color:rgba(255,255,255,0.5);line-height:1.7;">Clique sur le <span style="background:rgba(79,142,255,0.2);border:1px solid rgba(79,142,255,0.4);border-radius:50%;padding:2px 6px;font-size:12px;color:#4f8eff;">ℹ</span> pour les infos, ouvre Maps ou Waze en un tap.</div>
+        <div id="dc2" style="opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s;position:absolute;top:0;left:0;right:0;">
+          <div style="font-size:11px;color:#4f8eff;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;">Chaque etape</div>
+          <div style="font-size:clamp(26px,3vw,40px);font-weight:800;color:#fff;line-height:1.1;margin-bottom:16px;">Des lieux reels,<br>des liens GPS directs</div>
+          <div style="font-size:15px;color:rgba(255,255,255,0.5);line-height:1.7;">Clique sur le badge info pour les details, ouvre Maps ou Waze en un tap.</div>
         </div>
-        <div id="dc3" style="opacity:0;transform:translateY(20px);transition:opacity 0.5s,transform 0.5s;position:absolute;top:0;left:0;right:0;">
+        <div id="dc3" style="opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s;position:absolute;top:0;left:0;right:0;">
           <div style="font-size:11px;color:#4f8eff;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;">Checklist intelligente</div>
-          <div style="font-size:clamp(28px,3.5vw,42px);font-weight:800;color:#fff;line-height:1.1;margin-bottom:16px;">Emporte exactement<br>ce qu'il faut</div>
-          <div style="font-size:16px;color:rgba(255,255,255,0.5);line-height:1.7;">L'algorithme génère ta liste selon la destination, la saison, ton véhicule et ton profil.</div>
+          <div style="font-size:clamp(26px,3vw,40px);font-weight:800;color:#fff;line-height:1.1;margin-bottom:16px;">Emporte exactement<br>ce qu&#x27;il faut</div>
+          <div style="font-size:15px;color:rgba(255,255,255,0.5);line-height:1.7;">Liste generee selon la destination, la saison, ton vehicule et ton profil.</div>
         </div>
-        <div id="dc4" style="opacity:0;transform:translateY(20px);transition:opacity 0.5s,transform 0.5s;position:absolute;top:0;left:0;right:0;">
-          <div style="font-size:11px;color:#4f8eff;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;">Budget en temps réel</div>
-          <div style="font-size:clamp(28px,3.5vw,42px);font-weight:800;color:#fff;line-height:1.1;margin-bottom:16px;">Suis chaque euro<br>pendant le voyage</div>
-          <div style="font-size:16px;color:rgba(255,255,255,0.5);line-height:1.7;">Ajoute tes dépenses, vois où tu en es par rapport au budget prévu — par catégorie.</div>
+        <div id="dc4" style="opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s;position:absolute;top:0;left:0;right:0;">
+          <div style="font-size:11px;color:#4f8eff;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;">Budget en temps reel</div>
+          <div style="font-size:clamp(26px,3vw,40px);font-weight:800;color:#fff;line-height:1.1;margin-bottom:16px;">Suis chaque euro<br>pendant le voyage</div>
+          <div style="font-size:15px;color:rgba(255,255,255,0.5);line-height:1.7;">Ajoute tes depenses, suis ton budget prevu par categorie.</div>
         </div>
       </div>
-      <!-- Dots de navigation -->
-      <div style="display:flex;gap:8px;margin-top:40px;" id="demo-dots">
-        <div class="demo-dot active" onclick="jumpFrame(1)" style="width:24px;height:3px;border-radius:99px;background:#4f8eff;cursor:pointer;transition:all 0.3s;"></div>
-        <div class="demo-dot" onclick="jumpFrame(2)" style="width:8px;height:3px;border-radius:99px;background:rgba(255,255,255,0.2);cursor:pointer;transition:all 0.3s;"></div>
-        <div class="demo-dot" onclick="jumpFrame(3)" style="width:8px;height:3px;border-radius:99px;background:rgba(255,255,255,0.2);cursor:pointer;transition:all 0.3s;"></div>
-        <div class="demo-dot" onclick="jumpFrame(4)" style="width:8px;height:3px;border-radius:99px;background:rgba(255,255,255,0.2);cursor:pointer;transition:all 0.3s;"></div>
+      <div style="display:flex;gap:8px;margin-top:40px;">
+        <div class="demo-dot" onclick="window.jumpFrame(1)" style="width:24px;height:3px;border-radius:99px;background:#4f8eff;cursor:pointer;transition:all .3s;"></div>
+        <div class="demo-dot" onclick="window.jumpFrame(2)" style="width:8px;height:3px;border-radius:99px;background:rgba(255,255,255,0.2);cursor:pointer;transition:all .3s;"></div>
+        <div class="demo-dot" onclick="window.jumpFrame(3)" style="width:8px;height:3px;border-radius:99px;background:rgba(255,255,255,0.2);cursor:pointer;transition:all .3s;"></div>
+        <div class="demo-dot" onclick="window.jumpFrame(4)" style="width:8px;height:3px;border-radius:99px;background:rgba(255,255,255,0.2);cursor:pointer;transition:all .3s;"></div>
       </div>
     </div>
-
-    <!-- Colonne droite : téléphone 3D -->
-    <div style="display:flex;align-items:center;justify-content:center;perspective:1200px;">
-      <div id="demo-phone" style="width:300px;height:610px;border-radius:46px;position:relative;transform:rotateY(-10deg) rotateX(2deg);transform-style:preserve-3d;transition:transform 0.9s cubic-bezier(0.22,1,0.36,1);flex-shrink:0;">
-
-        <!-- Épaisseur — tranche droite -->
-        <div style="position:absolute;top:30px;bottom:30px;right:-12px;width:12px;background:linear-gradient(90deg,#252528,#18181b);border-radius:0 6px 6px 0;"></div>
-        <!-- Épaisseur — tranche gauche -->
-        <div style="position:absolute;top:30px;bottom:30px;left:-12px;width:12px;background:linear-gradient(90deg,#18181b,#252528);border-radius:6px 0 0 6px;"></div>
-        <!-- Boutons droite -->
-        <div style="position:absolute;top:140px;right:-16px;width:4px;height:56px;background:#222;border-radius:0 3px 3px 0;"></div>
-        <div style="position:absolute;top:214px;right:-16px;width:4px;height:72px;background:#222;border-radius:0 3px 3px 0;"></div>
-        <!-- Bouton gauche -->
-        <div style="position:absolute;top:170px;left:-16px;width:4px;height:44px;background:#222;border-radius:3px 0 0 3px;"></div>
-
-        <!-- Face avant -->
-        <div style="position:absolute;inset:0;border-radius:46px;background:linear-gradient(170deg,#1c1c22,#0a0a0e);border:1.5px solid rgba(255,255,255,0.15);box-shadow:0 0 0 1px rgba(255,255,255,0.04),0 60px 140px rgba(0,0,0,0.9),inset 0 1px 0 rgba(255,255,255,0.09);overflow:hidden;">
-          <!-- Reflet vitré -->
-          <div style="position:absolute;inset:0;background:linear-gradient(155deg,rgba(255,255,255,0.055) 0%,transparent 45%);border-radius:46px;pointer-events:none;z-index:20;"></div>
-          <!-- Dynamic Island -->
-          <div style="position:absolute;top:15px;left:50%;transform:translateX(-50%);width:96px;height:28px;background:#000;border-radius:99px;z-index:15;"></div>
-          <!-- Status bar -->
-          <div style="position:absolute;top:16px;left:22px;right:22px;display:flex;justify-content:space-between;z-index:14;font-size:9px;color:rgba(255,255,255,0.55);font-family:system-ui,sans-serif;">
-            <span style="font-weight:600;">9:41</span>
-            <span>●●●● WiFi 🔋</span>
-          </div>
-          <!-- Reflet haut gauche -->
-          <div style="position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(160deg,rgba(255,255,255,0.06) 0%,transparent 60%);border-radius:44px 44px 0 0;pointer-events:none;z-index:20;"></div>
-          <!-- Dynamic Island -->
-          <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);width:100px;height:30px;background:#000;border-radius:99px;z-index:15;display:flex;align-items:center;justify-content:center;gap:6px;">
-            <div style="width:10px;height:10px;border-radius:50%;background:#111;border:1px solid #222;"></div>
-            <div style="width:6px;height:6px;border-radius:50%;background:#1a1a1a;"></div>
-          </div>
-          <!-- Barre de status -->
-          <div style="position:absolute;top:14px;left:20px;right:20px;display:flex;justify-content:space-between;align-items:center;z-index:14;font-size:9px;color:rgba(255,255,255,0.6);">
-            <span>9:41</span>
-            <span style="display:flex;gap:4px;align-items:center;">
-              <span>●●●●</span>
-              <span>WiFi</span>
-              <span>🔋</span>
-            </span>
-          </div>
-          <!-- Écran scrollable -->
-          <div id="demo-screen" style="position:absolute;inset:0;padding:52px 14px 20px;overflow:hidden;">
-    <!-- Mockup téléphone -->
-    <div id="demo-phone" style="width:260px;height:520px;background:#0a0a0a;border-radius:40px;border:2px solid rgba(255,255,255,0.12);box-shadow:0 32px 80px rgba(0,0,0,0.8),0 0 0 1px rgba(255,255,255,0.05);position:relative;overflow:hidden;transition:transform 0.6s cubic-bezier(0.22,1,0.36,1);">
-      <!-- Notch -->
-      <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%);width:80px;height:6px;background:#000;border-radius:99px;z-index:10;"></div>
-      <!-- Écran -->
-      <div id="demo-screen" style="position:absolute;inset:0;padding:28px 16px 16px;overflow:hidden;">
-        <!-- Frame 1 : vue d'ensemble roadbook -->
-        <div id="df1" style="opacity:1;transition:opacity 0.45s,transform 0.45s;transform:translateY(0);">
-          <div style="font-size:8px;color:#4f8eff;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;">🗺️ LIBERTRIP — TON ROADBOOK</div>
-          <div style="font-size:18px;font-weight:800;color:#fff;line-height:1.15;margin-bottom:3px;">Rome en 5 jours</div>
-          <div style="font-size:9px;color:rgba(255,255,255,0.45);margin-bottom:12px;">Itinéraire couple · Transports en commun · Été</div>
-          <!-- Stats -->
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px;">
-            <div style="background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:8px;text-align:center;">
-              <div style="font-size:16px;font-weight:800;color:#fff;">5</div>
-              <div style="font-size:8px;color:rgba(255,255,255,0.35);margin-top:1px;">Jours</div>
-            </div>
-            <div style="background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:8px;text-align:center;">
-              <div style="font-size:16px;font-weight:800;color:#f5c842;">320€</div>
-              <div style="font-size:8px;color:rgba(255,255,255,0.35);margin-top:1px;">/personne</div>
-            </div>
-            <div style="background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:8px;text-align:center;">
-              <div style="font-size:16px;font-weight:800;color:#34d399;">Modéré</div>
-              <div style="font-size:8px;color:rgba(255,255,255,0.35);margin-top:1px;">Niveau</div>
-            </div>
-          </div>
-          <!-- Budget strip -->
-          <div style="background:linear-gradient(135deg,rgba(245,200,66,0.07),rgba(245,200,66,0.02));border:1px solid rgba(245,200,66,0.18);border-radius:10px;padding:10px 12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
-            <div>
-              <div style="font-size:8px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:1px;">Budget estimé</div>
-              <div style="display:flex;gap:10px;margin-top:4px;">
-                <span style="font-size:9px;color:rgba(255,255,255,0.5);">🏨 90€</span>
-                <span style="font-size:9px;color:rgba(255,255,255,0.5);">🍽️ 55€</span>
-                <span style="font-size:9px;color:rgba(255,255,255,0.5);">🎯 42€</span>
+    <!-- Droite : telephone -->
+    <div style="display:flex;align-items:center;justify-content:center;height:100%;perspective:1200px;">
+      <div id="demo-phone" style="width:290px;height:590px;border-radius:46px;position:relative;transform:rotateY(-10deg) rotateX(2deg);transform-style:preserve-3d;transition:transform .9s;flex-shrink:0;">
+        <div style="position:absolute;top:30px;bottom:30px;right:-11px;width:11px;background:linear-gradient(90deg,#232327,#17171a);border-radius:0 5px 5px 0;"></div>
+        <div style="position:absolute;top:30px;bottom:30px;left:-11px;width:11px;background:linear-gradient(90deg,#17171a,#232327);border-radius:5px 0 0 5px;"></div>
+        <div style="position:absolute;top:135px;right:-15px;width:4px;height:52px;background:#222;border-radius:0 3px 3px 0;"></div>
+        <div style="position:absolute;top:205px;right:-15px;width:4px;height:68px;background:#222;border-radius:0 3px 3px 0;"></div>
+        <div style="position:absolute;top:165px;left:-15px;width:4px;height:42px;background:#222;border-radius:3px 0 0 3px;"></div>
+        <div style="position:absolute;inset:0;border-radius:46px;background:linear-gradient(170deg,#1c1c22,#080810);border:1.5px solid rgba(255,255,255,0.14);box-shadow:0 60px 140px rgba(0,0,0,0.95),inset 0 1px 0 rgba(255,255,255,0.08);overflow:hidden;">
+          <div style="position:absolute;inset:0;background:linear-gradient(150deg,rgba(255,255,255,0.06) 0%,transparent 40%);pointer-events:none;z-index:20;border-radius:46px;"></div>
+          <div style="position:absolute;top:14px;left:50%;transform:translateX(-50%);width:94px;height:27px;background:#000;border-radius:99px;z-index:15;"></div>
+          <div style="position:absolute;top:15px;left:20px;right:20px;display:flex;justify-content:space-between;z-index:14;font-size:9px;color:rgba(255,255,255,0.5);font-family:system-ui;"><b>9:41</b><span>WiFi 100%</span></div>
+          <div style="position:absolute;inset:0;padding:50px 14px 18px;overflow:hidden;">
+            <!-- Frame 1 -->
+            <div id="df1" style="opacity:1;transform:translateY(0);transition:opacity .45s,transform .45s;">
+              <div style="font-size:8px;color:#4f8eff;letter-spacing:2px;text-transform:uppercase;margin-bottom:7px;">LIBERTRIP — TON ROADBOOK</div>
+              <div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:2px;">Rome en 5 jours</div>
+              <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:11px;">Couple · Transports · Ete</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:10px;">
+                <div style="background:#111;border:1px solid #1e1e1e;border-radius:9px;padding:7px;text-align:center;"><div style="font-size:15px;font-weight:800;color:#fff;">5</div><div style="font-size:7px;color:rgba(255,255,255,0.3);">Jours</div></div>
+                <div style="background:#111;border:1px solid #1e1e1e;border-radius:9px;padding:7px;text-align:center;"><div style="font-size:15px;font-weight:800;color:#f5c842;">320€</div><div style="font-size:7px;color:rgba(255,255,255,0.3);">/pers.</div></div>
+                <div style="background:#111;border:1px solid #1e1e1e;border-radius:9px;padding:7px;text-align:center;"><div style="font-size:12px;font-weight:800;color:#34d399;">Modere</div><div style="font-size:7px;color:rgba(255,255,255,0.3);">Niveau</div></div>
+              </div>
+              <div style="background:linear-gradient(135deg,rgba(245,200,66,0.08),rgba(245,200,66,0.02));border:1px solid rgba(245,200,66,0.2);border-radius:9px;padding:9px 11px;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center;">
+                <div><div style="font-size:7px;color:rgba(255,255,255,0.3);text-transform:uppercase;">Budget estime</div><div style="display:flex;gap:8px;margin-top:3px;"><span style="font-size:8px;color:rgba(255,255,255,0.4);">hotel 90€</span><span style="font-size:8px;color:rgba(255,255,255,0.4);">resto 55€</span></div></div>
+                <div style="font-size:19px;font-weight:800;color:#f5c842;">320€</div>
+              </div>
+              <div style="background:#111;border:1px solid #1e1e1e;border-radius:9px;padding:9px 11px;">
+                <div style="font-size:7px;color:#4f8eff;letter-spacing:2px;margin-bottom:7px;">JOUR PAR JOUR</div>
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;"><div style="width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,#4f8eff,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#fff;flex-shrink:0;">J1</div><div style="font-size:9px;color:#fff;">Arrivee · Vatican · Place Navone</div></div>
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;"><div style="width:22px;height:22px;border-radius:7px;background:rgba(79,142,255,0.12);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:rgba(79,142,255,0.6);flex-shrink:0;">J2</div><div style="font-size:9px;color:rgba(255,255,255,0.4);">Colisee · Forum romain</div></div>
+                <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;"><div style="width:22px;height:22px;border-radius:7px;background:rgba(79,142,255,0.12);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:rgba(79,142,255,0.6);flex-shrink:0;">J3</div><div style="font-size:9px;color:rgba(255,255,255,0.4);">Trastevere · Campo de Fiori</div></div>
+                <div style="display:flex;align-items:center;gap:7px;"><div style="width:22px;height:22px;border-radius:7px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.15);flex-shrink:0;">?</div><div style="font-size:9px;color:rgba(255,255,255,0.15);">Jours 4-5 — debloquer…</div></div>
               </div>
             </div>
-            <div style="font-size:20px;font-weight:800;color:#f5c842;">320€</div>
-          </div>
-          <!-- Jours -->
-          <div style="background:#111;border:1px solid #1e1e1e;border-radius:10px;padding:10px 12px;">
-            <div style="font-size:8px;color:#4f8eff;letter-spacing:2px;margin-bottom:8px;">JOUR PAR JOUR</div>
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-              <div style="width:24px;height:24px;border-radius:8px;background:linear-gradient(135deg,#4f8eff,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#fff;flex-shrink:0;">J1</div>
-              <div style="font-size:10px;color:#fff;">Arrivée · Vatican · Place Navone</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-              <div style="width:24px;height:24px;border-radius:8px;background:rgba(79,142,255,0.15);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:rgba(79,142,255,0.7);flex-shrink:0;">J2</div>
-              <div style="font-size:10px;color:rgba(255,255,255,0.45);">Colisée · Forum romain · Palatin</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-              <div style="width:24px;height:24px;border-radius:8px;background:rgba(79,142,255,0.15);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:rgba(79,142,255,0.7);flex-shrink:0;">J3</div>
-              <div style="font-size:10px;color:rgba(255,255,255,0.45);">Trastevere · Campo de Fiori</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="width:24px;height:24px;border-radius:8px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.2);flex-shrink:0;">🔒</div>
-              <div style="font-size:10px;color:rgba(255,255,255,0.2);">Jours 4–5 — débloquer…</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Frame 2 : étape détaillée -->
-        <div id="df2" style="opacity:0;position:absolute;inset:52px 14px 20px;transition:opacity 0.45s,transform 0.45s;transform:translateY(16px);">
-          <!-- Nav bar -->
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-            <div style="font-size:8px;color:rgba(255,255,255,0.35);">← Jour 1 · 5 étapes</div>
-            <div style="font-size:8px;color:#4f8eff;">09:00</div>
-          </div>
-          <!-- Étape principale -->
-          <div style="background:linear-gradient(135deg,rgba(15,15,20,0.9),rgba(10,10,15,0.9));border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px;margin-bottom:8px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-              <div style="font-size:13px;font-weight:800;color:#fff;">Musées du Vatican</div>
-              <div style="width:18px;height:18px;border-radius:50%;background:rgba(79,142,255,0.18);border:1px solid rgba(79,142,255,0.35);display:flex;align-items:center;justify-content:center;font-size:9px;color:#4f8eff;">ℹ</div>
-            </div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.5);line-height:1.5;margin-bottom:8px;">Chapelle Sixtine, galeries inestimables. Réservez à l'avance — file d'attente 2h sans résa.</div>
-            <!-- Why chosen -->
-            <div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);border-radius:7px;padding:7px 9px;font-size:8px;color:#34d399;margin-bottom:8px;">✓ Idéal en couple · visite matinale moins fréquentée</div>
-            <!-- Transport tip -->
-            <div style="background:rgba(79,142,255,0.07);border:1px solid rgba(79,142,255,0.15);border-radius:7px;padding:7px 9px;font-size:8px;color:#4f8eff;margin-bottom:8px;">🚂 Métro Ligne A — Ottaviano (3 min à pied)</div>
-            <!-- Prix -->
-            <div style="font-size:8px;color:rgba(255,255,255,0.3);">Entrée : ~20€/pers · Durée : 3h</div>
-          </div>
-          <!-- GPS buttons -->
-          <div style="display:flex;gap:6px;margin-bottom:8px;">
-            <div style="flex:1;background:rgba(79,142,255,0.1);border:1px solid rgba(79,142,255,0.2);border-radius:8px;padding:9px;text-align:center;font-size:9px;color:#4f8eff;">🗺️ Google Maps</div>
-            <div style="flex:1;background:rgba(79,142,255,0.1);border:1px solid rgba(79,142,255,0.2);border-radius:8px;padding:9px;text-align:center;font-size:9px;color:#4f8eff;">🚙 Waze</div>
-          </div>
-          <!-- Prochaine étape -->
-          <div style="background:#0d0d0f;border:1px solid #1a1a1e;border-radius:10px;padding:9px 11px;display:flex;align-items:center;gap:8px;">
-            <div style="font-size:8px;color:rgba(255,255,255,0.3);">13:00 →</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.6);">Place Saint-Pierre · 10 min à pied</div>
-          </div>
-        </div>
-
-        <!-- Frame 3 : checklist -->
-        <div id="df3" style="opacity:0;position:absolute;inset:52px 14px 20px;transition:opacity 0.45s,transform 0.45s;transform:translateY(16px);">
-          <div style="font-size:8px;color:#4f8eff;letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;">🧳 CHECKLIST BAGAGES</div>
-          <div style="font-size:9px;color:rgba(255,255,255,0.35);margin-bottom:10px;">5/14 items préparés</div>
-          <!-- Progress bar -->
-          <div style="background:#1a1a1e;border-radius:99px;height:4px;margin-bottom:12px;overflow:hidden;">
-            <div style="height:100%;border-radius:99px;background:linear-gradient(90deg,#4f8eff,#8b5cf6);width:35%;"></div>
-          </div>
-          <!-- Items cochés -->
-          <div style="display:flex;align-items:center;gap:8px;background:#0f1a0f;border:1px solid rgba(52,211,153,0.15);border-radius:9px;padding:9px 10px;margin-bottom:5px;">
-            <div style="width:15px;height:15px;border-radius:50%;background:#34d399;display:flex;align-items:center;justify-content:center;font-size:8px;color:#000;font-weight:700;flex-shrink:0;">✓</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.35);text-decoration:line-through;">Passeport + photocopie carte identité</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;background:#0f1a0f;border:1px solid rgba(52,211,153,0.15);border-radius:9px;padding:9px 10px;margin-bottom:5px;">
-            <div style="width:15px;height:15px;border-radius:50%;background:#34d399;display:flex;align-items:center;justify-content:center;font-size:8px;color:#000;font-weight:700;flex-shrink:0;">✓</div>
-            <div style="font-size:9px;color:rgba(255,255,255,0.35);text-decoration:line-through;">Adaptateur prise Type L (Italie)</div>
-          </div>
-          <!-- Items non cochés -->
-          <div style="display:flex;align-items:center;gap:8px;background:#111;border:1px solid #1e1e1e;border-radius:9px;padding:9px 10px;margin-bottom:5px;">
-            <div style="width:15px;height:15px;border-radius:50%;border:1.5px solid #333;flex-shrink:0;"></div>
-            <div style="font-size:9px;color:#fff;">Crème solaire SPF50 — été à Rome 35°C</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;background:#111;border:1px solid #1e1e1e;border-radius:9px;padding:9px 10px;margin-bottom:5px;">
-            <div style="width:15px;height:15px;border-radius:50%;border:1.5px solid #333;flex-shrink:0;"></div>
-            <div style="font-size:9px;color:#fff;">Chaussures de marche légères</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;background:#111;border:1px solid #1e1e1e;border-radius:9px;padding:9px 10px;margin-bottom:5px;">
-            <div style="width:15px;height:15px;border-radius:50%;border:1.5px solid #333;flex-shrink:0;"></div>
-            <div style="font-size:9px;color:#fff;">Carte bancaire sans frais (Revolut)</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;background:#111;border:1px solid #1e1e1e;border-radius:9px;padding:9px 10px;margin-bottom:5px;">
-            <div style="width:15px;height:15px;border-radius:50%;border:1.5px solid #333;flex-shrink:0;"></div>
-            <div style="font-size:9px;color:#fff;">Bouteille d'eau réutilisable</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;background:#111;border:1px solid #1e1e1e;border-radius:9px;padding:9px 10px;">
-            <div style="width:15px;height:15px;border-radius:50%;border:1.5px solid #333;flex-shrink:0;"></div>
-            <div style="font-size:9px;color:#fff;">Power bank 10 000 mAh</div>
-          </div>
-        </div>
-
-        <!-- Frame 4 : budget tracker -->
-        <div id="df4" style="opacity:0;position:absolute;inset:52px 14px 20px;transition:opacity 0.45s,transform 0.45s;transform:translateY(16px);">
-          <div style="font-size:8px;color:#4f8eff;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;">💸 SUIVI DE MES DÉPENSES</div>
-          <!-- Barre principale -->
-          <div style="background:#111;border:1px solid #1e1e1e;border-radius:12px;padding:12px;margin-bottom:10px;">
-            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
-              <div style="font-size:9px;color:rgba(255,255,255,0.4);">Total dépensé</div>
-              <div>
-                <span style="font-size:22px;font-weight:800;color:#fff;">187</span><span style="font-size:12px;color:rgba(255,255,255,0.5);">€</span>
-                <span style="font-size:9px;color:rgba(255,255,255,0.3);"> / 320€</span>
+            <!-- Frame 2 -->
+            <div id="df2" style="opacity:0;transform:translateY(16px);position:absolute;inset:50px 14px 18px;transition:opacity .45s,transform .45s;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:9px;"><div style="font-size:8px;color:rgba(255,255,255,0.3);">Jour 1 - 5 etapes</div><div style="font-size:8px;color:#4f8eff;">09:00</div></div>
+              <div style="background:rgba(15,15,20,0.95);border:1px solid rgba(255,255,255,0.09);border-radius:13px;padding:11px;margin-bottom:7px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><div style="font-size:12px;font-weight:800;color:#fff;">Musees du Vatican</div><div style="width:17px;height:17px;border-radius:50%;background:rgba(79,142,255,0.15);border:1px solid rgba(79,142,255,0.3);display:flex;align-items:center;justify-content:center;font-size:9px;color:#4f8eff;">i</div></div>
+                <div style="font-size:9px;color:rgba(255,255,255,0.45);line-height:1.5;margin-bottom:7px;">Chapelle Sixtine. Reservez a l&#x27;avance — 2h de queue sans resa.</div>
+                <div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.18);border-radius:6px;padding:6px 8px;font-size:8px;color:#34d399;margin-bottom:7px;">Ideal en couple - matin moins frequente</div>
+                <div style="background:rgba(79,142,255,0.07);border:1px solid rgba(79,142,255,0.15);border-radius:6px;padding:6px 8px;font-size:8px;color:#4f8eff;">Metro Ligne A - Ottaviano (3 min)</div>
               </div>
+              <div style="display:flex;gap:6px;margin-bottom:7px;"><div style="flex:1;background:rgba(79,142,255,0.1);border:1px solid rgba(79,142,255,0.2);border-radius:8px;padding:8px;text-align:center;font-size:9px;color:#4f8eff;">Google Maps</div><div style="flex:1;background:rgba(79,142,255,0.1);border:1px solid rgba(79,142,255,0.2);border-radius:8px;padding:8px;text-align:center;font-size:9px;color:#4f8eff;">Waze</div></div>
+              <div style="background:#0d0d10;border:1px solid #1a1a1e;border-radius:9px;padding:8px 10px;display:flex;gap:7px;margin-bottom:5px;"><div style="font-size:8px;color:rgba(255,255,255,0.25);">13:00</div><div style="font-size:9px;color:rgba(255,255,255,0.55);">Place Saint-Pierre · 10 min a pied</div></div>
+              <div style="background:#0d0d10;border:1px solid #1a1a1e;border-radius:9px;padding:8px 10px;display:flex;gap:7px;"><div style="font-size:8px;color:rgba(255,255,255,0.25);">16:00</div><div style="font-size:9px;color:rgba(255,255,255,0.55);">Castel Sant&#x27;Angelo · vue pano</div></div>
             </div>
-            <div style="background:#1e1e1e;border-radius:99px;height:7px;overflow:hidden;margin-bottom:5px;">
-              <div style="height:100%;border-radius:99px;background:linear-gradient(90deg,#4f8eff,#8b5cf6);width:58%;"></div>
+            <!-- Frame 3 -->
+            <div id="df3" style="opacity:0;transform:translateY(16px);position:absolute;inset:50px 14px 18px;transition:opacity .45s,transform .45s;">
+              <div style="font-size:8px;color:#4f8eff;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;">CHECKLIST BAGAGES</div>
+              <div style="font-size:8px;color:rgba(255,255,255,0.3);margin-bottom:8px;">5/14 prepares</div>
+              <div style="background:#1a1a1e;border-radius:99px;height:4px;margin-bottom:10px;overflow:hidden;"><div style="height:100%;border-radius:99px;background:linear-gradient(90deg,#4f8eff,#8b5cf6);width:35%;"></div></div>
+              <div style="display:flex;align-items:center;gap:7px;background:#0f1a0f;border:1px solid rgba(52,211,153,0.15);border-radius:8px;padding:8px;margin-bottom:5px;"><div style="width:14px;height:14px;border-radius:50%;background:#34d399;display:flex;align-items:center;justify-content:center;font-size:8px;color:#000;font-weight:700;flex-shrink:0;">v</div><div style="font-size:9px;color:rgba(255,255,255,0.3);text-decoration:line-through;">Passeport + photocopie</div></div>
+              <div style="display:flex;align-items:center;gap:7px;background:#0f1a0f;border:1px solid rgba(52,211,153,0.15);border-radius:8px;padding:8px;margin-bottom:5px;"><div style="width:14px;height:14px;border-radius:50%;background:#34d399;display:flex;align-items:center;justify-content:center;font-size:8px;color:#000;font-weight:700;flex-shrink:0;">v</div><div style="font-size:9px;color:rgba(255,255,255,0.3);text-decoration:line-through;">Adaptateur prise Type L</div></div>
+              <div style="display:flex;align-items:center;gap:7px;background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:8px;margin-bottom:5px;"><div style="width:14px;height:14px;border-radius:50%;border:1.5px solid #333;flex-shrink:0;"></div><div style="font-size:9px;color:#fff;">Creme solaire SPF50 (ete Rome)</div></div>
+              <div style="display:flex;align-items:center;gap:7px;background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:8px;margin-bottom:5px;"><div style="width:14px;height:14px;border-radius:50%;border:1.5px solid #333;flex-shrink:0;"></div><div style="font-size:9px;color:#fff;">Chaussures de marche</div></div>
+              <div style="display:flex;align-items:center;gap:7px;background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:8px;margin-bottom:5px;"><div style="width:14px;height:14px;border-radius:50%;border:1.5px solid #333;flex-shrink:0;"></div><div style="font-size:9px;color:#fff;">Carte bancaire sans frais</div></div>
+              <div style="display:flex;align-items:center;gap:7px;background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:8px;"><div style="width:14px;height:14px;border-radius:50%;border:1.5px solid #333;flex-shrink:0;"></div><div style="font-size:9px;color:#fff;">Power bank 10 000 mAh</div></div>
             </div>
-            <div style="font-size:8px;color:rgba(255,255,255,0.25);">Il te reste 133€ sur ton budget</div>
-          </div>
-          <!-- Catégories -->
-          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span style="font-size:12px;width:18px;">🏨</span>
-              <div style="flex:1;">
-                <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:3px;"><span style="color:rgba(255,255,255,0.5);">Hébergement</span><span style="color:#fff;font-weight:600;">90€</span></div>
-                <div style="background:#1e1e1e;border-radius:99px;height:5px;"><div style="height:100%;border-radius:99px;background:#4f8eff;width:48%;"></div></div>
+            <!-- Frame 4 -->
+            <div id="df4" style="opacity:0;transform:translateY(16px);position:absolute;inset:50px 14px 18px;transition:opacity .45s,transform .45s;">
+              <div style="font-size:8px;color:#4f8eff;letter-spacing:2px;text-transform:uppercase;margin-bottom:9px;">SUIVI DEPENSES</div>
+              <div style="background:#111;border:1px solid #1e1e1e;border-radius:11px;padding:11px;margin-bottom:9px;">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;"><div style="font-size:9px;color:rgba(255,255,255,0.4);">Total depense</div><div><span style="font-size:20px;font-weight:800;color:#fff;">187</span><span style="font-size:11px;color:rgba(255,255,255,0.4);">€ / 320€</span></div></div>
+                <div style="background:#1e1e1e;border-radius:99px;height:6px;overflow:hidden;margin-bottom:4px;"><div style="height:100%;border-radius:99px;background:linear-gradient(90deg,#4f8eff,#8b5cf6);width:58%;"></div></div>
+                <div style="font-size:8px;color:rgba(255,255,255,0.2);">Il te reste 133€</div>
               </div>
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;"><span style="width:16px;">🏨</span><div style="flex:1;"><div style="display:flex;justify-content:space-between;font-size:8px;margin-bottom:2px;"><span style="color:rgba(255,255,255,0.4);">Hebergement</span><span style="color:#fff;">90€</span></div><div style="background:#1e1e1e;border-radius:99px;height:4px;"><div style="height:100%;border-radius:99px;background:#4f8eff;width:48%;"></div></div></div></div>
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;"><span style="width:16px;">🍽️</span><div style="flex:1;"><div style="display:flex;justify-content:space-between;font-size:8px;margin-bottom:2px;"><span style="color:rgba(255,255,255,0.4);">Restaurant</span><span style="color:#fff;">55€</span></div><div style="background:#1e1e1e;border-radius:99px;height:4px;"><div style="height:100%;border-radius:99px;background:#f59e0b;width:29%;"></div></div></div></div>
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px;"><span style="width:16px;">🎯</span><div style="flex:1;"><div style="display:flex;justify-content:space-between;font-size:8px;margin-bottom:2px;"><span style="color:rgba(255,255,255,0.4);">Activites</span><span style="color:#fff;">42€</span></div><div style="background:#1e1e1e;border-radius:99px;height:4px;"><div style="height:100%;border-radius:99px;background:#34d399;width:22%;"></div></div></div></div>
+              <div style="font-size:7px;color:rgba(255,255,255,0.25);text-transform:uppercase;margin-bottom:5px;">Dernieres depenses</div>
+              <div style="display:flex;justify-content:space-between;background:#111;border:1px solid #1e1e1e;border-radius:7px;padding:7px 9px;margin-bottom:4px;"><span style="font-size:9px;color:rgba(255,255,255,0.55);">Pizzeria Trastevere</span><span style="font-size:9px;color:#fff;font-weight:600;">24€</span></div>
+              <div style="display:flex;justify-content:space-between;background:#111;border:1px solid #1e1e1e;border-radius:7px;padding:7px 9px;"><span style="font-size:9px;color:rgba(255,255,255,0.55);">Musees Vatican</span><span style="font-size:9px;color:#fff;font-weight:600;">20€</span></div>
             </div>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span style="font-size:12px;width:18px;">🍽️</span>
-              <div style="flex:1;">
-                <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:3px;"><span style="color:rgba(255,255,255,0.5);">Restaurant</span><span style="color:#fff;font-weight:600;">55€</span></div>
-                <div style="background:#1e1e1e;border-radius:99px;height:5px;"><div style="height:100%;border-radius:99px;background:#f59e0b;width:30%;"></div></div>
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span style="font-size:12px;width:18px;">🎯</span>
-              <div style="flex:1;">
-                <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:3px;"><span style="color:rgba(255,255,255,0.5);">Activités</span><span style="color:#fff;font-weight:600;">42€</span></div>
-                <div style="background:#1e1e1e;border-radius:99px;height:5px;"><div style="height:100%;border-radius:99px;background:#34d399;width:22%;"></div></div>
-              </div>
-            </div>
-          </div>
-          <!-- Dernières dépenses -->
-          <div style="font-size:8px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Dernières dépenses</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:8px 10px;margin-bottom:5px;">
-            <span style="font-size:9px;color:rgba(255,255,255,0.6);">🍕 Pizzeria Trastevere</span>
-            <span style="font-size:9px;color:#fff;font-weight:600;">24€</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:8px 10px;">
-            <span style="font-size:9px;color:rgba(255,255,255,0.6);">🎯 Musées Vatican</span>
-            <span style="font-size:9px;color:#fff;font-weight:600;">20€</span>
           </div>
         </div>
       </div>
-        </div><!-- fin face avant -->
-      </div><!-- fin demo-phone -->
-    </div><!-- fin colonne droite -->
-  </div><!-- fin demo-sticky -->
-
-  <!-- Espace de scroll : 4 écrans pour 4 frames + 1 de marge -->
+    </div>
+  </div>
   <div style="height:500vh;"></div>
 </section>
-
-<style>
-/* Section démo — toujours fond noir, même en mode clair */
-#demo, #demo-sticky { background: #000 !important; color: #fff; }
-#demo-captions * { color: inherit; }
-@media (max-width: 900px) {
-  #demo-sticky { grid-template-columns: 1fr !important; grid-template-rows: auto auto; align-items: start; padding: 60px 24px 24px; }
-  #demo-phone  { width: 200px !important; height: 410px !important; }
-  #demo-captions { min-height: 200px; }
-}
-</style>
-
+<style>#demo,#demo-sticky{background:#000!important;}@media(max-width:900px){#demo-sticky{grid-template-columns:1fr!important;}#demo-phone{width:200px!important;height:410px!important;}}</style>
 <script>
-(function() {
-  const section = document.getElementById('demo');
-  if (!section) return;
-  const frames   = [1,2,3,4];
-  const totalH   = section.offsetHeight;
-  let currentFrame = 1;
-
-  function getProgress() {
-    const rect = section.getBoundingClientRect();
-    const scrolled = -rect.top;
-    const total    = rect.height - window.innerHeight;
-    return Math.max(0, Math.min(1, scrolled / total));
-  }
-
-  function updateDots(n) {
-    document.querySelectorAll('.demo-dot').forEach((d, i) => {
-      const active = i + 1 === n;
-      d.style.width    = active ? '24px' : '8px';
-      d.style.background = active ? '#4f8eff' : 'rgba(255,255,255,0.2)';
+(function(){
+  var s=document.getElementById('demo');
+  if(!s)return;
+  var cur=1;
+  function pct(){var r=s.getBoundingClientRect();return Math.max(0,Math.min(1,-r.top/(r.height-window.innerHeight)));}
+  function dots(n){document.querySelectorAll('.demo-dot').forEach(function(d,i){d.style.width=(i+1===n)?'24px':'8px';d.style.background=(i+1===n)?'#4f8eff':'rgba(255,255,255,0.2)';});}
+  function show(n){
+    if(n===cur)return;
+    ['df','dc'].forEach(function(p){
+      var o=document.getElementById(p+cur);if(o){o.style.opacity='0';o.style.transform='translateY(16px)';}
+      var nw=document.getElementById(p+n);if(nw){nw.style.opacity='1';nw.style.transform='translateY(0)';}
     });
+    cur=n;dots(n);
   }
-
-  function showFrame(n) {
-    if (n === currentFrame) return;
-    const old = document.getElementById('df' + currentFrame);
-    const odc = document.getElementById('dc' + currentFrame);
-    if (old) { old.style.opacity = '0'; old.style.transform = 'translateY(16px)'; }
-    if (odc) { odc.style.opacity = '0'; odc.style.transform = 'translateY(20px)'; }
-    const nw  = document.getElementById('df' + n);
-    const ndc = document.getElementById('dc' + n);
-    if (nw) { nw.style.opacity = '1'; nw.style.transform = 'translateY(0)'; }
-    if (ndc) { ndc.style.opacity = '1'; ndc.style.transform = 'translateY(0)'; }
-    currentFrame = n;
-    updateDots(n);
-  }
-
-  // Permet de cliquer sur les dots
-  window.jumpFrame = function(n) { showFrame(n); };
-
-  window.addEventListener('scroll', () => {
-    const p = getProgress();
-    const frameIdx = Math.min(4, Math.floor(p * 4) + 1);
-    showFrame(frameIdx);
-    // Rotation 3D animée
-    const phone = document.getElementById('demo-phone');
-    if (phone) {
-      const tiltY = -10 + p * 20;
-      const tiltX = 3 - p * 6;
-      phone.style.transform = `rotateY(${tiltY}deg) rotateX(${tiltX}deg)`;
-    }
-  }, { passive: true });
+  window.jumpFrame=function(n){show(n);};
+  window.addEventListener('scroll',function(){
+    var p=pct();
+    show(Math.min(4,Math.floor(p*4)+1));
+    var ph=document.getElementById('demo-phone');
+    if(ph)ph.style.transform='rotateY('+(-10+p*20)+'deg) rotateX('+(3-p*6)+'deg)';
+  },{passive:true});
 })();
 </script>
 
