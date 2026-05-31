@@ -1600,7 +1600,7 @@
       </div>
       <!-- Champ texte destination -->
       <div id="dest-input-wrap" style="display:none;max-width:480px;margin:0 auto;">
-        <input class="form-field" type="text" id="destination-custom" placeholder="Ex : Rome, Barcelone, Islande…" style="font-size:15px;">
+        <input class="form-field" type="text" id="destination-custom" placeholder="Ex : Rome, Barcelone, Islande…" style="font-size:15px;width:100%;box-sizing:border-box;">
         <div style="text-align:center;margin-top:16px;">
           <button class="btn-next" style="border-radius:12px;padding:14px 40px;" onclick="advanceFromDest()">Continuer ➔</button>
         </div>
@@ -1721,8 +1721,8 @@
         <button class="form-option quiz-card" onclick="selectFood(this,'gastronomie')"><span class="opt-icon">🍷</span> <span>Gastronomie & Terroir</span><div style="font-size:12px;color:var(--gray);margin-top:4px;">Spécialités et belles tables</div></button>
       </div>
       <!-- Champ allergies/régimes alimentaires -->
-      <div style="margin-top:20px;max-width:480px;margin:20px auto 0;">
-        <input class="form-field" type="text" id="food-allergies" placeholder="🌿 Allergies ou restrictions alimentaires ? (optionnel)" style="font-size:14px;" oninput="formData['food_allergies']=this.value.trim()">
+      <div style="max-width:480px;margin:20px auto 0;">
+        <input class="form-field" type="text" id="food-allergies" placeholder="🌿 Allergies ou restrictions alimentaires ? (optionnel)" style="font-size:14px;width:100%;box-sizing:border-box;" oninput="formData['food_allergies']=this.value.trim()">
       </div>
       <div style="text-align:center;margin-top:24px;">
         <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(8,9)">Continuer ➔</button>
@@ -1745,11 +1745,11 @@
           <span style="color:var(--gray-light);font-size:15px;white-space:nowrap;">€</span>
         </div>
         <!-- Toggle par personne / total -->
-        <div style="display:flex;gap:0;border:1px solid rgba(255,255,255,0.12);border-radius:10px;overflow:hidden;max-width:300px;margin:0 auto;" id="budget-scope-toggle">
-          <button id="budget-scope-person" onclick="setBudgetScope('per_person')" style="flex:1;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:rgba(79,142,255,0.18);color:#4f8eff;font-weight:600;transition:all 0.2s;">Par personne</button>
-          <button id="budget-scope-total" onclick="setBudgetScope('total')" style="flex:1;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,0.4);transition:all 0.2s;">Total du groupe</button>
+        <div style="display:flex;gap:0;border:1px solid var(--border-light);border-radius:10px;overflow:hidden;max-width:300px;margin:0 auto;" id="budget-scope-toggle">
+          <button id="budget-scope-person" onclick="setBudgetScope('per_person')" style="flex:1;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:var(--accent);color:#fff;font-weight:600;transition:all 0.2s;">Par personne</button>
+          <button id="budget-scope-total" onclick="setBudgetScope('total')" style="flex:1;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;border:none;background:transparent;color:var(--gray);transition:all 0.2s;">Total du groupe</button>
         </div>
-        <div id="budget-scope-hint" style="font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin-top:8px;">Budget par personne — l'IA calculera le total selon le groupe</div>
+        <div id="budget-scope-hint" style="font-size:11px;color:var(--gray);text-align:center;margin-top:8px;">Budget par personne — l'IA calculera le total selon le groupe</div>
       </div>
       <div style="text-align:center;margin-top:28px;">
         <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(9,10)">Suivant ➔</button>
@@ -2033,6 +2033,19 @@ function goToSlide(from, to) {
     leaving.style.display = 'none';
     arriving.style.display = 'block';
     arriving.classList.add('active');
+    // Bouton retour discret — injecté si slide > 1 (pas sur slide 1 ni le loader)
+    const existingBack = arriving.querySelector('.slide-back-btn');
+    if (existingBack) existingBack.remove();
+    if (to > 1 && to < totalSlides) {
+      const backBtn = document.createElement('button');
+      backBtn.className = 'slide-back-btn';
+      backBtn.innerHTML = '← Retour';
+      backBtn.onclick = () => goToSlide(to, from);
+      backBtn.style.cssText = 'display:block;background:transparent;border:none;color:var(--gray);font-family:"DM Sans",sans-serif;font-size:13px;cursor:pointer;padding:0 0 16px;opacity:0.6;transition:opacity 0.2s;';
+      backBtn.onmouseenter = () => backBtn.style.opacity = '1';
+      backBtn.onmouseleave = () => backBtn.style.opacity = '0.6';
+      arriving.insertBefore(backBtn, arriving.firstChild);
+    }
   }, 340);
   currentSlide = to;
   updateProgress();
@@ -2199,12 +2212,12 @@ function setBudgetScope(scope) {
   const btnTotal  = document.getElementById('budget-scope-total');
   const hint      = document.getElementById('budget-scope-hint');
   if (scope === 'per_person') {
-    btnPerson.style.background = 'rgba(79,142,255,0.18)'; btnPerson.style.color = '#4f8eff'; btnPerson.style.fontWeight = '600';
-    btnTotal.style.background  = 'transparent'; btnTotal.style.color = 'rgba(255,255,255,0.4)'; btnTotal.style.fontWeight = '400';
+    btnPerson.style.background = 'var(--accent)'; btnPerson.style.color = '#fff'; btnPerson.style.fontWeight = '600';
+    btnTotal.style.background  = 'transparent'; btnTotal.style.color = 'var(--gray)'; btnTotal.style.fontWeight = '400';
     if (hint) hint.textContent = 'Budget par personne — l\'IA calculera le total selon le groupe';
   } else {
-    btnTotal.style.background  = 'rgba(79,142,255,0.18)'; btnTotal.style.color = '#4f8eff'; btnTotal.style.fontWeight = '600';
-    btnPerson.style.background = 'transparent'; btnPerson.style.color = 'rgba(255,255,255,0.4)'; btnPerson.style.fontWeight = '400';
+    btnTotal.style.background  = 'var(--accent)'; btnTotal.style.color = '#fff'; btnTotal.style.fontWeight = '600';
+    btnPerson.style.background = 'transparent'; btnPerson.style.color = 'var(--gray)'; btnPerson.style.fontWeight = '400';
     if (hint) hint.textContent = 'Budget total pour tout le groupe';
   }
 }
@@ -3113,7 +3126,7 @@ function renderReviews(lang) {
       <div class="review-stars">★★★★★</div>
       <div class="review-text">${r.text}</div>
       <div class="review-author">
-        <div class="review-avatar" style="background:linear-gradient(135deg,#${r.grad});">${r.initial}</div>
+        <div class="review-avatar" style="background:linear-gradient(135deg,${r.grad});">${r.initial}</div>
         <div><div class="review-name">${r.name}</div><div class="review-detail">${r.detail}</div></div>
       </div>
     </div>`).join('');
