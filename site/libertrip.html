@@ -855,7 +855,10 @@
     transition: all 0.2s;
   }
   .form-option:hover { border-color: var(--accent); color: var(--white); background: rgba(79,142,255,0.05); }
-  .form-option.selected { border-color: var(--accent); color: var(--white); background: rgba(79,142,255,0.08); }
+  .form-option.selected { border-color: var(--accent); color: var(--white); background: rgba(79,142,255,0.08); box-shadow: 0 0 0 1px var(--accent); }
+  html.light .form-option { color: var(--gray); }
+  html.light .form-option:hover { color: var(--white); }
+  html.light .form-option.selected { color: var(--white); background: rgba(37,99,235,0.12); border-color: #2563eb; box-shadow: 0 0 0 1px #2563eb; }
   .form-option .opt-icon { font-size: 20px; flex-shrink: 0; }
 
   .form-row { display: flex; gap: 12px; }
@@ -1250,7 +1253,11 @@
   html.light .form-wrapper { background: #ffffff; box-shadow: 0 4px 40px rgba(0,0,0,0.08); }
   html.light .form-q { color: var(--white); }
   html.light .form-hint { color: var(--gray); }
-  html.light .quiz-card-rythme { background: var(--card); border-color: var(--border); color: var(--white); }
+  html.light .quiz-card { color: var(--gray); }
+  html.light .quiz-card:hover, html.light .quiz-card.selected { color: var(--white); }
+  html.light .quiz-card.selected { background: rgba(37,99,235,0.12); border-color: #2563eb; box-shadow: 0 0 0 1px #2563eb; }
+  html.light .quiz-card-rythme { background: var(--card); border-color: var(--border); color: var(--gray); }
+  html.light .quiz-card-rythme:hover, html.light .quiz-card-rythme.selected { color: var(--white); background: rgba(37,99,235,0.12); border-color: #2563eb; box-shadow: 0 0 0 1px #2563eb; }
   html.light .form-slide { background: transparent; }
   html.light .day-btn { background: var(--card); border-color: var(--border); color: var(--white); }
   html.light #days-count { color: var(--white); -webkit-text-fill-color: var(--white); }
