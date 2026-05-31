@@ -437,6 +437,7 @@ nav::before {
   opacity: 0.4;
   border-radius: 24px;
   overflow: hidden;
+  max-height: 280px;
 }
 
 .lock-overlay {
@@ -1055,26 +1056,10 @@ function renderStep(step) {
 
 // ── 7. Rendu Jour 1 ──────────────────────────────────────────────────────────
 
-function renderDay1(day1) {
-  document.getElementById('day1-title').textContent = day1.title || 'Jour 1';
-  document.getElementById('day1-theme').textContent = day1.theme || '';
-  // Date sur le pill Jour 1
-  const d1 = dayDate(1);
-  const pill1 = document.getElementById('day1-pill');
-  if (d1 && pill1) pill1.innerHTML = `Jour 1<span class="day-pill-date">${d1}</span>`;
-
-  // Timeline
-  const timeline = document.getElementById('day1-timeline');
-  if (day1.steps && day1.steps.length) {
-    timeline.innerHTML = day1.steps
-      .sort((a,b) => (a.order||0) - (b.order||0))
-      .map(renderStep).join('');
-  }
-
-  // Overnight
-  const on = day1.overnight;
+function renderOvernightCard(day1) {
+  const on = day1?.overnight;
   const overnightCard = document.getElementById('overnight-card');
-  // Chercher si l'utilisateur a renseigné un hébergement pour la nuit 1
+  if (!overnightCard) return;
   const userLodging1 = (window._userLodgings || []).find(l => l.day === 1);
   if (on || userLodging1) {
     const name = userLodging1?.name || on?.name || '';
@@ -1096,6 +1081,26 @@ function renderDay1(day1) {
       ${on?.tips ? `<div class="step-tip" style="margin-top:12px;">💡 ${esc(on.tips)}</div>` : ''}
       ${!userLodging1 ? `<div style="margin-top:12px;font-size:12px;color:var(--text-dim);">✏️ <button onclick="openEditPanel()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;padding:0;text-decoration:underline;">Ajouter ton hébergement réel</button></div>` : ''}`;
   }
+}
+
+function renderDay1(day1) {
+  document.getElementById('day1-title').textContent = day1.title || 'Jour 1';
+  document.getElementById('day1-theme').textContent = day1.theme || '';
+  // Date sur le pill Jour 1
+  const d1 = dayDate(1);
+  const pill1 = document.getElementById('day1-pill');
+  if (d1 && pill1) pill1.innerHTML = `Jour 1<span class="day-pill-date">${d1}</span>`;
+
+  // Timeline
+  const timeline = document.getElementById('day1-timeline');
+  if (day1.steps && day1.steps.length) {
+    timeline.innerHTML = day1.steps
+      .sort((a,b) => (a.order||0) - (b.order||0))
+      .map(renderStep).join('');
+  }
+
+  // Overnight
+  renderOvernightCard(day1);
 }
 
 // ── 8. Rendu jours suivants (PREMIUM) ────────────────────────────────────────
@@ -1270,6 +1275,7 @@ async function init() {
     const criteria  = data.criteria  || {};
     window._roadbookDays = criteria.days || logistics.total_days || '';
     const day1      = data.day_1     || {};
+    window._day1    = day1; // stocker pour rafraîchir l'overnight card
     const isPaid    = data.payment_status === 'paid';
 
     // Titre page
@@ -2001,6 +2007,9 @@ async function saveLodgings() {
     const data = await res.json();
     if (data.ok) {
       if (status) { status.textContent = '✅ Hébergements sauvegardés !'; status.style.color = 'var(--green)'; }
+      // Mettre à jour en temps réel dans le roadbook
+      window._userLodgings = _editLodgings;
+      renderOvernightCard(window._day1);
     } else {
       if (status) { status.textContent = '❌ ' + (data.error || 'Erreur'); status.style.color = 'var(--red)'; }
     }
