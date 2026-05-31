@@ -107,13 +107,16 @@ export default async function handler(req, res) {
     lodgings:        Array.isArray(body.lodgings) ? body.lodgings.filter(l => l.trim()) : [],
     budget_level:    body.budget_level   || 'medium',
     budget_amount:   body.budget_amount  || null,
-    city_mode:       body.city_mode      || false,
-    return_place:    body.return_place   || '',
-    return_date:     body.return_date    || '',
-    return_time:     body.return_time    || '',
-    food_allergies:  body.food_allergies || '',
-    custom_notes:    body.custom_notes   || '',
-    vehicle_range:   body.vehicle_range  || null,
+    city_mode:         body.city_mode          || false,
+    destination_type:  body.destination_type   || 'pays',
+    return_place:      body.return_place       || '',
+    return_date:       body.return_date        || '',
+    return_time:       body.return_time        || '',
+    arrival_transport: body.arrival_transport  || '',
+    return_transport:  body.return_transport   || '',
+    food_allergies:    body.food_allergies     || '',
+    custom_notes:      body.custom_notes       || '',
+    vehicle_range:     body.vehicle_range      || null,
   };
 
   const email = body.email.toLowerCase().trim();
