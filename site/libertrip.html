@@ -1583,18 +1583,26 @@
 
     <!-- PAGE 3 : Destination (auto-advance + champ texte si Autre) -->
     <div class="form-slide" id="slide-3">
-      <div class="form-q" style="text-align:center;" data-i18n="q3">Où veux-tu poser tes bagages ? 🌍</div>
-      <div class="form-options quiz-grid" style="margin-top:28px;" id="dest-grid">
-        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'destination','suisse',3)"><span class="opt-icon">🇨🇭</span> Suisse</button>
-        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'destination','italie',3)"><span class="opt-icon">🇮🇹</span> Italie</button>
-        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'destination','france',3)"><span class="opt-icon">🇫🇷</span> France</button>
-        <button class="form-option quiz-card" onclick="selectAndAdvance(this,'destination','espagne',3)"><span class="opt-icon">🇪🇸</span> Espagne</button>
-        <button class="form-option quiz-card quiz-card-full" id="btn-autre-dest" onclick="toggleDestAutre(this)"><span class="opt-icon">🗺️</span> <span data-i18n="optAutreDest">Autre destination</span></button>
+      <div class="form-q" style="text-align:center;">Où veux-tu aller ? 🌍</div>
+      <div style="font-size:13px;color:var(--gray);text-align:center;margin:8px 0 28px;">Choisis le type de voyage</div>
+      <!-- Choix ville ou pays -->
+      <div style="display:flex;gap:12px;justify-content:center;margin-bottom:24px;">
+        <button class="quiz-card-rythme" id="btn-dest-pays" onclick="selectDestType(this,'pays')" style="flex:1;max-width:180px;flex-direction:column;align-items:center;padding:20px 12px;">
+          <span class="opt-icon">🗺️</span>
+          <div style="margin-top:8px;font-size:13px;font-weight:600;">Un pays</div>
+          <div style="font-size:11px;color:var(--gray);margin-top:3px;">Road trip &amp; découverte</div>
+        </button>
+        <button class="quiz-card-rythme" id="btn-dest-ville" onclick="selectDestType(this,'ville')" style="flex:1;max-width:180px;flex-direction:column;align-items:center;padding:20px 12px;">
+          <span class="opt-icon">🏙️</span>
+          <div style="margin-top:8px;font-size:13px;font-weight:600;">Une ville</div>
+          <div style="font-size:11px;color:var(--gray);margin-top:3px;">Explorer en profondeur</div>
+        </button>
       </div>
-      <div id="autre-dest-field" style="display:none;margin-top:16px;">
-        <input class="form-field" type="text" placeholder="Saisir le pays ou la région..." id="destination-custom">
-        <div style="text-align:center;margin-top:12px;">
-          <button class="btn-next" style="border-radius:12px;padding:14px 40px;" onclick="advanceFromAutreDest()">Continuer ➔</button>
+      <!-- Champ texte destination -->
+      <div id="dest-input-wrap" style="display:none;max-width:480px;margin:0 auto;">
+        <input class="form-field" type="text" id="destination-custom" placeholder="Ex : Rome, Barcelone, Islande…" style="font-size:15px;">
+        <div style="text-align:center;margin-top:16px;">
+          <button class="btn-next" style="border-radius:12px;padding:14px 40px;" onclick="advanceFromDest()">Continuer ➔</button>
         </div>
       </div>
     </div>
@@ -1624,20 +1632,36 @@
 
     <!-- PAGE 5 : Logistique départ + retour -->
     <div class="form-slide" id="slide-5">
-      <div class="form-q" style="text-align:center;" data-i18n="q5">Où et quand commence ton voyage ? 🏁</div>
+      <div class="form-q" style="text-align:center;">Où et quand commence ton voyage ? 🏁</div>
       <div style="display:flex;flex-direction:column;gap:16px;margin-top:28px;">
-        <input class="form-field" type="text" id="departure-place" data-i18n-placeholder="depPlaceholder">
-        <div style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:-6px;" data-i18n="labelDep">Départ</div>
+        <div style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:-6px;">Départ</div>
+        <input class="form-field" type="text" id="departure-place" placeholder="Ville ou lieu de départ exact (ex: Aéroport de Genève, Gare de Lyon…)">
         <div class="form-row">
           <input class="form-field" type="date" id="departure-date">
           <input class="form-field" type="time" id="departure-time" placeholder="09:00">
         </div>
+        <!-- Moyen d'arrivée à destination -->
+        <div style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;margin-top:4px;">Comment tu arrives à destination ?</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="form-option" id="arr-avion" onclick="selectArrival(this,'avion')" style="padding:10px 16px;border-radius:10px;font-size:13px;flex:1;min-width:80px;justify-content:center;">✈️ Avion</button>
+          <button class="form-option" id="arr-train" onclick="selectArrival(this,'train')" style="padding:10px 16px;border-radius:10px;font-size:13px;flex:1;min-width:80px;justify-content:center;">🚂 Train</button>
+          <button class="form-option" id="arr-voiture" onclick="selectArrival(this,'voiture')" style="padding:10px 16px;border-radius:10px;font-size:13px;flex:1;min-width:80px;justify-content:center;">🚗 Voiture</button>
+          <button class="form-option" id="arr-bateau" onclick="selectArrival(this,'bateau')" style="padding:10px 16px;border-radius:10px;font-size:13px;flex:1;min-width:80px;justify-content:center;">⛴️ Bateau</button>
+        </div>
         <div style="height:1px;background:rgba(255,255,255,0.06);margin:4px 0;"></div>
-        <div style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:-6px;" data-i18n="labelRet">Retour <span style="color:var(--gray);font-size:11px;text-transform:none;letter-spacing:0;" data-i18n="labelRetSub">(optionnel — si tu as un avion, train ou contrainte de retour)</span></div>
-        <input class="form-field" type="text" id="return-place" data-i18n-placeholder="retPlaceholder">
+        <div style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:-6px;">Retour <span style="color:var(--gray);font-size:11px;text-transform:none;letter-spacing:0;">(optionnel — si tu as un avion, train ou contrainte de retour)</span></div>
+        <input class="form-field" type="text" id="return-place" placeholder="Lieu de retour (ex: Aéroport de Paris CDG, optionnel)">
         <div class="form-row">
           <input class="form-field" type="date" id="return-date">
           <input class="form-field" type="time" id="return-time" placeholder="18:00">
+        </div>
+        <!-- Moyen de retour -->
+        <div style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;margin-top:4px;">Comment tu repars ? <span style="color:var(--gray);font-size:11px;text-transform:none;letter-spacing:0;">(optionnel)</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="form-option" id="dep-avion" onclick="selectDeparture(this,'avion')" style="padding:10px 16px;border-radius:10px;font-size:13px;flex:1;min-width:80px;justify-content:center;">✈️ Avion</button>
+          <button class="form-option" id="dep-train" onclick="selectDeparture(this,'train')" style="padding:10px 16px;border-radius:10px;font-size:13px;flex:1;min-width:80px;justify-content:center;">🚂 Train</button>
+          <button class="form-option" id="dep-voiture" onclick="selectDeparture(this,'voiture')" style="padding:10px 16px;border-radius:10px;font-size:13px;flex:1;min-width:80px;justify-content:center;">🚗 Voiture</button>
+          <button class="form-option" id="dep-bateau" onclick="selectDeparture(this,'bateau')" style="padding:10px 16px;border-radius:10px;font-size:13px;flex:1;min-width:80px;justify-content:center;">⛴️ Bateau</button>
         </div>
       </div>
       <div style="text-align:center;margin-top:32px;">
@@ -1657,24 +1681,17 @@
         </div>
         <div style="font-size:13px;color:var(--gray);margin-top:6px;" data-i18n="labelDaysUnit">jours</div>
       </div>
-      <!-- Option mode ville -->
-      <div style="margin-bottom:18px;">
-        <button class="quiz-card-rythme" id="btn-city-mode" onclick="selectRythme(this,'city')" style="width:100%;max-width:340px;margin:0 auto;display:flex;flex-direction:column;align-items:center;border:2px solid var(--border-light);border-radius:14px;padding:14px 20px;">
-          <span class="opt-icon">🏙️</span>
-          <div style="margin-top:6px;font-size:13px;font-weight:500;">Rester dans une ville</div>
-          <div style="font-size:11px;color:var(--gray);margin-top:2px;">Explorer une destination précise en profondeur</div>
-        </button>
-      </div>
-      <!-- Séparateur -->
-      <div id="rhythm-separator" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-        <div style="flex:1;height:1px;background:var(--border-light);"></div>
-        <div style="font-size:11px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.08em;">ou choisir le rythme de route</div>
-        <div style="flex:1;height:1px;background:var(--border-light);"></div>
-      </div>
-      <div id="rhythm-cards" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-        <button class="quiz-card-rythme" onclick="selectRythme(this,'slow')"><span class="opt-icon">🧘</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Slow Travel</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">Moins de 100km/j</div></button>
-        <button class="quiz-card-rythme" onclick="selectRythme(this,'equilibre')"><span class="opt-icon">⛰️</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Équilibré</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">100–200km/j</div></button>
-        <button class="quiz-card-rythme" onclick="selectRythme(this,'rouleur')"><span class="opt-icon">🏁</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Grand Rouleur</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">+200km/j</div></button>
+      <div id="rhythm-section">
+        <!-- Rythme masqué si mode ville (géré automatiquement via le choix du slide 3) -->
+        <div id="rhythm-label" style="font-size:12px;color:var(--gray-light);text-transform:uppercase;letter-spacing:0.07em;text-align:center;margin-bottom:14px;">Rythme de voyage</div>
+        <div id="rhythm-cards" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <button class="quiz-card-rythme" onclick="selectRythme(this,'slow')"><span class="opt-icon">🧘</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Slow Travel</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">Moins de 100km/j</div></button>
+          <button class="quiz-card-rythme" onclick="selectRythme(this,'equilibre')"><span class="opt-icon">⛰️</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Équilibré</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">100–200km/j</div></button>
+          <button class="quiz-card-rythme" onclick="selectRythme(this,'rouleur')"><span class="opt-icon">🏁</span><div style="margin-top:6px;font-size:13px;font-weight:500;">Grand Rouleur</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">+200km/j</div></button>
+        </div>
+        <div id="city-mode-notice" style="display:none;text-align:center;padding:14px;background:rgba(79,142,255,0.07);border:1px solid rgba(79,142,255,0.2);border-radius:12px;font-size:13px;color:var(--accent);">
+          🏙️ Mode ville activé — l'IA planifiera ton séjour dans la ville choisie
+        </div>
       </div>
       <div style="text-align:center;margin-top:32px;">
         <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(6,7)" data-i18n="continueBtn">Continuer ➔</button>
@@ -1695,17 +1712,20 @@
       </div>
     </div>
 
-    <!-- PAGE 8 : Gastronomie (auto-advance) -->
+    <!-- PAGE 8 : Gastronomie -->
     <div class="form-slide" id="slide-8">
-      <div class="form-q" style="text-align:center;" data-i18n="q8">Côté nourriture, quelle est la politique ? 🍽️</div>
+      <div class="form-q" style="text-align:center;">Côté nourriture, quelle est la politique ? 🍽️</div>
       <div class="form-options quiz-grid quiz-grid-3" style="margin-top:28px;">
-        <button class="form-option quiz-card" onclick="selectFood(this,'economique')"><span class="opt-icon">🥪</span> <span data-i18n="foodEco">Sur le pouce</span><div style="font-size:12px;color:var(--gray);margin-top:4px;" data-i18n="foodEcoSub">Économique, sandwichs, fast-food</div></button>
-        <button class="form-option quiz-card" onclick="selectFood(this,'local')"><span class="opt-icon">🍕</span> <span data-i18n="foodLocal">Bon rapport qualité/prix</span><div style="font-size:12px;color:var(--gray);margin-top:4px;" data-i18n="foodLocalSub">Petits restos locaux, brasseries</div></button>
-        <button class="form-option quiz-card" onclick="selectFood(this,'gastronomie')"><span class="opt-icon">🍷</span> <span data-i18n="foodGastro">Gastronomie & Terroir</span><div style="font-size:12px;color:var(--gray);margin-top:4px;" data-i18n="foodGastroSub">Spécialités et belles tables</div></button>
+        <button class="form-option quiz-card" onclick="selectFood(this,'economique')"><span class="opt-icon">🥪</span> <span>Sur le pouce</span><div style="font-size:12px;color:var(--gray);margin-top:4px;">Économique, sandwichs, fast-food</div></button>
+        <button class="form-option quiz-card" onclick="selectFood(this,'local')"><span class="opt-icon">🍕</span> <span>Bon rapport qualité/prix</span><div style="font-size:12px;color:var(--gray);margin-top:4px;">Petits restos locaux, brasseries</div></button>
+        <button class="form-option quiz-card" onclick="selectFood(this,'gastronomie')"><span class="opt-icon">🍷</span> <span>Gastronomie & Terroir</span><div style="font-size:12px;color:var(--gray);margin-top:4px;">Spécialités et belles tables</div></button>
       </div>
       <!-- Champ allergies/régimes alimentaires -->
-      <div style="margin-top:20px;max-width:480px;margin-left:auto;margin-right:auto;">
-        <input class="form-field" type="text" id="food-allergies" data-i18n-placeholder="foodAllergyPlaceholder" style="font-size:14px;" oninput="formData['food_allergies']=this.value.trim()">
+      <div style="margin-top:20px;max-width:480px;margin:20px auto 0;">
+        <input class="form-field" type="text" id="food-allergies" placeholder="🌿 Allergies ou restrictions alimentaires ? (optionnel)" style="font-size:14px;" oninput="formData['food_allergies']=this.value.trim()">
+      </div>
+      <div style="text-align:center;margin-top:24px;">
+        <button class="btn-next" style="border-radius:12px;padding:16px 48px;" onclick="goToSlide(8,9)">Continuer ➔</button>
       </div>
     </div>
 
@@ -2063,21 +2083,64 @@ function selectRythme(el, val) {
   document.querySelectorAll('.quiz-card-rythme').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
   formData['rythme'] = val;
-  // Mode ville : masquer/afficher les cartes de rythme de route
-  const rhythmCards = document.getElementById('rhythm-cards');
-  const rhythmSep = document.getElementById('rhythm-separator');
-  if (val === 'city') {
-    formData['city_mode'] = true;
-    if (rhythmCards) rhythmCards.style.opacity = '0.35';
-    if (rhythmSep) rhythmSep.style.opacity = '0.35';
-  } else {
-    formData['city_mode'] = false;
-    if (rhythmCards) rhythmCards.style.opacity = '1';
-    if (rhythmSep) rhythmSep.style.opacity = '1';
-    // Désélectionner le bouton ville
-    const cityBtn = document.getElementById('btn-city-mode');
-    if (cityBtn) cityBtn.classList.remove('selected');
-  }
+}
+
+function selectDestType(el, type) {
+  // Sélection visuelle
+  document.querySelectorAll('#btn-dest-pays, #btn-dest-ville').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  formData['destination_type'] = type;
+  formData['city_mode'] = (type === 'ville');
+  // Afficher le champ texte
+  const wrap = document.getElementById('dest-input-wrap');
+  wrap.style.display = 'block';
+  const input = document.getElementById('destination-custom');
+  input.placeholder = type === 'ville' ? 'Ex : Rome, Barcelone, Tokyo…' : 'Ex : Italie, Espagne, Islande…';
+  setTimeout(() => input.focus(), 100);
+  // Afficher/masquer le rythme au slide 6 selon le type
+  setTimeout(() => {
+    const rhythmCards = document.getElementById('rhythm-cards');
+    const rhythmLabel = document.getElementById('rhythm-label');
+    const cityNotice  = document.getElementById('city-mode-notice');
+    if (rhythmCards && cityNotice) {
+      if (type === 'ville') {
+        rhythmCards.style.display = 'none';
+        if (rhythmLabel) rhythmLabel.style.display = 'none';
+        cityNotice.style.display = 'block';
+        formData['rythme'] = 'city';
+      } else {
+        rhythmCards.style.display = 'flex';
+        if (rhythmLabel) rhythmLabel.style.display = 'block';
+        cityNotice.style.display = 'none';
+        if (formData['rythme'] === 'city') formData['rythme'] = 'equilibre';
+      }
+    }
+  }, 0);
+}
+
+function advanceFromDest() {
+  const val = document.getElementById('destination-custom').value.trim();
+  if (!val) { document.getElementById('destination-custom').focus(); return; }
+  formData['destination'] = val;
+  goToSlide(3, 4);
+}
+
+function selectArrival(el, val) {
+  ['arr-avion','arr-train','arr-voiture','arr-bateau'].forEach(id => {
+    const b = document.getElementById(id);
+    if (b) b.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  formData['arrival_transport'] = val;
+}
+
+function selectDeparture(el, val) {
+  ['dep-avion','dep-train','dep-voiture','dep-bateau'].forEach(id => {
+    const b = document.getElementById(id);
+    if (b) b.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  formData['return_transport'] = val;
 }
 
 function selectVehicleElectric(el) {
@@ -2094,7 +2157,11 @@ function selectVehicleElectric(el) {
 }
 
 function selectFood(el, val) {
-  selectAndAdvance(el, 'food', val, 8);
+  const container = el.closest('.form-options');
+  if (container) container.querySelectorAll('.form-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  formData['food'] = val;
+  // Pas d'auto-advance — l'utilisateur clique Continuer
 }
 
 function selectBudget(el, val) {
@@ -2142,27 +2209,6 @@ function setBudgetScope(scope) {
   }
 }
 
-function toggleDestAutre(el) {
-  const field = document.getElementById('autre-dest-field');
-  const isShown = field.style.display !== 'none';
-  if (isShown) {
-    field.style.display = 'none';
-    el.classList.remove('selected');
-  } else {
-    field.style.display = 'block';
-    el.classList.add('selected');
-    document.querySelectorAll('#dest-grid .form-option:not(#btn-autre-dest)').forEach(o => o.classList.remove('selected'));
-    document.getElementById('destination-custom').focus();
-  }
-}
-
-function advanceFromAutreDest() {
-  const val = document.getElementById('destination-custom').value.trim();
-  if (val) {
-    formData['destination'] = val;
-    goToSlide(3, 4);
-  }
-}
 
 function changeDays(delta) {
   selectedDays = Math.max(1, Math.min(30, selectedDays + delta));
